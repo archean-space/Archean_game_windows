@@ -31,15 +31,12 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 	// 8 bytes (64 bits)
 	aligned_uint8_t type; // 256 types & orientations
 	aligned_uint8_t color[7]; // 256 materials (color + roughness + metallic)
-								// 32 metalic
-								// 128 matte
-								// 96 glossy
 	
 	#ifdef __cplusplus
 		// 4 bytes (32 bits)
-		uint32_t damage : 6; // 64 states
-		uint32_t dirt : 2; // 4 states
-		uint32_t composition : 8; // 256 alloys
+		/*UNUSED*/uint32_t _damage : 6; // 64 states
+		/*UNUSED*/uint32_t _dirt : 2; // 4 states
+		/*UNUSED*/uint32_t _composition : 8; // 256 alloys
 		uint32_t extra : 4; // 16 states
 		uint32_t size_x : 4; // from 0.25 to 4.0 meter
 		uint32_t size_y : 4;
@@ -56,7 +53,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			} position;
 		};
 		
-		Block(uint16_t id_ = 0) : type(0), color{0,0,0,0,0,0,0}, damage(0), dirt(0), composition(0), extra(0), size_x(0), size_y(0), size_z(0), id(id_) {}
+		Block(uint16_t id_ = 0) : type(0), color{0,0,0,0,0,0,0}, _damage(0), _dirt(0), _composition(0), extra(0), size_x(0), size_y(0), size_z(0), id(id_) {}
 		
 		vec3 GetPosition() const {
 			return vec3(position.x, position.y, position.z) * 0.25f;
@@ -136,7 +133,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		}
 		
 		bool IsDifferent (const Block& other) const {
-			return IsDifferentShapeOrSize(other) || damage != other.damage || dirt != other.dirt || extra != other.extra || composition != other.composition || memcmp(color, other.color, sizeof(color)) != 0;
+			return IsDifferentShapeOrSize(other) || _damage != other._damage || _dirt != other._dirt || extra != other.extra || _composition != other._composition || memcmp(color, other.color, sizeof(color)) != 0;
 		}
 		
 		bool HasSameOccupancy (const Block& other) {
