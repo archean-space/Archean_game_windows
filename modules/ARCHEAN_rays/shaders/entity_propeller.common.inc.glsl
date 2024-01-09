@@ -30,7 +30,7 @@ float sdProp(vec3 p) {
 	p.xz = RotationMatrix(angle) * p.xz;
 	
 	// Blade Pitch
-	p.yz = RotationMatrix(-prop.pitch * 3.141592654 / 2. * sign(p.x)) * p.yz;
+	p.yz = RotationMatrix(-prop.pitch * 3.141592654 / 4. * sign(p.x)) * p.yz;
 	
 	// Blade Twist
 	p.y -= p.x / prop.radius * p.z * prop.twist * 2. / float(prop.blades);
