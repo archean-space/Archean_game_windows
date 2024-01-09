@@ -170,6 +170,9 @@ void main() {
 	}
 	
 	const float waterWavesStrength = pow(0.5/*water.wavesStrength*/, 2);
+
+	vec3 downDir = normalize(spherePosition);
+	float dotUp = dot(gl_WorldRayDirectionEXT, -downDir);
 	
 	if (gl_HitKindEXT == 0) {
 		// Above water
@@ -205,7 +208,7 @@ void main() {
 		// See through water (refraction)
 		vec3 rayDirection = gl_WorldRayDirectionEXT;
 		if ((renderer.options & RENDERER_OPTION_WATER_TRANSPARENCY) != 0) {
-			if ((renderer.options & RENDERER_OPTION_WATER_REFRACTION) == 0 || Refract(rayDirection, surfaceNormal, WATER_IOR)) {
+			if ((renderer.options & RENDERER_OPTION_WATER_REFRACTION) == 0 || -dotUp < 0.04 || Refract(rayDirection, surfaceNormal, WATER_IOR)) {
 				RAY_RECURSION_PUSH
 					RAY_UNDERWATER_PUSH
 						ray.color = vec4(0);
@@ -243,8 +246,6 @@ void main() {
 		
 	} else {
 		// Underwater
-		vec3 downDir = normalize(spherePosition);
-		float dotUp = dot(gl_WorldRayDirectionEXT, -downDir);
 		float maxLightDepth = mix(WATER_MAX_LIGHT_DEPTH, WATER_MAX_LIGHT_DEPTH_VERTICAL, max(0, dotUp));
 		
 		RAY_UNDERWATER_PUSH
