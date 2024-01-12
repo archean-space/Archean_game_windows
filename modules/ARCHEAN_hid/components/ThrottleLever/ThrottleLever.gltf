@@ -121,7 +121,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":114,
+			"count":110,
 			"max":[
 				0.125,
 				0.25,
@@ -137,41 +137,41 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":114,
+			"count":110,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5123,
-			"count":258,
+			"count":240,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":372,
+			"count":376,
 			"max":[
-				0.01492958515882492,
-				0.25997838377952576,
-				0.026880744844675064
+				0.02985917031764984,
+				0.2703028619289398,
+				0.041810330003499985
 			],
 			"min":[
-				-0.01492958515882492,
-				0.25,
-				-0.002978426404297352
+				-0.02985917031764984,
+				0.2496539205312729,
+				-0.017908010631799698
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":372,
+			"count":376,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":1014,
+			"count":1020,
 			"type":"SCALAR"
 		},
 		{
@@ -234,80 +234,80 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1368,
+			"byteLength":1320,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1368,
-			"byteOffset":1368,
+			"byteLength":1320,
+			"byteOffset":1320,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":516,
-			"byteOffset":2736,
+			"byteLength":480,
+			"byteOffset":2640,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":4464,
-			"byteOffset":3252,
+			"byteLength":4512,
+			"byteOffset":3120,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4464,
-			"byteOffset":7716,
+			"byteLength":4512,
+			"byteOffset":7632,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2028,
-			"byteOffset":12180,
+			"byteLength":2040,
+			"byteOffset":12144,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":240,
-			"byteOffset":14208,
+			"byteOffset":14184,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":240,
-			"byteOffset":14448,
+			"byteOffset":14424,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":60,
-			"byteOffset":14688,
+			"byteOffset":14664,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":8448,
-			"byteOffset":14748,
+			"byteOffset":14724,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":8448,
-			"byteOffset":23196,
+			"byteOffset":23172,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4560,
-			"byteOffset":31644,
+			"byteOffset":31620,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":36204,
+			"byteLength":36180,
 			"uri":"ThrottleLever.bin"
 		}
 	]
