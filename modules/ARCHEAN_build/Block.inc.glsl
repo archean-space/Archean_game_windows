@@ -35,7 +35,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 	#ifdef __cplusplus
 		// 4 bytes (32 bits)
 		/*UNUSED*/uint32_t _damage : 8; // 256 states
-		/*UNUSED*/uint32_t composition : 8; // 256 alloys
+		/*UNUSED*/uint32_t material : 8; // 256 alloys
 		uint32_t extra : 4; // 16 states
 		uint32_t size_x : 4; // from 0.25 to 4.0 meter
 		uint32_t size_y : 4;
@@ -52,7 +52,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			} position;
 		};
 		
-		Block(uint16_t id_ = 0) : type(0), color{0,0,0,0,0,0,0}, _damage(0), composition(0), extra(0), size_x(0), size_y(0), size_z(0), id(id_) {}
+		Block(uint16_t id_ = 0) : type(0), color{0,0,0,0,0,0,0}, _damage(0), material(0), extra(0), size_x(0), size_y(0), size_z(0), id(id_) {}
 		
 		vec3 GetPosition() const {
 			return vec3(position.x, position.y, position.z) * 0.25f;
@@ -69,7 +69,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		double GetMass() const {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			double size = (size_x+1) * (size_y+1) * (size_z+1);
-			switch (composition) {
+			switch (material) {
 			case 0: // Composite (1)
 				return size * 0.250;
 			case 1: // Concrete (2)
@@ -85,7 +85,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		
 		// for better handling of drag, lift and bouyancy
 		double GetVolumeDisplacementRatio() const {
-			switch (composition) {
+			switch (material) {
 			case 0: // Composite
 				return 0.02;
 			case 1: // Concrete
@@ -159,7 +159,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		}
 		
 		bool IsDifferent (const Block& other) const {
-			return IsDifferentShapeOrSize(other) || _damage != other._damage || extra != other.extra || composition != other.composition || memcmp(color, other.color, sizeof(color)) != 0;
+			return IsDifferentShapeOrSize(other) || _damage != other._damage || extra != other.extra || material != other.material || memcmp(color, other.color, sizeof(color)) != 0;
 		}
 		
 		bool HasSameOccupancy (const Block& other) {
