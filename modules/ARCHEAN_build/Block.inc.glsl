@@ -34,9 +34,8 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 	
 	#ifdef __cplusplus
 		// 4 bytes (32 bits)
-		/*UNUSED*/uint32_t _damage : 6; // 64 states
-		/*UNUSED*/uint32_t _dirt : 2; // 4 states
-		/*UNUSED*/uint32_t _composition : 8; // 256 alloys
+		/*UNUSED*/uint32_t _damage : 8; // 256 states
+		/*UNUSED*/uint32_t composition : 8; // 256 alloys
 		uint32_t extra : 4; // 16 states
 		uint32_t size_x : 4; // from 0.25 to 4.0 meter
 		uint32_t size_y : 4;
@@ -53,7 +52,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			} position;
 		};
 		
-		Block(uint16_t id_ = 0) : type(0), color{0,0,0,0,0,0,0}, _damage(0), _dirt(0), _composition(0), extra(0), size_x(0), size_y(0), size_z(0), id(id_) {}
+		Block(uint16_t id_ = 0) : type(0), color{0,0,0,0,0,0,0}, _damage(0), composition(0), extra(0), size_x(0), size_y(0), size_z(0), id(id_) {}
 		
 		vec3 GetPosition() const {
 			return vec3(position.x, position.y, position.z) * 0.25f;
@@ -67,10 +66,37 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			return vec3(size_x, size_y, size_z) * 0.25f + 0.25f;
 		}
 		
-		// using a volume displacement ratio of 0.2, a mass of 1 kg is floating and a mass of 5 kg is sinking
 		double GetMass() const {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
-			return 1.0 * (size_x+1) * (size_y+1) * (size_z+1);
+			double size = (size_x+1) * (size_y+1) * (size_z+1);
+			switch (composition) {
+			case 0: // Composite (1)
+				return size * 0.250;
+			case 1: // Concrete (2)
+				return size * 10.0;
+			case 2: // Steel (8)
+				return size * 1.0;
+			case 3: // Aluminum (4)
+				return size * 0.500;
+			default:
+				return size;
+			}
+		}
+		
+		// for better handling of drag, lift and bouyancy
+		double GetVolumeDisplacementRatio() const {
+			switch (composition) {
+			case 0: // Composite
+				return 0.02;
+			case 1: // Concrete
+				return 0.25;
+			case 2: // Steel
+				return 0.01;
+			case 3: // Aluminum
+				return 0.01;
+			default:
+				return 1.0;
+			}
 		}
 		
 		void SetOccupancy(const glm::ivec3& a, const glm::ivec3& b) {
@@ -133,7 +159,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		}
 		
 		bool IsDifferent (const Block& other) const {
-			return IsDifferentShapeOrSize(other) || _damage != other._damage || _dirt != other._dirt || extra != other.extra || _composition != other._composition || memcmp(color, other.color, sizeof(color)) != 0;
+			return IsDifferentShapeOrSize(other) || _damage != other._damage || extra != other.extra || composition != other.composition || memcmp(color, other.color, sizeof(color)) != 0;
 		}
 		
 		bool HasSameOccupancy (const Block& other) {
