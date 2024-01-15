@@ -7,6 +7,8 @@
 	#include <cstring>
 #endif
 
+// #define BLOCK_TYPE_BEVEL_ENABLED
+
 BUFFER_REFERENCE_STRUCT_READONLY(4) BlockColor {
 	aligned_uint8_t r;
 	aligned_uint8_t g;
@@ -68,7 +70,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		
 		double GetMass() const {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
-			double size = (size_x+1) * (size_y+1) * (size_z+1);
+			double size = double((size_x+1) * (size_y+1) * (size_z+1)) * (type==0? 1.0:0.5);
 			switch (material) {
 			case 0: // Composite (1)
 				return size * 0.250;
@@ -85,17 +87,18 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		
 		// for better handling of drag, lift and bouyancy
 		double GetVolumeDisplacementRatio() const {
+			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			switch (material) {
 			case 0: // Composite
-				return 0.02;
+				return 0.02 * (type==0? 1.0:0.5);
 			case 1: // Concrete
-				return 0.25;
+				return 0.25 * (type==0? 1.0:0.5);
 			case 2: // Steel
-				return 0.01;
+				return 0.01 * (type==0? 1.0:0.5);
 			case 3: // Aluminum
-				return 0.01;
+				return 0.01 * (type==0? 1.0:0.5);
 			default:
-				return 1.0;
+				return 1.00 * (type==0? 1.0:0.5);
 			}
 		}
 		
