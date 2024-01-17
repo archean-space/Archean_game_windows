@@ -225,14 +225,14 @@
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":312,
+			"count":624,
 			"max":[
-				0.030625849962234497,
+				0.1556258499622345,
 				0.02749231643974781,
 				-0.2500159442424774
 			],
 			"min":[
-				-0.030625855550169945,
+				-0.1556258499622345,
 				-0.03375938534736633,
 				-0.2703963816165924
 			],
@@ -241,13 +241,13 @@
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":312,
+			"count":624,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":11,
 			"componentType":5123,
-			"count":996,
+			"count":1992,
 			"type":"SCALAR"
 		},
 		{
@@ -336,44 +336,44 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":3744,
+			"byteLength":7488,
 			"byteOffset":132804,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3744,
-			"byteOffset":136548,
+			"byteLength":7488,
+			"byteOffset":140292,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1992,
-			"byteOffset":140292,
+			"byteLength":3984,
+			"byteOffset":147780,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":5172,
-			"byteOffset":142284,
+			"byteOffset":151764,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":5172,
-			"byteOffset":147456,
+			"byteOffset":156936,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2988,
-			"byteOffset":152628,
+			"byteOffset":162108,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":155616,
+			"byteLength":165096,
 			"uri":"RTG.bin"
 		}
 	]

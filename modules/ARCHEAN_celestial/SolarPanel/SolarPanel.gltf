@@ -159,14 +159,14 @@
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":312,
+			"count":624,
 			"max":[
-				0.030625849962234497,
+				0.1556258499622345,
 				-0.9999999403953552,
 				0.030625849962234497
 			],
 			"min":[
-				-0.030625849962234497,
+				-0.1556258499622345,
 				-1.0203803777694702,
 				-0.030625851824879646
 			],
@@ -175,13 +175,13 @@
 		{
 			"bufferView":7,
 			"componentType":5126,
-			"count":312,
+			"count":624,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":8,
 			"componentType":5123,
-			"count":996,
+			"count":1992,
 			"type":"SCALAR"
 		}
 	],
@@ -224,26 +224,26 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":3744,
+			"byteLength":7488,
 			"byteOffset":3240,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3744,
-			"byteOffset":6984,
+			"byteLength":7488,
+			"byteOffset":10728,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1992,
-			"byteOffset":10728,
+			"byteLength":3984,
+			"byteOffset":18216,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":12720,
+			"byteLength":22200,
 			"uri":"SolarPanel.bin"
 		}
 	]
