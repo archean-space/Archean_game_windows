@@ -48,7 +48,7 @@ function @button($text:text):number
 	if ($btn_index == 0)
 		$_btns_start_y = $_current_y
 	var $is_clicked = $btn_index == $_clicked_btn
-	var $border_color = color(9, 9, 9)
+	var $border_color = color(50, 50, 50)
 	if $is_clicked
 		$_clicked_btn = -1
 	if $is_clicked or $_active_btn == $btn_index

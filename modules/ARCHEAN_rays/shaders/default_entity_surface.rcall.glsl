@@ -18,7 +18,7 @@ void main() {
 		surface.metallic = mix(surface.metallic, data.pbrMetallic, data.pbrMix);
 		surface.roughness = mix(surface.roughness, data.pbrRoughness, data.pbrMix);
 		if (data.monitorIndex > 0) {
-			surface.emission *= texture(nonuniformEXT(textures[data.monitorIndex]), surface.uv1).rgb;
+			surface.emission *= ReverseGamma(texture(nonuniformEXT(textures[data.monitorIndex]), surface.uv1).rgb);
 		}
 	}
 	if (surface.geometryInfoData > 0) {
