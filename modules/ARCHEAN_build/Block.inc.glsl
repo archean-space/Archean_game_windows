@@ -72,14 +72,18 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			double size = double((size_x+1) * (size_y+1) * (size_z+1)) * (type==0? 1.0:0.5);
 			switch (material) {
-			case 0: // Composite (1)
+			case 0: // Composite
 				return size * 0.250;
-			case 1: // Concrete (2)
+			case 1: // Concrete
 				return size * 10.0;
-			case 2: // Steel (8)
+			case 2: // Steel
 				return size * 1.0;
-			case 3: // Aluminum (4)
+			case 3: // Aluminum
 				return size * 0.500;
+			case 4: // Glass
+				return size * 1.0;
+			case 5: // Lead
+				return size * 150.0;
 			default:
 				return size;
 			}
@@ -97,6 +101,10 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 				return 0.01 * (type==0? 1.0:0.5);
 			case 3: // Aluminum
 				return 0.01 * (type==0? 1.0:0.5);
+			case 4: // Glass
+				return 0.02 * (type==0? 1.0:0.5);
+			case 5: // Lead
+				return 1.0 * (type==0? 1.0:0.5);
 			default:
 				return 1.00 * (type==0? 1.0:0.5);
 			}
