@@ -6,11 +6,8 @@ layout(set = 1, binding = 0, rgba8) uniform image2D images[];
 vec2 coord = vec2(gl_GlobalInvocationID.xy);
 vec2 uv = coord / vec2(SCREEN_COMPUTE_WIDTH, SCREEN_COMPUTE_HEIGHT);
 
-const vec3 skyColor = vec3(0.35,0.46,0.62);
-const vec3 groundColor = vec3(0.53,0.42,0.35);
-const vec3 lineColor = vec3(0.7);
-const vec3 textColor = vec3(0.8);
-const vec3 horizonMarkersColor = vec3(0.75, 0.75, 0);
+const vec3 skyColor = vec3(0.1,0.18,0.35);
+const vec3 groundColor = vec3(0.25,0.15,0.1);
 const vec2 textSize = vec2(SCREEN_TEXT_SIZE_X, SCREEN_TEXT_SIZE_Y);
 
 float saturate(float x) {return clamp(x, 0, 1);}
@@ -63,44 +60,44 @@ void main() {
 			if (horizon.y > 0) col = skyColor; // Blue sky
 			
 			// Middle line
-			if (horizon.y > -0.005 && horizon.y < 0.005) col = lineColor;
+			if (horizon.y > -0.005 && horizon.y < 0.005) col = vec3(0.3);
 			
 			// +45 degrees Lines
-			col = mix(col, textColor, writeNumber(4, horizon + vec2(-0.1,-0.61)));
-			col = mix(col, textColor, writeNumber(5, horizon + vec2(-0.055,-0.61)));
-			if (horizon.y > 0.495 && horizon.y < 0.505 && horizon.x > -0.5 && horizon.x < 0.5) col = lineColor;
+			col = mix(col, vec3(0.4), writeNumber(4, horizon + vec2(-0.1,-0.61)));
+			col = mix(col, vec3(0.4), writeNumber(5, horizon + vec2(-0.055,-0.61)));
+			if (horizon.y > 0.495 && horizon.y < 0.505 && horizon.x > -0.5 && horizon.x < 0.5) col = vec3(0.3);
 			// -45 degrees Lines
-			col = mix(col, textColor, writeNumber(4, horizon + vec2(-0.1,0.39)));
-			col = mix(col, textColor, writeNumber(5, horizon + vec2(-0.055,0.39)));
-			if (horizon.y > -0.505 && horizon.y < -0.495 && horizon.x > -0.5 && horizon.x < 0.5) col = lineColor;
+			col = mix(col, vec3(0.4), writeNumber(4, horizon + vec2(-0.1,0.39)));
+			col = mix(col, vec3(0.4), writeNumber(5, horizon + vec2(-0.055,0.39)));
+			if (horizon.y > -0.505 && horizon.y < -0.495 && horizon.x > -0.5 && horizon.x < 0.5) col = vec3(0.3);
 			
 			// +30 degrees Lines
-			col = mix(col, textColor, writeNumber(3, horizon + vec2(-0.1,-0.445)));
-			col = mix(col, textColor, writeNumber(0, horizon + vec2(-0.055,-0.445)));
-			if (horizon.y > 0.33 && horizon.y < 0.34 && horizon.x > -0.3 && horizon.x < 0.3) col = lineColor;
+			col = mix(col, vec3(0.4), writeNumber(3, horizon + vec2(-0.1,-0.445)));
+			col = mix(col, vec3(0.4), writeNumber(0, horizon + vec2(-0.055,-0.445)));
+			if (horizon.y > 0.33 && horizon.y < 0.34 && horizon.x > -0.3 && horizon.x < 0.3) col = vec3(0.3);
 			// -30 degrees Lines
-			col = mix(col, textColor, writeNumber(3, horizon + vec2(-0.1,0.225)));
-			col = mix(col, textColor, writeNumber(0, horizon + vec2(-0.055,0.225)));
-			if (horizon.y > -0.34 && horizon.y < -0.33 && horizon.x > -0.3 && horizon.x < 0.3) col = lineColor;
+			col = mix(col, vec3(0.4), writeNumber(3, horizon + vec2(-0.1,0.225)));
+			col = mix(col, vec3(0.4), writeNumber(0, horizon + vec2(-0.055,0.225)));
+			if (horizon.y > -0.34 && horizon.y < -0.33 && horizon.x > -0.3 && horizon.x < 0.3) col = vec3(0.3);
 			
 			// +15 degrees Lines
-			col = mix(col, textColor, writeNumber(1, horizon + vec2(-0.1,-0.27)));
-			col = mix(col, textColor, writeNumber(5, horizon + vec2(-0.055,-0.27)));
-			if (horizon.y > 0.155 && horizon.y < 0.165 && horizon.x > -0.1 && horizon.x < 0.1) col = lineColor;
+			col = mix(col, vec3(0.4), writeNumber(1, horizon + vec2(-0.1,-0.27)));
+			col = mix(col, vec3(0.4), writeNumber(5, horizon + vec2(-0.055,-0.27)));
+			if (horizon.y > 0.155 && horizon.y < 0.165 && horizon.x > -0.1 && horizon.x < 0.1) col = vec3(0.3);
 			// -15 degrees Lines
-			col = mix(col, textColor, writeNumber(1, horizon + vec2(-0.1,0.05)));
-			col = mix(col, textColor, writeNumber(5, horizon + vec2(-0.055,0.05)));
-			if (horizon.y > -0.165 && horizon.y < -0.155 && horizon.x > -0.1 && horizon.x < 0.1) col = lineColor;
+			col = mix(col, vec3(0.4), writeNumber(1, horizon + vec2(-0.1,0.05)));
+			col = mix(col, vec3(0.4), writeNumber(5, horizon + vec2(-0.055,0.05)));
+			if (horizon.y > -0.165 && horizon.y < -0.155 && horizon.x > -0.1 && horizon.x < 0.1) col = vec3(0.3);
 			
 			// 90 degree line
 			if (abs(horizon.y) > 0.98 && abs(horizon.y) < 1.02) col = vec3(0);
 			// Next 45 degrees lines
-			if (abs(horizon.y) > 1.495 && abs(horizon.y) < 1.505 && horizon.x > -0.5 && horizon.x < 0.5) col = lineColor;
+			if (abs(horizon.y) > 1.495 && abs(horizon.y) < 1.505 && horizon.x > -0.5 && horizon.x < 0.5) col = vec3(0.3);
 			
 			// Center marker
-			if (screen.y > -0.02 && screen.y < 0.02 && (screen.x < -0.8 || screen.x > 0.8)) col = horizonMarkersColor; // thick yellow lines
-			if (screen.y > -0.005 && screen.y < 0.005 && (screen.x < -0.6 || screen.x > 0.6)) col = horizonMarkersColor; // thin yellow lines
-			if (screen.y > -0.02 && screen.y < 0.02 && screen.x > -0.02 && screen.x < 0.02) col = horizonMarkersColor; // Center yellow square
+			if (screen.y > -0.02 && screen.y < 0.02 && (screen.x < -0.8 || screen.x > 0.8)) col = vec3(0.5, 0.5, 0); // thick yellow lines
+			if (screen.y > -0.005 && screen.y < 0.005 && (screen.x < -0.6 || screen.x > 0.6)) col = vec3(0.5, 0.5, 0); // thin yellow lines
+			if (screen.y > -0.02 && screen.y < 0.02 && screen.x > -0.02 && screen.x < 0.02) col = vec3(0.5, 0.5, 0); // Center yellow square
 			
 			// Velocity
 			vec2 v = velocity.xz / 20;
@@ -153,31 +150,31 @@ void main() {
 			if (horizon.y > 0) col = skyColor; // Blue sky
 			
 			// Middle line
-			if (horizon.y > -0.005 && horizon.y < 0.005) col = lineColor;
+			if (horizon.y > -0.005 && horizon.y < 0.005) col = vec3(0.3);
 			
 			// Heading lines
 			// 0 (north)
-			if (heading_0 > -0.005 && heading_0 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(0, vec2(heading_0 - 0.045, horizon.y - 0.03)));
+			if (heading_0 > -0.005 && heading_0 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_0 - 0.045, horizon.y - 0.03)));
 			// 180 (south)
-			if (heading_plus180 > -0.005 && heading_plus180 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			if (heading_minus180 > -0.005 && heading_minus180 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(1, vec2(heading_plus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(8, vec2(heading_plus180, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_plus180 + 0.045, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(1, vec2(heading_minus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(8, vec2(heading_minus180, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_minus180 + 0.045, horizon.y - 0.03)));
+			if (heading_plus180 > -0.005 && heading_plus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			if (heading_minus180 > -0.005 && heading_minus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_plus180 - 0.04, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_plus180, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus180 + 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_minus180 - 0.04, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_minus180, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus180 + 0.045, horizon.y - 0.03)));
 			// +90
-			if (heading_plus90 > -0.005 && heading_plus90 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(-5, vec2(heading_plus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(9, vec2(heading_plus90, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_plus90 + 0.045, horizon.y - 0.03)));
+			if (heading_plus90 > -0.005 && heading_plus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(-5, vec2(heading_plus90 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_plus90, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus90 + 0.045, horizon.y - 0.03)));
 			// -90
-			if (heading_minus90 > -0.005 && heading_minus90 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(-3, vec2(heading_minus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(9, vec2(heading_minus90, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_minus90 + 0.045, horizon.y - 0.03)));
+			if (heading_minus90 > -0.005 && heading_minus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(-3, vec2(heading_minus90 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_minus90, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus90 + 0.045, horizon.y - 0.03)));
 			
 			// Circle Mask
 			float navballCircle = saturate(length(navballscreen));
@@ -287,27 +284,27 @@ void main() {
 			
 			// Heading lines
 			// 0 (north)
-			if (heading_0 > -0.005 && heading_0 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(0, vec2(heading_0 - 0.045, horizon.y - 0.03)));
+			if (heading_0 > -0.005 && heading_0 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_0 - 0.045, horizon.y - 0.03)));
 			// 180 (south)
-			if (heading_plus180 > -0.005 && heading_plus180 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			if (heading_minus180 > -0.005 && heading_minus180 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(1, vec2(heading_plus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(8, vec2(heading_plus180, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_plus180 + 0.045, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(1, vec2(heading_minus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(8, vec2(heading_minus180, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_minus180 + 0.045, horizon.y - 0.03)));
+			if (heading_plus180 > -0.005 && heading_plus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			if (heading_minus180 > -0.005 && heading_minus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_plus180 - 0.04, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_plus180, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus180 + 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_minus180 - 0.04, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_minus180, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus180 + 0.045, horizon.y - 0.03)));
 			// +90
-			if (heading_plus90 > -0.005 && heading_plus90 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(-5, vec2(heading_plus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(9, vec2(heading_plus90, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_plus90 + 0.045, horizon.y - 0.03)));
+			if (heading_plus90 > -0.005 && heading_plus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(-5, vec2(heading_plus90 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_plus90, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus90 + 0.045, horizon.y - 0.03)));
 			// -90
-			if (heading_minus90 > -0.005 && heading_minus90 < +0.005) col = mix(col, lineColor, verticalLineFade);
-			col = mix(col, textColor, writeNumber(-3, vec2(heading_minus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(9, vec2(heading_minus90, horizon.y - 0.03)));
-			col = mix(col, textColor, writeNumber(0, vec2(heading_minus90 + 0.045, horizon.y - 0.03)));
+			if (heading_minus90 > -0.005 && heading_minus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(-3, vec2(heading_minus90 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_minus90, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus90 + 0.045, horizon.y - 0.03)));
 			
 			// Circle Mask
 			float navballCircle = saturate(length(navballscreen));
@@ -345,5 +342,5 @@ void main() {
 		}
 	}
 	
-	imageStore(images[imageIndex*2+1], ivec2(coord), vec4(mix(pow(col, vec3(2.4)), overlay.rgb, overlay.a), 1));
+	imageStore(images[imageIndex*2+1], ivec2(coord), vec4(mix(col, overlay.rgb, overlay.a), 1));
 }
