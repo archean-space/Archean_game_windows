@@ -6,17 +6,7 @@ float GetAlphaOcclusion(vec2 uv) {
 	if (uv.x < 0 || uv.x >= 1.0 || uv.y < 0 || uv.y >= 1.0) {
 		return 1;
 	}
-	return clamp((
-		+ step(0.9999, texture(sampler_resolved, uv).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2( 1,  0)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2(-1,  0)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2( 0,  1)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2( 0, -1)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2( 1,  1)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2(-1, -1)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2( 1, -1)).a)
-		+ step(0.9999, textureLodOffset(sampler_resolved, uv, 0.0, ivec2(-1,  1)).a)
-	) / 9, 0, 1);
+	return step(0.9999, texture(sampler_resolved, uv).a);
 }
 
 vec3 GetScreenCoord(in vec3 worldPosition) {
@@ -36,7 +26,7 @@ void main() {
 	
 	vec3 sunCenterPosition = sunData.position - sunDir * sunData.radius * 2;
 	vec3 sunCenterScreenCoord = GetScreenCoord(sunCenterPosition);
-	const int nbSamples = 32;
+	const int nbSamples = 16;
 	vec3 sunSamplesScreenCoord[nbSamples] = {
 		GetScreenCoord(sunCenterPosition + tangent * sunData.radius),
 		GetScreenCoord(sunCenterPosition - tangent * sunData.radius),
@@ -54,22 +44,6 @@ void main() {
 		GetScreenCoord(sunCenterPosition + (tangent * sunData.radius - bitangent * sunData.radius) * 0.08),
 		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius + bitangent * sunData.radius) * 0.08),
 		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius - bitangent * sunData.radius) * 0.08),
-		GetScreenCoord(sunCenterPosition + tangent * sunData.radius * 0.4),
-		GetScreenCoord(sunCenterPosition - tangent * sunData.radius * 0.4),
-		GetScreenCoord(sunCenterPosition + bitangent * sunData.radius * 0.4),
-		GetScreenCoord(sunCenterPosition - bitangent * sunData.radius * 0.4),
-		GetScreenCoord(sunCenterPosition + (tangent * sunData.radius + bitangent * sunData.radius) * 0.3),
-		GetScreenCoord(sunCenterPosition + (tangent * sunData.radius - bitangent * sunData.radius) * 0.3),
-		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius + bitangent * sunData.radius) * 0.3),
-		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius - bitangent * sunData.radius) * 0.3),
-		GetScreenCoord(sunCenterPosition + tangent * sunData.radius * 0.7),
-		GetScreenCoord(sunCenterPosition - tangent * sunData.radius * 0.7),
-		GetScreenCoord(sunCenterPosition + bitangent * sunData.radius * 0.7),
-		GetScreenCoord(sunCenterPosition - bitangent * sunData.radius * 0.7),
-		GetScreenCoord(sunCenterPosition + (tangent * sunData.radius + bitangent * sunData.radius) * 0.6),
-		GetScreenCoord(sunCenterPosition + (tangent * sunData.radius - bitangent * sunData.radius) * 0.6),
-		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius + bitangent * sunData.radius) * 0.6),
-		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius - bitangent * sunData.radius) * 0.6),
 	};
 	
 	float sunOcclusionSampling = 0;
