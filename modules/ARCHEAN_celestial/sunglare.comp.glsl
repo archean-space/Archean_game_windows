@@ -46,6 +46,8 @@ void main() {
 		GetScreenCoord(sunCenterPosition - (tangent * sunData.radius - bitangent * sunData.radius) * 0.08),
 	};
 	
+	if (sunSamplesScreenCoord[0].z < 0) return;
+	
 	float sunOcclusionSampling = 0;
 	for (int i = 0; i < nbSamples; i++) {
 		sunOcclusionSampling += GetAlphaOcclusion(sunSamplesScreenCoord[i].xy);
