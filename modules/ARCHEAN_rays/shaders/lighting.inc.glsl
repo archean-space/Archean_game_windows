@@ -736,7 +736,24 @@ void ApplyDefaultLighting(in uint giObjectIndex, in vec3 giPos, in vec3 giRayOri
 				ray.color.rgb += albedo * ambient + albedo * vec3(pow(smoothstep(GI_MAX_DISTANCE*2, 0, realDistance), 4)) * 0.005;
 			}
 		} else {
-			ray.color.rgb += albedo * vec3(pow(smoothstep(GI_MAX_DISTANCE*2, 0, realDistance), 4)) * 0.01;
+			vec3 ambient = vec3(0);
+			if (recursions < renderer.rays_max_bounces) {
+				RayPayload originalRay = ray;
+				RAY_RECURSION_PUSH
+					RAY_GI_PUSH
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
+					RAY_GI_POP
+				RAY_RECURSION_POP
+				ray = originalRay;
+			}
+			ray.color.rgb += albedo * ambient * 0.1;
 		}
 	}
 	
