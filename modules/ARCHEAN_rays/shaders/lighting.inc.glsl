@@ -736,7 +736,7 @@ void ApplyDefaultLighting(in uint giObjectIndex, in vec3 giPos, in vec3 giRayOri
 				ray.color.rgb += albedo * ambient + albedo * vec3(pow(smoothstep(GI_MAX_DISTANCE*2, 0, realDistance), 4)) * 0.005;
 			}
 		} else {
-			vec3 ambient = vec3(0);
+			vec3 ambient = vec3(pow(smoothstep(GI_MAX_DISTANCE*2, 0, realDistance), 4)) * 0.01;
 			if (recursions < renderer.rays_max_bounces) {
 				RayPayload originalRay = ray;
 				RAY_RECURSION_PUSH
