@@ -20,7 +20,7 @@
 			"translation":[
 				0,
 				-0.46286123991012573,
-				0.06384986639022827
+				0.06384998559951782
 			]
 		},
 		{
@@ -30,9 +30,9 @@
 			"mesh":1,
 			"name":"l_lowerleg",
 			"translation":[
-				-0.017598778009414673,
+				-0.01759853959083557,
 				-0.45367103815078735,
-				0.014827307313680649
+				0.014826402068138123
 			]
 		},
 		{
@@ -63,9 +63,9 @@
 			"mesh":4,
 			"name":"r_lowerleg",
 			"translation":[
-				0.017602182924747467,
-				-0.4536697268486023,
-				0.014826703816652298
+				0.017601944506168365,
+				-0.4536709189414978,
+				0.014825515449047089
 			]
 		},
 		{
@@ -84,8 +84,8 @@
 			"mesh":6,
 			"name":"l_hand",
 			"translation":[
-				-0.29993027448654175,
-				-3.918923084711423e-06,
+				-0.2999301552772522,
+				-3.6358010220283177e-06,
 				0
 			]
 		},
@@ -138,8 +138,8 @@
 			"mesh":10,
 			"name":"r_hand",
 			"translation":[
-				0.29993003606796265,
-				-4.172242825006833e-06,
+				0.29993006587028503,
+				-4.038132374262204e-06,
 				0
 			]
 		},
@@ -327,6 +327,48 @@
 		},
 		{
 			"doubleSided":true,
+			"name":"light-led",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.8285714387893677,
+					0.8642857074737549,
+					1,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":1
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"red-led",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					1,
+					0.012187023647129536,
+					0.002838427433744073,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":1
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"light-body",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.800000011920929,
+					0.800000011920929,
+					0.800000011920929,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":0
+			}
+		},
+		{
+			"doubleSided":true,
 			"name":"drone-bolt",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
@@ -362,7 +404,7 @@
 					1
 				],
 				"metallicFactor":0,
-				"roughnessFactor":0
+				"roughnessFactor":0.4000000059604645
 			}
 		},
 		{
@@ -392,32 +434,6 @@
 				],
 				"metallicFactor":0,
 				"roughnessFactor":0.5
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"drone-cake-eye-blue",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.06324554234743118,
-					0.08444134891033173,
-					0.40195316076278687,
-					0.5
-				],
-				"roughnessFactor":0
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"drone-cake-eye-red",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					1,
-					0.012187023647129536,
-					0.002838427433744073,
-					1
-				],
-				"roughnessFactor":0
 			}
 		}
 	],
@@ -733,19 +749,14 @@
 					},
 					"indices":98,
 					"material":7
-				}
-			]
-		},
-		{
-			"name":"Sphere.225",
-			"primitives":[
+				},
 				{
 					"attributes":{
 						"POSITION":99,
 						"NORMAL":100
 					},
 					"indices":101,
-					"material":1
+					"material":8
 				},
 				{
 					"attributes":{
@@ -753,7 +764,7 @@
 						"NORMAL":103
 					},
 					"indices":104,
-					"material":0
+					"material":9
 				},
 				{
 					"attributes":{
@@ -761,12 +772,12 @@
 						"NORMAL":106
 					},
 					"indices":107,
-					"material":2
+					"material":10
 				}
 			]
 		},
 		{
-			"name":"Sphere.190",
+			"name":"Sphere.225",
 			"primitives":[
 				{
 					"attributes":{
@@ -782,21 +793,21 @@
 						"NORMAL":112
 					},
 					"indices":113,
-					"material":2
-				}
-			]
-		},
-		{
-			"name":"Sphere.192",
-			"primitives":[
+					"material":0
+				},
 				{
 					"attributes":{
 						"POSITION":114,
 						"NORMAL":115
 					},
 					"indices":116,
-					"material":3
-				},
+					"material":2
+				}
+			]
+		},
+		{
+			"name":"Sphere.190",
+			"primitives":[
 				{
 					"attributes":{
 						"POSITION":117,
@@ -811,15 +822,20 @@
 						"NORMAL":121
 					},
 					"indices":122,
-					"material":4
-				},
+					"material":2
+				}
+			]
+		},
+		{
+			"name":"Sphere.192",
+			"primitives":[
 				{
 					"attributes":{
 						"POSITION":123,
 						"NORMAL":124
 					},
 					"indices":125,
-					"material":5
+					"material":3
 				},
 				{
 					"attributes":{
@@ -827,6 +843,30 @@
 						"NORMAL":127
 					},
 					"indices":128,
+					"material":1
+				},
+				{
+					"attributes":{
+						"POSITION":129,
+						"NORMAL":130
+					},
+					"indices":131,
+					"material":4
+				},
+				{
+					"attributes":{
+						"POSITION":132,
+						"NORMAL":133
+					},
+					"indices":134,
+					"material":5
+				},
+				{
+					"attributes":{
+						"POSITION":135,
+						"NORMAL":136
+					},
+					"indices":137,
 					"material":2
 				}
 			]
@@ -836,35 +876,11 @@
 			"primitives":[
 				{
 					"attributes":{
-						"POSITION":129,
-						"NORMAL":130
-					},
-					"indices":131,
-					"material":3
-				},
-				{
-					"attributes":{
-						"POSITION":132,
-						"NORMAL":133
-					},
-					"indices":134,
-					"material":1
-				},
-				{
-					"attributes":{
-						"POSITION":135,
-						"NORMAL":136
-					},
-					"indices":137,
-					"material":0
-				},
-				{
-					"attributes":{
 						"POSITION":138,
 						"NORMAL":139
 					},
 					"indices":140,
-					"material":5
+					"material":3
 				},
 				{
 					"attributes":{
@@ -872,6 +888,30 @@
 						"NORMAL":142
 					},
 					"indices":143,
+					"material":1
+				},
+				{
+					"attributes":{
+						"POSITION":144,
+						"NORMAL":145
+					},
+					"indices":146,
+					"material":0
+				},
+				{
+					"attributes":{
+						"POSITION":147,
+						"NORMAL":148
+					},
+					"indices":149,
+					"material":5
+				},
+				{
+					"attributes":{
+						"POSITION":150,
+						"NORMAL":151
+					},
+					"indices":152,
 					"material":4
 				}
 			]
@@ -881,35 +921,11 @@
 			"primitives":[
 				{
 					"attributes":{
-						"POSITION":144,
-						"NORMAL":145
-					},
-					"indices":146,
-					"material":3
-				},
-				{
-					"attributes":{
-						"POSITION":147,
-						"NORMAL":148
-					},
-					"indices":149,
-					"material":1
-				},
-				{
-					"attributes":{
-						"POSITION":150,
-						"NORMAL":151
-					},
-					"indices":152,
-					"material":0
-				},
-				{
-					"attributes":{
 						"POSITION":153,
 						"NORMAL":154
 					},
 					"indices":155,
-					"material":5
+					"material":3
 				},
 				{
 					"attributes":{
@@ -917,6 +933,30 @@
 						"NORMAL":157
 					},
 					"indices":158,
+					"material":1
+				},
+				{
+					"attributes":{
+						"POSITION":159,
+						"NORMAL":160
+					},
+					"indices":161,
+					"material":0
+				},
+				{
+					"attributes":{
+						"POSITION":162,
+						"NORMAL":163
+					},
+					"indices":164,
+					"material":5
+				},
+				{
+					"attributes":{
+						"POSITION":165,
+						"NORMAL":166
+					},
+					"indices":167,
 					"material":4
 				}
 			]
@@ -926,35 +966,11 @@
 			"primitives":[
 				{
 					"attributes":{
-						"POSITION":159,
-						"NORMAL":160
-					},
-					"indices":161,
-					"material":3
-				},
-				{
-					"attributes":{
-						"POSITION":162,
-						"NORMAL":163
-					},
-					"indices":164,
-					"material":1
-				},
-				{
-					"attributes":{
-						"POSITION":165,
-						"NORMAL":166
-					},
-					"indices":167,
-					"material":8
-				},
-				{
-					"attributes":{
 						"POSITION":168,
 						"NORMAL":169
 					},
 					"indices":170,
-					"material":9
+					"material":3
 				},
 				{
 					"attributes":{
@@ -962,7 +978,7 @@
 						"NORMAL":172
 					},
 					"indices":173,
-					"material":10
+					"material":1
 				},
 				{
 					"attributes":{
@@ -970,7 +986,7 @@
 						"NORMAL":175
 					},
 					"indices":176,
-					"material":0
+					"material":11
 				},
 				{
 					"attributes":{
@@ -978,7 +994,7 @@
 						"NORMAL":178
 					},
 					"indices":179,
-					"material":5
+					"material":12
 				},
 				{
 					"attributes":{
@@ -986,7 +1002,7 @@
 						"NORMAL":181
 					},
 					"indices":182,
-					"material":11
+					"material":13
 				},
 				{
 					"attributes":{
@@ -994,7 +1010,7 @@
 						"NORMAL":184
 					},
 					"indices":185,
-					"material":12
+					"material":0
 				},
 				{
 					"attributes":{
@@ -1002,7 +1018,7 @@
 						"NORMAL":187
 					},
 					"indices":188,
-					"material":13
+					"material":5
 				},
 				{
 					"attributes":{
@@ -1011,6 +1027,30 @@
 					},
 					"indices":191,
 					"material":14
+				},
+				{
+					"attributes":{
+						"POSITION":192,
+						"NORMAL":193
+					},
+					"indices":194,
+					"material":15
+				},
+				{
+					"attributes":{
+						"POSITION":195,
+						"NORMAL":196
+					},
+					"indices":101,
+					"material":8
+				},
+				{
+					"attributes":{
+						"POSITION":197,
+						"NORMAL":198
+					},
+					"indices":104,
+					"material":9
 				}
 			]
 		}
@@ -1943,6 +1983,90 @@
 		{
 			"bufferView":99,
 			"componentType":5126,
+			"count":257,
+			"max":[
+				0.005397242493927479,
+				0.19741013646125793,
+				-0.13373593986034393
+			],
+			"min":[
+				-0.005349176004528999,
+				0.18666371703147888,
+				-0.1341620832681656
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":100,
+			"componentType":5126,
+			"count":257,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":101,
+			"componentType":5123,
+			"count":1440,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":102,
+			"componentType":5126,
+			"count":65,
+			"max":[
+				-0.0029491265304386616,
+				0.19767411053180695,
+				-0.13414737582206726
+			],
+			"min":[
+				-0.003915322944521904,
+				0.19670791923999786,
+				-0.13431452214717865
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":103,
+			"componentType":5126,
+			"count":65,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":104,
+			"componentType":5123,
+			"count":336,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":105,
+			"componentType":5126,
+			"count":3349,
+			"max":[
+				0.009146851487457752,
+				0.20115946233272552,
+				-0.12157963216304779
+			],
+			"min":[
+				-0.009098527021706104,
+				0.18291407823562622,
+				-0.1367371380329132
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":106,
+			"componentType":5126,
+			"count":3349,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":107,
+			"componentType":5123,
+			"count":18273,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":108,
+			"componentType":5126,
 			"count":2021,
 			"max":[
 				0.09648244082927704,
@@ -1957,19 +2081,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":100,
+			"bufferView":109,
 			"componentType":5126,
 			"count":2021,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":101,
+			"bufferView":110,
 			"componentType":5123,
 			"count":10686,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":102,
+			"bufferView":111,
 			"componentType":5126,
 			"count":7278,
 			"max":[
@@ -1985,19 +2109,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":103,
+			"bufferView":112,
 			"componentType":5126,
 			"count":7278,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":104,
+			"bufferView":113,
 			"componentType":5123,
 			"count":40032,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":105,
+			"bufferView":114,
 			"componentType":5126,
 			"count":3301,
 			"max":[
@@ -2013,19 +2137,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":106,
+			"bufferView":115,
 			"componentType":5126,
 			"count":3301,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":107,
+			"bufferView":116,
 			"componentType":5123,
 			"count":18432,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":108,
+			"bufferView":117,
 			"componentType":5126,
 			"count":6391,
 			"max":[
@@ -2041,19 +2165,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":109,
+			"bufferView":118,
 			"componentType":5126,
 			"count":6391,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":110,
+			"bufferView":119,
 			"componentType":5123,
 			"count":37200,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":111,
+			"bufferView":120,
 			"componentType":5126,
 			"count":138,
 			"max":[
@@ -2069,19 +2193,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":112,
+			"bufferView":121,
 			"componentType":5126,
 			"count":138,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":113,
+			"bufferView":122,
 			"componentType":5123,
 			"count":732,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":114,
+			"bufferView":123,
 			"componentType":5126,
 			"count":2358,
 			"max":[
@@ -2097,19 +2221,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":115,
+			"bufferView":124,
 			"componentType":5126,
 			"count":2358,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":116,
+			"bufferView":125,
 			"componentType":5123,
 			"count":13680,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":117,
+			"bufferView":126,
 			"componentType":5126,
 			"count":4778,
 			"max":[
@@ -2125,19 +2249,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":118,
+			"bufferView":127,
 			"componentType":5126,
 			"count":4778,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":119,
+			"bufferView":128,
 			"componentType":5123,
 			"count":27756,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":120,
+			"bufferView":129,
 			"componentType":5126,
 			"count":1124,
 			"max":[
@@ -2153,19 +2277,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":121,
+			"bufferView":130,
 			"componentType":5126,
 			"count":1124,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":122,
+			"bufferView":131,
 			"componentType":5123,
 			"count":6468,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":123,
+			"bufferView":132,
 			"componentType":5126,
 			"count":405,
 			"max":[
@@ -2181,19 +2305,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":124,
+			"bufferView":133,
 			"componentType":5126,
 			"count":405,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":125,
+			"bufferView":134,
 			"componentType":5123,
 			"count":2304,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":126,
+			"bufferView":135,
 			"componentType":5126,
 			"count":150,
 			"max":[
@@ -2209,19 +2333,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":127,
+			"bufferView":136,
 			"componentType":5126,
 			"count":150,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":128,
+			"bufferView":137,
 			"componentType":5123,
 			"count":732,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":129,
+			"bufferView":138,
 			"componentType":5126,
 			"count":8984,
 			"max":[
@@ -2237,19 +2361,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":130,
+			"bufferView":139,
 			"componentType":5126,
 			"count":8984,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":131,
+			"bufferView":140,
 			"componentType":5123,
 			"count":51384,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":132,
+			"bufferView":141,
 			"componentType":5126,
 			"count":3986,
 			"max":[
@@ -2265,19 +2389,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":133,
+			"bufferView":142,
 			"componentType":5126,
 			"count":3986,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":134,
+			"bufferView":143,
 			"componentType":5123,
 			"count":22518,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":135,
+			"bufferView":144,
 			"componentType":5126,
 			"count":9500,
 			"max":[
@@ -2293,19 +2417,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":136,
+			"bufferView":145,
 			"componentType":5126,
 			"count":9500,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":137,
+			"bufferView":146,
 			"componentType":5123,
 			"count":48252,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":138,
+			"bufferView":147,
 			"componentType":5126,
 			"count":304,
 			"max":[
@@ -2321,19 +2445,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":139,
+			"bufferView":148,
 			"componentType":5126,
 			"count":304,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":140,
+			"bufferView":149,
 			"componentType":5123,
 			"count":1536,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":141,
+			"bufferView":150,
 			"componentType":5126,
 			"count":1275,
 			"max":[
@@ -2349,19 +2473,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":142,
+			"bufferView":151,
 			"componentType":5126,
 			"count":1275,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":143,
+			"bufferView":152,
 			"componentType":5123,
 			"count":6888,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":144,
+			"bufferView":153,
 			"componentType":5126,
 			"count":3463,
 			"max":[
@@ -2377,19 +2501,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":145,
+			"bufferView":154,
 			"componentType":5126,
 			"count":3463,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":146,
+			"bufferView":155,
 			"componentType":5123,
 			"count":20064,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":147,
+			"bufferView":156,
 			"componentType":5126,
 			"count":2447,
 			"max":[
@@ -2405,19 +2529,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":148,
+			"bufferView":157,
 			"componentType":5126,
 			"count":2447,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":149,
+			"bufferView":158,
 			"componentType":5123,
 			"count":13824,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":150,
+			"bufferView":159,
 			"componentType":5126,
 			"count":520,
 			"max":[
@@ -2433,19 +2557,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":151,
+			"bufferView":160,
 			"componentType":5126,
 			"count":520,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":152,
+			"bufferView":161,
 			"componentType":5123,
 			"count":1560,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":153,
+			"bufferView":162,
 			"componentType":5126,
 			"count":493,
 			"max":[
@@ -2461,19 +2585,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":154,
+			"bufferView":163,
 			"componentType":5126,
 			"count":493,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":155,
+			"bufferView":164,
 			"componentType":5123,
 			"count":2808,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":156,
+			"bufferView":165,
 			"componentType":5126,
 			"count":1008,
 			"max":[
@@ -2489,21 +2613,21 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":157,
+			"bufferView":166,
 			"componentType":5126,
 			"count":1008,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":158,
+			"bufferView":167,
 			"componentType":5123,
 			"count":5760,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":159,
+			"bufferView":168,
 			"componentType":5126,
-			"count":27894,
+			"count":27895,
 			"max":[
 				0.19772017002105713,
 				0.12077272683382034,
@@ -2517,19 +2641,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":160,
+			"bufferView":169,
 			"componentType":5126,
-			"count":27894,
+			"count":27895,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":161,
+			"bufferView":170,
 			"componentType":5123,
 			"count":163992,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":162,
+			"bufferView":171,
 			"componentType":5126,
 			"count":22289,
 			"max":[
@@ -2545,19 +2669,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":163,
+			"bufferView":172,
 			"componentType":5126,
 			"count":22289,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":164,
+			"bufferView":173,
 			"componentType":5123,
 			"count":131796,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":165,
+			"bufferView":174,
 			"componentType":5126,
 			"count":4800,
 			"max":[
@@ -2573,19 +2697,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":166,
+			"bufferView":175,
 			"componentType":5126,
 			"count":4800,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":167,
+			"bufferView":176,
 			"componentType":5123,
 			"count":28704,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":168,
+			"bufferView":177,
 			"componentType":5126,
 			"count":62161,
 			"max":[
@@ -2601,19 +2725,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":169,
+			"bufferView":178,
 			"componentType":5126,
 			"count":62161,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":170,
+			"bufferView":179,
 			"componentType":5123,
 			"count":355758,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":171,
+			"bufferView":180,
 			"componentType":5126,
 			"count":349,
 			"max":[
@@ -2629,19 +2753,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":172,
+			"bufferView":181,
 			"componentType":5126,
 			"count":349,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":173,
+			"bufferView":182,
 			"componentType":5123,
 			"count":1512,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":174,
+			"bufferView":183,
 			"componentType":5126,
 			"count":12074,
 			"max":[
@@ -2657,19 +2781,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":175,
+			"bufferView":184,
 			"componentType":5126,
 			"count":12074,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":176,
+			"bufferView":185,
 			"componentType":5123,
 			"count":70353,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":177,
+			"bufferView":186,
 			"componentType":5126,
 			"count":806,
 			"max":[
@@ -2685,19 +2809,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":178,
+			"bufferView":187,
 			"componentType":5126,
 			"count":806,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":179,
+			"bufferView":188,
 			"componentType":5123,
 			"count":4398,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":180,
+			"bufferView":189,
 			"componentType":5126,
 			"count":456,
 			"max":[
@@ -2713,19 +2837,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":181,
+			"bufferView":190,
 			"componentType":5126,
 			"count":456,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":182,
+			"bufferView":191,
 			"componentType":5123,
 			"count":1716,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":183,
+			"bufferView":192,
 			"componentType":5126,
 			"count":257,
 			"max":[
@@ -2741,19 +2865,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":184,
+			"bufferView":193,
 			"componentType":5126,
 			"count":257,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":185,
+			"bufferView":194,
 			"componentType":5123,
 			"count":1440,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":186,
+			"bufferView":195,
 			"componentType":5126,
 			"count":257,
 			"max":[
@@ -2769,19 +2893,13 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":187,
+			"bufferView":196,
 			"componentType":5126,
 			"count":257,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":188,
-			"componentType":5123,
-			"count":1440,
-			"type":"SCALAR"
-		},
-		{
-			"bufferView":189,
+			"bufferView":197,
 			"componentType":5126,
 			"count":65,
 			"max":[
@@ -2797,16 +2915,10 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":190,
+			"bufferView":198,
 			"componentType":5126,
 			"count":65,
 			"type":"VEC3"
-		},
-		{
-			"bufferView":191,
-			"componentType":5123,
-			"count":336,
-			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -3406,566 +3518,608 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":24252,
+			"byteLength":3084,
 			"byteOffset":2089456,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":24252,
-			"byteOffset":2113708,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":21372,
-			"byteOffset":2137960,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":87336,
-			"byteOffset":2159332,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":87336,
-			"byteOffset":2246668,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":80064,
-			"byteOffset":2334004,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":39612,
-			"byteOffset":2414068,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":39612,
-			"byteOffset":2453680,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":36864,
-			"byteOffset":2493292,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":76692,
-			"byteOffset":2530156,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":76692,
-			"byteOffset":2606848,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":74400,
-			"byteOffset":2683540,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":1656,
-			"byteOffset":2757940,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":1656,
-			"byteOffset":2759596,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":1464,
-			"byteOffset":2761252,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":28296,
-			"byteOffset":2762716,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":28296,
-			"byteOffset":2791012,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":27360,
-			"byteOffset":2819308,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":57336,
-			"byteOffset":2846668,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":57336,
-			"byteOffset":2904004,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":55512,
-			"byteOffset":2961340,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":13488,
-			"byteOffset":3016852,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":13488,
-			"byteOffset":3030340,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":12936,
-			"byteOffset":3043828,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":4860,
-			"byteOffset":3056764,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":4860,
-			"byteOffset":3061624,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":4608,
-			"byteOffset":3066484,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":1800,
-			"byteOffset":3071092,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":1800,
-			"byteOffset":3072892,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":1464,
-			"byteOffset":3074692,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":107808,
-			"byteOffset":3076156,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":107808,
-			"byteOffset":3183964,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":102768,
-			"byteOffset":3291772,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":47832,
-			"byteOffset":3394540,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":47832,
-			"byteOffset":3442372,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":45036,
-			"byteOffset":3490204,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":114000,
-			"byteOffset":3535240,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":114000,
-			"byteOffset":3649240,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":96504,
-			"byteOffset":3763240,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":3648,
-			"byteOffset":3859744,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3648,
-			"byteOffset":3863392,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3072,
-			"byteOffset":3867040,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":15300,
-			"byteOffset":3870112,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":15300,
-			"byteOffset":3885412,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":13776,
-			"byteOffset":3900712,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":41556,
-			"byteOffset":3914488,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":41556,
-			"byteOffset":3956044,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":40128,
-			"byteOffset":3997600,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":29364,
-			"byteOffset":4037728,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":29364,
-			"byteOffset":4067092,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":27648,
-			"byteOffset":4096456,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":6240,
-			"byteOffset":4124104,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":6240,
-			"byteOffset":4130344,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3120,
-			"byteOffset":4136584,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":5916,
-			"byteOffset":4139704,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":5916,
-			"byteOffset":4145620,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":5616,
-			"byteOffset":4151536,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":12096,
-			"byteOffset":4157152,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":12096,
-			"byteOffset":4169248,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":11520,
-			"byteOffset":4181344,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":334728,
-			"byteOffset":4192864,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":334728,
-			"byteOffset":4527592,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":327984,
-			"byteOffset":4862320,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":267468,
-			"byteOffset":5190304,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":267468,
-			"byteOffset":5457772,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":263592,
-			"byteOffset":5725240,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":57600,
-			"byteOffset":5988832,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":57600,
-			"byteOffset":6046432,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":57408,
-			"byteOffset":6104032,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":745932,
-			"byteOffset":6161440,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":745932,
-			"byteOffset":6907372,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":711516,
-			"byteOffset":7653304,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":4188,
-			"byteOffset":8364820,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":4188,
-			"byteOffset":8369008,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3024,
-			"byteOffset":8373196,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":144888,
-			"byteOffset":8376220,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":144888,
-			"byteOffset":8521108,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":140706,
-			"byteOffset":8665996,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":9672,
-			"byteOffset":8806704,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":9672,
-			"byteOffset":8816376,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":8796,
-			"byteOffset":8826048,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":5472,
-			"byteOffset":8834844,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":5472,
-			"byteOffset":8840316,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3432,
-			"byteOffset":8845788,
-			"target":34963
-		},
-		{
-			"buffer":0,
 			"byteLength":3084,
-			"byteOffset":8849220,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3084,
-			"byteOffset":8852304,
+			"byteOffset":2092540,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2880,
-			"byteOffset":8855388,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":3084,
-			"byteOffset":8858268,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":3084,
-			"byteOffset":8861352,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":2880,
-			"byteOffset":8864436,
+			"byteOffset":2095624,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":780,
-			"byteOffset":8867316,
+			"byteOffset":2098504,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":780,
-			"byteOffset":8868096,
+			"byteOffset":2099284,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":672,
-			"byteOffset":8868876,
+			"byteOffset":2100064,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":40188,
+			"byteOffset":2100736,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":40188,
+			"byteOffset":2140924,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":36546,
+			"byteOffset":2181112,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":24252,
+			"byteOffset":2217660,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":24252,
+			"byteOffset":2241912,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":21372,
+			"byteOffset":2266164,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":87336,
+			"byteOffset":2287536,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":87336,
+			"byteOffset":2374872,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":80064,
+			"byteOffset":2462208,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":39612,
+			"byteOffset":2542272,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":39612,
+			"byteOffset":2581884,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":36864,
+			"byteOffset":2621496,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":76692,
+			"byteOffset":2658360,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":76692,
+			"byteOffset":2735052,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":74400,
+			"byteOffset":2811744,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":1656,
+			"byteOffset":2886144,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1656,
+			"byteOffset":2887800,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1464,
+			"byteOffset":2889456,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":28296,
+			"byteOffset":2890920,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":28296,
+			"byteOffset":2919216,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":27360,
+			"byteOffset":2947512,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":57336,
+			"byteOffset":2974872,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":57336,
+			"byteOffset":3032208,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":55512,
+			"byteOffset":3089544,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":13488,
+			"byteOffset":3145056,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":13488,
+			"byteOffset":3158544,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":12936,
+			"byteOffset":3172032,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":4860,
+			"byteOffset":3184968,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4860,
+			"byteOffset":3189828,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4608,
+			"byteOffset":3194688,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":1800,
+			"byteOffset":3199296,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1800,
+			"byteOffset":3201096,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1464,
+			"byteOffset":3202896,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":107808,
+			"byteOffset":3204360,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":107808,
+			"byteOffset":3312168,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":102768,
+			"byteOffset":3419976,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":47832,
+			"byteOffset":3522744,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":47832,
+			"byteOffset":3570576,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":45036,
+			"byteOffset":3618408,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":114000,
+			"byteOffset":3663444,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":114000,
+			"byteOffset":3777444,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":96504,
+			"byteOffset":3891444,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":3648,
+			"byteOffset":3987948,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3648,
+			"byteOffset":3991596,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3072,
+			"byteOffset":3995244,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":15300,
+			"byteOffset":3998316,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":15300,
+			"byteOffset":4013616,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":13776,
+			"byteOffset":4028916,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":41556,
+			"byteOffset":4042692,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":41556,
+			"byteOffset":4084248,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":40128,
+			"byteOffset":4125804,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":29364,
+			"byteOffset":4165932,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":29364,
+			"byteOffset":4195296,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":27648,
+			"byteOffset":4224660,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":6240,
+			"byteOffset":4252308,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":6240,
+			"byteOffset":4258548,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3120,
+			"byteOffset":4264788,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":5916,
+			"byteOffset":4267908,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5916,
+			"byteOffset":4273824,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5616,
+			"byteOffset":4279740,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":12096,
+			"byteOffset":4285356,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":12096,
+			"byteOffset":4297452,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":11520,
+			"byteOffset":4309548,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":334740,
+			"byteOffset":4321068,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":334740,
+			"byteOffset":4655808,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":327984,
+			"byteOffset":4990548,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":267468,
+			"byteOffset":5318532,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":267468,
+			"byteOffset":5586000,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":263592,
+			"byteOffset":5853468,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":57600,
+			"byteOffset":6117060,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":57600,
+			"byteOffset":6174660,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":57408,
+			"byteOffset":6232260,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":745932,
+			"byteOffset":6289668,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":745932,
+			"byteOffset":7035600,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":711516,
+			"byteOffset":7781532,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":4188,
+			"byteOffset":8493048,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4188,
+			"byteOffset":8497236,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3024,
+			"byteOffset":8501424,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":144888,
+			"byteOffset":8504448,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":144888,
+			"byteOffset":8649336,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":140706,
+			"byteOffset":8794224,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":9672,
+			"byteOffset":8934932,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":9672,
+			"byteOffset":8944604,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":8796,
+			"byteOffset":8954276,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":5472,
+			"byteOffset":8963072,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5472,
+			"byteOffset":8968544,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3432,
+			"byteOffset":8974016,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":3084,
+			"byteOffset":8977448,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3084,
+			"byteOffset":8980532,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2880,
+			"byteOffset":8983616,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":3084,
+			"byteOffset":8986496,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3084,
+			"byteOffset":8989580,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":780,
+			"byteOffset":8992664,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":780,
+			"byteOffset":8993444,
+			"target":34962
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":8869548,
+			"byteLength":8994224,
 			"uri":"Avatar.bin"
 		}
 	]
