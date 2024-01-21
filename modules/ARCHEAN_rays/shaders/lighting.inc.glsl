@@ -741,13 +741,14 @@ void ApplyDefaultLighting(in uint giObjectIndex, in vec3 giPos, in vec3 giRayOri
 				RayPayload originalRay = ray;
 				RAY_RECURSION_PUSH
 					RAY_GI_PUSH
-						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						uint fakeGiSeed = 598734;
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, normalize(originalRay.normal + RandomInUnitSphere(fakeGiSeed)), 10000, 0);
 						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
-						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, normalize(originalRay.normal + RandomInUnitSphere(fakeGiSeed)), 10000, 0);
 						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
-						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, normalize(originalRay.normal + RandomInUnitSphere(fakeGiSeed)), 10000, 0);
 						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
-						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, RandomCosineOnHemisphere(originalRay.normal), 10000, 0);
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, originalRay.hitDistance * 0.001, normalize(originalRay.normal + RandomInUnitSphere(fakeGiSeed)), 10000, 0);
 						ambient += pow(ray.color.rgb, vec3(0.5)) * 0.25;
 					RAY_GI_POP
 				RAY_RECURSION_POP
