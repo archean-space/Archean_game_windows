@@ -77,7 +77,7 @@ int32_t GetSunLight(in vec3 position, out vec3 lightPosition, out float lightPow
 		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius;
 		if (distanceToLightSurface <= 0.001) {
 			return -1;
-		} else if (distanceToLightSurface < lightSource.maxDistance) {
+		} else if (lightSource.power > 1000000 && distanceToLightSurface < lightSource.maxDistance) {
 			float effectiveLightIntensity = max(0, lightSource.power / (4.0 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
 			if (effectiveLightIntensity > lightPower) {
 				lightPower = effectiveLightIntensity;
