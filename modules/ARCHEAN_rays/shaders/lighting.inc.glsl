@@ -302,9 +302,9 @@ void ApplyDefaultLighting() {
 	else {
 		vec3 ambient;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
-			ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.004;
+			ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.001;
 			if (recursions <= 1) {
-				float ambientFactor = 0.2;
+				float ambientFactor = 0.05;
 				if (renderer.ambientOcclusionSamples > 0 && renderer.ambientOcclusionDistance > 0) {
 					float avgHitDistance = 0;
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
@@ -347,9 +347,9 @@ void ApplyDefaultLighting() {
 				ray = originalRay;
 			}
 		} else {
-			ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.1;
+			ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.05;
 		}
-		ray.color.rgb += albedo * ambient * 0.1;
+		ray.color.rgb += albedo * ambient * 0.5;
 	}
 	
 	// Emission
