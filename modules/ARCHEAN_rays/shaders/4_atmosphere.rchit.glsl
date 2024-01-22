@@ -93,7 +93,7 @@ void main() {
 		g = 0.0;
 	}
 	
-	bool shadows = (renderer.options & RENDERER_OPTION_ATMOSPHERIC_SHADOWS) != 0;
+	bool shadows = (renderer.options & RENDERER_OPTION_ATMOSPHERIC_SHADOWS) != 0 && !rayIsGi;
 	float shadowsMinDistance = 0;
 	if (recursions > 2 || !hasHitSomethingWithinAtmosphere) {
 		shadowsMinDistance = outerRadius;

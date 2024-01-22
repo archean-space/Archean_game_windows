@@ -66,8 +66,7 @@ void main() {
 	}
 	
 	// Apply Lighting
-	vec3 giPos = (INSTANCE.giTransform * vec4(ray.localPosition, 1)).xyz / renderer.globalIlluminationVoxelSize + surface.normal * 0.5001;
-	ApplyDefaultLighting(INSTANCE.giID, giPos, (gl_ObjectToWorldEXT * vec4(round(giPos) * renderer.globalIlluminationVoxelSize, 1)).xyz, renderer.globalIlluminationVoxelSize);
+	ApplyDefaultLighting();
 	
 	// Glossy surfaces
 	if (surface.metallic == 0.0 && surface.roughness == 0.0) {

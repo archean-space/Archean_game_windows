@@ -160,14 +160,10 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) GeometryData {
 STATIC_ASSERT_ALIGNED16_SIZE(GeometryData, 128)
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) RenderableInstanceData {
-	aligned_f32mat4 giTransform;
 	BUFFER_REFERENCE_ADDR(GeometryData) geometries; // shared data between all renderables loaded from the same mesh file
 	aligned_uint64_t data; // custom data defined per renderable type (defaults to an array of RenderableData per geometry)
-	aligned_uint32_t giID;
-	aligned_uint32_t _unused1;
-	aligned_uint64_t _unused2;
 };
-STATIC_ASSERT_ALIGNED16_SIZE(RenderableInstanceData, 96)
+STATIC_ASSERT_ALIGNED16_SIZE(RenderableInstanceData, 16)
 
 BUFFER_REFERENCE_STRUCT(16) AimBuffer {
 	aligned_f32vec3 localPosition;

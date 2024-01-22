@@ -36,9 +36,7 @@ void main() {
 	surface.color.rgb = ReverseGamma(surface.color.rgb);
 	
 	// Apply Lighting
-	float giVoxelSize = renderer.globalIlluminationVoxelSize * 2;
-	vec3 giPos = ray.worldPosition / giVoxelSize + ray.normal * 0.5001;
-	ApplyDefaultLighting(0, giPos, round(giPos) * giVoxelSize, giVoxelSize);
+	ApplyDefaultLighting();
 	
 	// Store albedo and roughness (may remove this in the future)
 	if (RAY_RECURSIONS == 0) {

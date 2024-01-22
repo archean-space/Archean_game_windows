@@ -110,30 +110,7 @@
 #define RENDERER_OPTION_WATER_WAVES			(1u<< 7 )
 #define RENDERER_OPTION_ATMOSPHERIC_SHADOWS	(1u<< 8 )
 #define RENDERER_OPTION_SPECULAR_SURFACES	(1u<< 9 )
-
-BUFFER_REFERENCE_STRUCT(16) GlobalIllumination {
-	aligned_f32vec4 bestSample;
-	aligned_f32vec4 variance;
-};
-STATIC_ASSERT_ALIGNED16_SIZE(GlobalIllumination, 32);
-
-BUFFER_REFERENCE_STRUCT(16) GlobalIllumination0 {
-	aligned_f32vec4 radiance;
-	aligned_u32vec4 pos;
-	aligned_int64_t frameIndex;
-	aligned_uint32_t iteration;
-	aligned_uint32_t lock;
-};
-STATIC_ASSERT_ALIGNED16_SIZE(GlobalIllumination0, 48);
-
-BUFFER_REFERENCE_STRUCT(16) GlobalIllumination1 {
-	aligned_f32vec4 radiance;
-	aligned_u32vec4 pos;
-	aligned_int64_t frameIndex;
-	aligned_uint32_t iteration;
-	aligned_uint32_t lock;
-};
-STATIC_ASSERT_ALIGNED16_SIZE(GlobalIllumination1, 48);
+#define RENDERER_OPTION_RT_AMBIENT_LIGHTING	(1u<< 10 )
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) TLASInstance {
 	aligned_f32mat3x4 transform;
@@ -164,9 +141,9 @@ struct RendererData {
 	BUFFER_REFERENCE_ADDR(RenderableInstanceData) renderableInstances;
 	BUFFER_REFERENCE_ADDR(TLASInstance) tlasInstances;
 	BUFFER_REFERENCE_ADDR(AimBuffer) aim;
-	BUFFER_REFERENCE_ADDR(GlobalIllumination) globalIllumination;
-	BUFFER_REFERENCE_ADDR(GlobalIllumination0) globalIllumination0;
-	BUFFER_REFERENCE_ADDR(GlobalIllumination1) globalIllumination1;
+	aligned_uint64_t _unused1;
+	aligned_uint64_t _unused2;
+	aligned_uint64_t _unused3;
 	BUFFER_REFERENCE_ADDR(LightSourceInstanceTable) lightSources;
 	BUFFER_REFERENCE_ADDR(EnvironmentAudioData) environmentAudio;
 	
@@ -174,18 +151,18 @@ struct RendererData {
 	aligned_float32_t wireframeThickness;
 	
 	aligned_i32vec3 worldOrigin;
-	aligned_uint32_t globalIlluminationTableCount;
+	aligned_float32_t cameraZNear;
 	
 	aligned_float64_t timestamp;
 	aligned_uint32_t rays_max_bounces;
 	aligned_float32_t warp;
 	
-	aligned_uint32_t giIteration;
-	aligned_float32_t cameraZNear;
+	aligned_uint32_t ambientAtmosphereSamples;
+	aligned_uint32_t ambientOcclusionSamples;
+	aligned_float32_t ambientOcclusionDistance;
 	aligned_float32_t globalLightingFactor;
-	aligned_uint32_t options; // RENDERER_OPTION_*
 	
-	aligned_float32_t globalIlluminationVoxelSize;
+	aligned_uint32_t options; // RENDERER_OPTION_*
 	aligned_int32_t atmosphere_raymarch_steps;
 	aligned_float32_t terrain_clutter_detail;
 	aligned_float32_t testSlider;
