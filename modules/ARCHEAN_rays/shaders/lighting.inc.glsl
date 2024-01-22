@@ -155,19 +155,20 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 normal, in vec3 albedo, in
 		float opacity = 0;
 		const float MAX_SHADOW_TRANSPARENCY_RAYS = 5;
 		for (int j = 0; j < MAX_SHADOW_TRANSPARENCY_RAYS; ++j) {
-			if ((xenonRendererData.config.options & RENDER_OPTION_GROUND_TRUTH) != 0) {
-				#ifdef USE_BLUE_NOISE
-					vec2 rnd = GetBlueNoiseFloat2();
-				#else
-					vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
-				#endif
-				float pointRadius = lightsRadius[i] / lightsDistance[i] * rnd.x;
-				float pointAngle = rnd.y * 2.0 * PI;
-				vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
-				vec3 lightTangent = normalize(cross(shadowRayDir, normal));
-				vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
-				shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
-			}
+			// // Soft Shadows
+			// if ((xenonRendererData.config.options & RENDER_OPTION_GROUND_TRUTH) != 0) {
+			// 	#ifdef USE_BLUE_NOISE
+			// 		vec2 rnd = GetBlueNoiseFloat2();
+			// 	#else
+			// 		vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
+			// 	#endif
+			// 	float pointRadius = lightsRadius[i] / lightsDistance[i] * rnd.x;
+			// 	float pointAngle = rnd.y * 2.0 * PI;
+			// 	vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
+			// 	vec3 lightTangent = normalize(cross(shadowRayDir, normal));
+			// 	vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
+			// 	shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
+			// }
 			if (dot(shadowRayDir, normal) > 0) {
 				vec3 rayDir = shadowRayDir;
 				uint shadowTraceMask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER;
@@ -194,10 +195,11 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 normal, in vec3 albedo, in
 					vec3 specular = light * pow(max(dot(-gl_WorldRayDirectionEXT, reflectDir), 0.0), mix(16, 4, surface.metallic)) * mix(vec3(1), albedo, surface.metallic);
 					directLighting += colorFilter * (1 - clamp(opacity,0,1)) * mix(diffuse, (diffuse + specular) * 0.5, step(1, float(renderer.options & RENDERER_OPTION_SPECULAR_SURFACES)) * surface.specular);
 					
-					if (++usefulLights == 2) {
-						ray = originalRay;
-						return directLighting;
-					}
+					// if (++usefulLights == 2) {
+					// 	ray = originalRay;
+					// 	return directLighting;
+					// }
+					
 					break;
 					
 				} else {
@@ -296,7 +298,7 @@ void ApplyDefaultLighting() {
 		}
 	}
 	
-	// Indirect lighting
+	// Ambient lighting
 	else {
 		vec3 ambient;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
