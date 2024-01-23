@@ -300,12 +300,12 @@ void ApplyDefaultLighting() {
 	
 	// Ambient lighting
 	else {
-		vec3 ambient;
+		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.005;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
-			ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.001;
 			if (recursions <= 1) {
-				float ambientFactor = 0.05;
+				float ambientFactor = 1;
 				if (renderer.ambientOcclusionSamples > 0 && renderer.ambientOcclusionDistance > 0) {
+					ambient /= renderer.ambientOcclusionSamples;
 					float avgHitDistance = 0;
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
 						rayQueryEXT rq;
@@ -332,7 +332,7 @@ void ApplyDefaultLighting() {
 						float hitDistance = rayQueryGetIntersectionTEXT(rq, true);
 						avgHitDistance += hitDistance>0? hitDistance : renderer.ambientOcclusionDistance;
 					}
-					ambientFactor = pow(clamp(avgHitDistance / renderer.ambientOcclusionDistance / renderer.ambientOcclusionSamples, 0, 1), 2);
+					ambientFactor = pow(clamp(avgHitDistance / (renderer.ambientOcclusionDistance * 2) / (renderer.ambientOcclusionSamples), 0, 1), 2);
 				}
 				uint fakeGiSeed = 598734;
 				RayPayload originalRay = ray;
@@ -346,10 +346,10 @@ void ApplyDefaultLighting() {
 				RAY_RECURSION_POP
 				ray = originalRay;
 			}
+			ray.color.rgb += albedo * ambient * max(0.25, float(renderer.ambientOcclusionSamples)) / 32;
 		} else {
-			ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.05;
+			ray.color.rgb += albedo * ambient / 8;
 		}
-		ray.color.rgb += albedo * ambient * 0.5;
 	}
 	
 	// Emission
