@@ -300,16 +300,17 @@ void ApplyDefaultLighting() {
 	
 	// Ambient lighting
 	else {
-		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.05;
+		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * renderer.baseAmbientBrightness * 0.01;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
 			if (recursions <= 1) {
 				float ambientFactor = 1;
-				if (renderer.ambientOcclusionSamples > 0 && renderer.ambientOcclusionDistance > 0) {
+				if (renderer.ambientOcclusionSamples > 0) {
 					ambient /= renderer.ambientOcclusionSamples;
+					const float maxAmbientDistance = renderer.ambientOcclusionSamples * 4;
 					float avgHitDistance = 0;
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
 						rayQueryEXT rq;
-						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, ray.worldPosition, ray.hitDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), renderer.ambientOcclusionDistance);
+						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, ray.worldPosition, ray.hitDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
 						while (rayQueryProceedEXT(rq)) {
 							uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 							if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
@@ -330,9 +331,9 @@ void ApplyDefaultLighting() {
 							}
 						}
 						float hitDistance = rayQueryGetIntersectionTEXT(rq, true);
-						avgHitDistance += hitDistance>0? hitDistance : renderer.ambientOcclusionDistance;
+						avgHitDistance += hitDistance>0? hitDistance : maxAmbientDistance;
 					}
-					ambientFactor = pow(clamp(avgHitDistance / (renderer.ambientOcclusionDistance * 2) / (renderer.ambientOcclusionSamples), 0, 1), 2);
+					ambientFactor = pow(clamp(avgHitDistance / maxAmbientDistance / renderer.ambientOcclusionSamples, 0, 1), 2);
 				}
 				uint fakeGiSeed = 598734;
 				RayPayload originalRay = ray;
@@ -340,7 +341,7 @@ void ApplyDefaultLighting() {
 					RAY_GI_PUSH
 					for (int i = 0; i < renderer.ambientAtmosphereSamples; ++i) {
 						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, originalRay.worldPosition, 1.0, normalize(originalRay.normal + RandomInUnitSphere(fakeGiSeed)), 10000, 0);
-						ambient += pow(ray.color.rgb, vec3(0.5)) / renderer.ambientAtmosphereSamples * ambientFactor;
+						ambient += pow(ray.color.rgb, vec3(0.5)) / renderer.ambientAtmosphereSamples * ambientFactor * renderer.baseAmbientBrightness;
 					}
 					RAY_GI_POP
 				RAY_RECURSION_POP

@@ -159,7 +159,7 @@ struct RendererData {
 	
 	aligned_uint32_t ambientAtmosphereSamples;
 	aligned_uint32_t ambientOcclusionSamples;
-	aligned_float32_t ambientOcclusionDistance;
+	aligned_float32_t baseAmbientBrightness;
 	aligned_float32_t globalLightingFactor;
 	
 	aligned_uint32_t options; // RENDERER_OPTION_*
