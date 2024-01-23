@@ -300,7 +300,7 @@ void ApplyDefaultLighting() {
 	
 	// Ambient lighting
 	else {
-		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.01;
+		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * 0.05;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
 			if (recursions <= 1) {
 				float ambientFactor = 1;
@@ -346,7 +346,7 @@ void ApplyDefaultLighting() {
 				RAY_RECURSION_POP
 				ray = originalRay;
 			}
-			ray.color.rgb += albedo * ambient * max(0.5, float(renderer.ambientOcclusionSamples)) / 32;
+			ray.color.rgb += albedo * ambient * max(1, renderer.ambientOcclusionSamples) / 32;
 		} else {
 			ray.color.rgb += albedo * ambient / 4;
 		}
