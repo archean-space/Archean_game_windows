@@ -300,7 +300,7 @@ void ApplyDefaultLighting() {
 	
 	// Ambient lighting
 	else {
-		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * renderer.baseAmbientBrightness * 0.01;
+		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * renderer.baseAmbientBrightness * 0.1;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
 			if (recursions <= 1) {
 				float ambientFactor = 1;
