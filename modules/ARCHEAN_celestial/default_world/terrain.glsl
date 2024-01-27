@@ -77,6 +77,7 @@ dvec2 GetHeightMapAndFeature(dvec3 normalizedPos) {
 		+ sharpPeaks * (perlint64f(pos, 50 M, 50 M, 5)) * 20 M
 		+ sharpPeaks * (perlint64f(pos, 5 M, 5 M, 3)) * 2 M
 		- sharpPeaks * (perlint64f(pos, 2 M, 2 M, 4)) * 1 M
+		- sharpPeaks * (perlint64f(pos, uint64_t(0.5 M), uint64_t(0.5 M), 4)) * 0.25 M
 	;
 	
 	mountains = _moutainStep(variationf * 0.2001, variationf * 0.1995, mountains);
