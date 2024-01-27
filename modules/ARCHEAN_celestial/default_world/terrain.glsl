@@ -54,7 +54,7 @@ dvec2 GetHeightMapAndFeature(dvec3 normalizedPos) {
 	double volcanoIsland = clamp(max(0.0, dot(normalizedPos, arbitraryPointOnEquator) - 0.999) * 1000.0, 0.0, 1.0);
 	volcanoIsland = volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland;
 	continents += volcanoIsland;
-	double coasts = continents * clamp((1.0-continents)*2.0 * (perlint64f(pos + config.seed, continentStride, variation, 2) * 4.0 - 2.0) + 0.03, 0.0, 1.0);
+	double coasts = continents * clamp((1.0-continents)*2.0 * (perlint64f(pos + config.seed, continentStride, variation, 2) * 1.5 - 0.1) + 0.025, 0.0, 1.0);
 	double peaks1 = 1.0 - perlint64fRidged(pos + warp/uint64_t(2) + uint64_t(1149783892), 50 KM, variation, 4);
 	double peaks2 = perlint64f(pos+warp/uint64_t(4) + uint64_t(87457641), 8 KM, variation/8, 2);
 	double peaks3 = perlint64f(pos+warp/uint64_t(4) + uint64_t(276537654), 2 KM, variation/32, 2);
@@ -74,10 +74,9 @@ dvec2 GetHeightMapAndFeature(dvec3 normalizedPos) {
 		+ coasts * peaks3*peaks3 * variation/8
 		- coasts * canyons*canyons * variation
 		+ sharpPeaks * sharpPeaks * 50 M
-		+ (perlint64f(pos, 50 M, 50 M, 5)) * 20 M
-		+ (perlint64f(pos, 5 M, 5 M, 3)) * 2 M
-		- (perlint64f(pos, 2 M, 2 M, 4)) * 1 M
-		- (perlint64f(pos, uint64_t(0.5 M), uint64_t(0.5 M), 4)) * 0.25 M
+		+ sharpPeaks * (perlint64f(pos, 50 M, 50 M, 5)) * 20 M
+		+ sharpPeaks * (perlint64f(pos, 5 M, 5 M, 3)) * 2 M
+		- sharpPeaks * (perlint64f(pos, 2 M, 2 M, 4)) * 1 M
 	;
 	
 	mountains = _moutainStep(variationf * 0.2001, variationf * 0.1995, mountains);
