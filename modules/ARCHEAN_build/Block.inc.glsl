@@ -94,7 +94,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			switch (material) {
 			case 0: // Composite
-				return 0.02 * (type==0? 1.0:0.5);
+				return 0.2 * (type==0? 1.0:0.5);
 			case 1: // Concrete
 				return 0.25 * (type==0? 1.0:0.5);
 			case 2: // Steel
@@ -107,6 +107,25 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 				return 1.0 * (type==0? 1.0:0.5);
 			default:
 				return 1.00 * (type==0? 1.0:0.5);
+			}
+		}
+		
+		double GetFrictionCoefficient() const {
+			switch (material) {
+			case 0: // Composite
+				return 0.05;
+			case 1: // Concrete
+				return 0.5;
+			case 2: // Steel
+				return 0.2;
+			case 3: // Aluminum
+				return 0.2;
+			case 4: // Glass
+				return 0.1;
+			case 5: // Lead
+				return 0.2;
+			default:
+				return 0.2;
 			}
 		}
 		
