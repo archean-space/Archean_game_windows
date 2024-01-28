@@ -80,12 +80,14 @@ void main() {
 	}
 	
 	// Sand/Dust
-	float sandWaves = 1 - pow(length(splat), 0.125);
-	if (sandWaves > 0.01) {
-		u64vec3 pos = u64vec3(posNorm * height * 1000 + 10000000000.0);
-		double bump = perlint64f(pos * u64vec3(6,3,1), 4000, 4000, 8) * double(sandWaves);
-		splat *= smoothstep(0.05, 0.0, float(bump));
-		height += bump * 0.2;
+	if (feature == TERRAIN_FEATURE_WAVY_SAND) {
+		float sandWaves = 1 - pow(length(splat), 0.125);
+		if (sandWaves > 0.01) {
+			u64vec3 pos = u64vec3(posNorm * height * 1000 + 10000000000.0);
+			double bump = perlint64f(pos * u64vec3(6,3,1), 4000, 4000, 8) * double(sandWaves);
+			splat *= smoothstep(0.05, 0.0, float(bump));
+			height += bump * 0.2;
+		}
 	}
 	
 	// Final Position
