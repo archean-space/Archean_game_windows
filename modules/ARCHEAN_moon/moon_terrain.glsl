@@ -33,7 +33,6 @@ dvec2 GetHeightMapAndFeature(dvec3 posNorm) {
 	
 	double height = variationf * 0.3 + mountains * variationf * 0.01;
 	height += Crater(pos, 500 KM, variation) * 5 KM;
-	height += Crater(pos, 300 KM, variation) * 3 KM;
 	height += Crater(pos, 200 KM, variation) * 2 KM;
 	height += Crater(pos, 100 KM, variation) * 1 KM;
 	height += Crater(pos, 60 KM, variation) * 1 KM;
