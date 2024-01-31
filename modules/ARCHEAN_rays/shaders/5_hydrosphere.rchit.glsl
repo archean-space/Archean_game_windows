@@ -113,11 +113,17 @@ void main() {
 	ray.color = vec4(vec3(0), 1);
 	ray.aimID = 0;
 	ray.renderableIndex = -1;
-	
+
+	if (true/*AMD*/) {
+		ray.color.rgb = vec3(0.1,0.2,1);
+		SetHitWater();
+		return;
+	}
+
 	if (recursions >= RAY_MAX_RECURSION) {
 		return;
 	}
-	
+
 	WaterData water = WaterData(AABB.data);
 	if (uint64_t(water) == 0) return;
 	
