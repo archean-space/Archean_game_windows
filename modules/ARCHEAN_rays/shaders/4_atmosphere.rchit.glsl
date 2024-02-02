@@ -8,8 +8,6 @@
 const int RAYMARCH_LIGHT_STEPS = 5; // low=2, medium=3, high=5, ultra=8
 const float sunLuminosityThreshold = LIGHT_LUMINOSITY_VISIBLE_THRESHOLD;
 
-// #define SUN_SHAFTS
-
 bool RaySphereIntersection(in vec3 position, in vec3 rayDir, in float radius, out float t1, out float t2) {
 	const vec3 p = -position; // equivalent to cameraPosition - spherePosition (or negative position of sphere in view space)
 	const float a = dot(rayDir, rayDir);
@@ -30,15 +28,28 @@ hitAttributeEXT hit {
 };
 
 void main() {
+	
+	ray.albedo = vec3(0);
+	ray.t1 = -1;
+	ray.normal = vec3(0);
+	ray.t2 = -1;
+	ray.emission = vec3(0);
+	ray.mask = 0;
+	ray.transmittance = vec3(0);
+	ray.ior = 0;
+	ray.reflectance = 0;
+	ray.metallic = 0;
+	ray.roughness = 0;
+	ray.specular = 0;
+	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * (gl_HitKindEXT == 0 ? gl_HitTEXT : intersectionT2);
+	ray.renderableIndex = -1;
+	
 	bool rayIsShadow = RAY_IS_SHADOW;
 	bool rayIsGi = RAY_IS_GI;
 	bool rayIsUnderwater = RAY_IS_UNDERWATER;
 	uint recursions = RAY_RECURSIONS;
 	
 	int raymarchSteps = renderer.atmosphere_raymarch_steps;
-	
-	ray.hitDistance = -1;
-	ray.color = vec4(0);
 	
 	AtmosphereData atmosphere = AtmosphereData(AABB.data);
 	vec4 rayleigh = atmosphere.rayleigh;
@@ -66,15 +77,9 @@ void main() {
 	float nextHitDistance = xenonRendererData.config.zFar;
 	if (recursions < RAY_MAX_RECURSION && !rayIsGi) {
 		RAY_RECURSION_PUSH
-			// Trace Plasma
-			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
-			// Trace Opaque
-			traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
-			if (ray.hitDistance == -1 && !hitInnerRadius) {
-				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t2 * 1.0001, viewDir, xenonRendererData.config.zFar, 0);
-			}
-			if (ray.hitDistance != -1) {
-				nextHitDistance = ray.hitDistance;
+			traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
+			if (ray.t1 != -1) {
+				nextHitDistance = ray.t1;
 			}
 		RAY_RECURSION_POP
 	}
@@ -199,8 +204,10 @@ void main() {
 	else mieScattering = vec3(0);
 	vec4 fog = vec4(rayleighScattering + mieScattering + emission, pow(clamp(maxDepth/thickness, 0, 1), 2));
 	
-	ray.color.rgb += fog.rgb * renderer.globalLightingFactor;
-	ray.color.a += pow(fog.a, 32);
+	ray.emission += fog.rgb * smoothstep(ATMOSPHERE_RAY_MIN_DISTANCE, ATMOSPHERE_RAY_MIN_DISTANCE*4, nextHitDistance);
+	float transparency = 1 - pow(fog.a, 32);
+	ray.transmittance *= transparency;
+	ray.t1 = min(t2, nextHitDistance);
 	
 	// Debug Time
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {

@@ -47,50 +47,50 @@ float t2 = t2_;
 // }
 
 void main() {
-	uint recursions = RAY_RECURSIONS;
-	vec3 exaustColor = PlasmaData(AABB.data).color;
-	float exaustDensity = PlasmaData(AABB.data).density;
-	float exaustTemperature = PlasmaData(AABB.data).temperature;
+	// uint recursions = RAY_RECURSIONS;
+	// vec3 exaustColor = PlasmaData(AABB.data).color;
+	// float exaustDensity = PlasmaData(AABB.data).density;
+	// float exaustTemperature = PlasmaData(AABB.data).temperature;
 	
-	if (RAY_IS_GI || RAY_IS_SHADOW) {
-		ray.hitDistance = t1;
-		ray.t2 = t2;
-		ray.aimID = gl_InstanceCustomIndexEXT;
-		ray.renderableIndex = gl_InstanceID;
-		ray.geometryIndex = gl_GeometryIndexEXT;
-		ray.primitiveIndex = gl_PrimitiveID;
-		ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t1;
-		ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * t1;
-		ray.ssao = 0;
-		ray.color = vec4(0,0,0,1);
-		ray.normal = vec3(0);
-		ray.plasma.rgb = GetEmissionColor(exaustTemperature) * 0.5;
-		ray.plasma.a = 0;
-		return;
-	}
+	// if (RAY_IS_GI || RAY_IS_SHADOW) {
+	// 	ray.hitDistance = t1;
+	// 	ray.t2 = t2;
+	// 	ray.aimID = gl_InstanceCustomIndexEXT;
+	// 	ray.renderableIndex = gl_InstanceID;
+	// 	ray.geometryIndex = gl_GeometryIndexEXT;
+	// 	ray.primitiveIndex = gl_PrimitiveID;
+	// 	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t1;
+	// 	ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * t1;
+	// 	ray.ssao = 0;
+	// 	ray.color = vec4(0,0,0,1);
+	// 	ray.normal = vec3(0);
+	// 	ray.plasma.rgb = GetEmissionColor(exaustTemperature) * 0.5;
+	// 	ray.plasma.a = 0;
+	// 	return;
+	// }
 
-	if (recursions >= RAY_MAX_RECURSION) {
-		return;
-	}
+	// if (recursions >= RAY_MAX_RECURSION) {
+	// 	return;
+	// }
 	
-	RAY_RECURSION_PUSH
-		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
-		if (ray.hitDistance > 0) {
-			t2 = min(t2, ray.hitDistance);
-		}
-		RayPayload originalRay = ray;
-		traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, ray.hitDistance<=0? xenonRendererData.config.zFar : ray.hitDistance, 0);
-		if (ray.hitDistance > 0) {
-			originalRay.color.rgb = ray.color.rgb;
-			originalRay.color.a = ray.color.a;
-		}
-		originalRay.plasma = ray.plasma;
-		originalRay.ssao = min(ray.ssao, originalRay.ssao);
-		ray = originalRay;
-	RAY_RECURSION_POP
+	// RAY_RECURSION_PUSH
+	// 	traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
+	// 	if (ray.hitDistance > 0) {
+	// 		t2 = min(t2, ray.hitDistance);
+	// 	}
+	// 	RayPayload originalRay = ray;
+	// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, ray.hitDistance<=0? xenonRendererData.config.zFar : ray.hitDistance, 0);
+	// 	if (ray.hitDistance > 0) {
+	// 		originalRay.color.rgb = ray.color.rgb;
+	// 		originalRay.color.a = ray.color.a;
+	// 	}
+	// 	originalRay.plasma = ray.plasma;
+	// 	originalRay.ssao = min(ray.ssao, originalRay.ssao);
+	// 	ray = originalRay;
+	// RAY_RECURSION_POP
 	
-	// Debug Time
-	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {
-		if (recursions == 0) WRITE_DEBUG_TIME
-	}
+	// // Debug Time
+	// if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {
+	// 	if (recursions == 0) WRITE_DEBUG_TIME
+	// }
 }

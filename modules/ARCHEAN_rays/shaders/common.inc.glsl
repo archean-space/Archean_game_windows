@@ -10,7 +10,7 @@
 #include "game/graphics/common.inc.glsl"
 #include "game/graphics/voxel.inc.glsl"
 
-#define RAY_MAX_RECURSION 8
+#define RAY_MAX_RECURSION 1
 
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
@@ -271,18 +271,20 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#endif
 	
 	struct RayPayload {
-		vec4 color;
+		vec3 albedo;
+		float t1;
 		vec3 normal;
-		float ssao;
-		vec3 localPosition;
 		float t2;
-		vec3 worldPosition;
-		float hitDistance;
-		int aimID;
+		vec3 emission;
+		uint mask;
+		vec3 transmittance;
+		float ior;
+		float reflectance;
+		float metallic;
+		float roughness;
+		float specular;
+		vec3 localPosition;
 		int renderableIndex;
-		int geometryIndex;
-		int primitiveIndex;
-		vec4 plasma;
 	};
 
 	#if defined(SHADER_RGEN) || defined(SHADER_RCHIT) || defined(SHADER_COMP_RAYS)

@@ -39,53 +39,53 @@ float density(vec3 pos) {
 }
 
 void main() {
-	vec3 exaustColor = PlasmaData(AABB.data).color;
-	float exaustDensity = PlasmaData(AABB.data).density;
-	float exaustTemperature = PlasmaData(AABB.data).temperature;
+	// vec3 exaustColor = PlasmaData(AABB.data).color;
+	// float exaustDensity = PlasmaData(AABB.data).density;
+	// float exaustTemperature = PlasmaData(AABB.data).temperature;
 	
-	if (ray.hitDistance > 0) {
-		t2 = min(t2, ray.hitDistance);
-		vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * ray.hitDistance;
-		if (mask == 0) {
-			ray.color.rgb += GetEmissionColor(exaustTemperature * density(pos));
-		} else {
-			vec2 uv = pos.xz / radius * 0.5 + 0.5;
-			float d = texture(textures[nonuniformEXT(mask)], uv).r;
-			if (d > 0 && d < radius*2 && pos.y < d + 0.125) {
-				ray.color.rgb += GetEmissionColor(min(exaustTemperature * 3, 2500));
-			}
-		}
-	}
+	// if (ray.hitDistance > 0) {
+	// 	t2 = min(t2, ray.hitDistance);
+	// 	vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * ray.hitDistance;
+	// 	if (mask == 0) {
+	// 		ray.color.rgb += GetEmissionColor(exaustTemperature * density(pos));
+	// 	} else {
+	// 		vec2 uv = pos.xz / radius * 0.5 + 0.5;
+	// 		float d = texture(textures[nonuniformEXT(mask)], uv).r;
+	// 		if (d > 0 && d < radius*2 && pos.y < d + 0.125) {
+	// 			ray.color.rgb += GetEmissionColor(min(exaustTemperature * 3, 2500));
+	// 		}
+	// 	}
+	// }
 	
-	int nb_steps = 4;
-	if (mask > 0) {
-		nb_steps = int(textureSize(textures[nonuniformEXT(mask)], 0).x);
-	}
-	const float stepSize = (t2 - t1) / (nb_steps + 2);
-	float t = stepSize * (0.5 + RandomFloat(seed));
+	// int nb_steps = 4;
+	// if (mask > 0) {
+	// 	nb_steps = int(textureSize(textures[nonuniformEXT(mask)], 0).x);
+	// }
+	// const float stepSize = (t2 - t1) / (nb_steps + 2);
+	// float t = stepSize * (0.5 + RandomFloat(seed));
 	
-	vec3 accumulatedLight = vec3(0);
-	float accumulatedDensity = 0.0;
+	// vec3 accumulatedLight = vec3(0);
+	// float accumulatedDensity = 0.0;
 	
-	uint thrusterSeed = temporalSeed + uint(gl_InstanceID);
-	vec3 offset = vec3(0);
-	if ((flags & PLASMA_FLAG_SHAKE) != 0) {
-		offset += RandomInUnitSphere(thrusterSeed) * radius * 0.1;
-	}
+	// uint thrusterSeed = temporalSeed + uint(gl_InstanceID);
+	// vec3 offset = vec3(0);
+	// if ((flags & PLASMA_FLAG_SHAKE) != 0) {
+	// 	offset += RandomInUnitSphere(thrusterSeed) * radius * 0.1;
+	// }
 	
-	for (int i = 0; i < nb_steps; ++i) {
-		vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * (t1 + t);
-		pos += offset * pos.y / depth;
-		float d = density(pos);
-		accumulatedDensity += d*d * exaustDensity * stepSize;
-		accumulatedLight += GetEmissionColor(d * exaustTemperature) * stepSize;
-		t += stepSize;
-		if (ray.hitDistance > 0 && t1 + t > ray.hitDistance) break;
-	}
+	// for (int i = 0; i < nb_steps; ++i) {
+	// 	vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * (t1 + t);
+	// 	pos += offset * pos.y / depth;
+	// 	float d = density(pos);
+	// 	accumulatedDensity += d*d * exaustDensity * stepSize;
+	// 	accumulatedLight += GetEmissionColor(d * exaustTemperature) * stepSize;
+	// 	t += stepSize;
+	// 	if (ray.hitDistance > 0 && t1 + t > ray.hitDistance) break;
+	// }
 	
-	ray.plasma.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
-	ray.plasma.a += accumulatedDensity;
-	ray.ssao = clamp(ray.ssao - accumulatedDensity * 0.2, 0.0, 1.0);
+	// ray.plasma.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
+	// ray.plasma.a += accumulatedDensity;
+	// ray.ssao = clamp(ray.ssao - accumulatedDensity * 0.2, 0.0, 1.0);
 	
-	ignoreIntersectionEXT;
+	// ignoreIntersectionEXT;
 }
