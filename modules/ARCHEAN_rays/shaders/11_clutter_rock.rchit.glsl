@@ -1,34 +1,12 @@
 #define SHADER_RCHIT
 #include "clutter_rock.common.inc.glsl"
-#include "lighting.inc.glsl"
 
 void main() {
-	// ray.hitDistance = gl_HitTEXT;
-	// ray.t2 = 0;
-	// ray.aimID = gl_InstanceCustomIndexEXT;
-	// ray.renderableIndex = gl_InstanceID;
-	// ray.geometryIndex = gl_GeometryIndexEXT;
-	// ray.primitiveIndex = gl_PrimitiveID;
 	vec3 localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
-	// ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-	// ray.ssao = 1;
-	// ray.color.a = 1;
 	
 	if (RAY_IS_SHADOW) {
-		ray.albedo = vec3(0);
 		ray.t1 = gl_HitTEXT;
-		ray.normal = vec3(0);
-		ray.t2 = 0;
-		ray.emission = vec3(0);
-		ray.mask = 0;
 		ray.transmittance = vec3(0);
-		ray.ior = 0;
-		ray.reflectance = 0;
-		ray.metallic = 0;
-		ray.roughness = 0;
-		ray.specular = 0;
-		ray.localPosition = localPosition;
-		ray.renderableIndex = gl_InstanceID;
 		return;
 	}
 	
@@ -55,26 +33,15 @@ void main() {
 	surface.ior = 1.45;
 	surface.specular = rocky*0.5;
 	
-	// // Apply world space normal
-	// ray.normal = normalize(MODEL2WORLDNORMAL * surface.normal);
-	
 	// Reverse gamma
 	surface.color.rgb = ReverseGamma(surface.color.rgb);
 	
-	// // // Apply Lighting
-	// // ApplyDefaultLighting();
-	
-	// // Store albedo and roughness (may remove this in the future)
-	// if (RAY_RECURSIONS == 0) {
-	// 	imageStore(img_primary_albedo_roughness, COORDS, vec4(surface.color.rgb, surface.roughness));
-	// }
-	
+	// Ray Payload
 	ray.albedo = surface.color.rgb;
 	ray.t1 = gl_HitTEXT;
 	ray.normal = normalize(MODEL2WORLDNORMAL * surface.normal);
 	ray.t2 = 0;
 	ray.emission = surface.emission;
-	ray.mask = 0;
 	ray.transmittance = vec3(0);
 	ray.ior = surface.ior;
 	ray.reflectance = 0;
@@ -83,4 +50,24 @@ void main() {
 	ray.specular = surface.specular;
 	ray.localPosition = surface.localPosition;
 	ray.renderableIndex = gl_InstanceID;
+	
+	// Aim
+	if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
+		if (renderer.aim.aimID == 0) {
+			renderer.aim.uv = surface.uv1;
+			renderer.aim.localPosition = ray.localPosition;
+			renderer.aim.geometryIndex = gl_GeometryIndexEXT;
+			renderer.aim.aimID = gl_InstanceCustomIndexEXT;
+			renderer.aim.worldSpaceHitNormal = ray.normal;
+			renderer.aim.primitiveIndex = gl_PrimitiveID;
+			renderer.aim.worldSpacePosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+			renderer.aim.hitDistance = ray.t1;
+			renderer.aim.color = surface.color;
+			renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * ray.normal);
+			renderer.aim.tlasInstanceIndex = gl_InstanceID;
+		}
+	}
+	
+	// Debug
+	DEBUG_RAY_HIT_TIME
 }

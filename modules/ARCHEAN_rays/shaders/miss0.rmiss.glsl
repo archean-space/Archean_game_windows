@@ -6,12 +6,11 @@ layout(location = 0) rayPayloadInEXT RayPayload ray;
 void main() {
 	ray.albedo = vec3(0);
 	ray.t1 = -1;
-	ray.normal = vec3(0);
+	ray.normal = -gl_WorldRayDirectionEXT;
 	ray.t2 = -1;
 	ray.emission = vec3(0);
-	ray.mask = 0;
 	ray.transmittance = vec3(1);
-	ray.ior = 0;
+	ray.ior = 1;
 	ray.reflectance = 0;
 	ray.metallic = 0;
 	ray.roughness = 0;

@@ -27,4 +27,10 @@ void main() {
 		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition * scale, surface.normal, surface.roughness * 0.009)
 		surface.color.rgb *= pow(dot(oldNormal, surface.normal), 500);
 	}
+	
+	// Glass
+	if (surface.color.a < 0.99) {
+		surface.ior = 1.02;
+		surface.specular = 0.5;
+	}
 }
