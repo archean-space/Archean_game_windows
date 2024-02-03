@@ -294,12 +294,10 @@ void main() {
 		mask &= ~ray0.mask;
 		
 		if (RAYLOOP == 0 && hitDistance == -1) hitDistance = ray0.t1;
-		if (RAYLOOP == 0 && hitRenderableIndex == -1) {
-			hitRenderableIndex = ray0.renderableIndex;
-			hitWorldPosition = rayOrigin + rayDirection * ray0.t1;
-			hitLocalPosition = ray0.localPosition;
-			hitNormal = ray0.normal;
-		}
+		hitRenderableIndex = ray0.renderableIndex;
+		hitWorldPosition = rayOrigin + rayDirection * ray0.t1;
+		hitLocalPosition = ray0.localPosition;
+		hitNormal = ray0.normal;
 		
 		opacity += 1 - clamp(max(max(ray0.transmittance.r, ray0.transmittance.g), ray0.transmittance.b), 0, 1);
 		
