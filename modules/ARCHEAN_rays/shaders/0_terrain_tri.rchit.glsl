@@ -1,7 +1,7 @@
 #define SHADER_RCHIT
 #include "common.inc.glsl"
 
-hitAttributeEXT vec3 hitAttribs;
+hitAttributeEXT vec2 hitAttribs;
 
 void main() {
 	if (RAY_IS_SHADOW) {

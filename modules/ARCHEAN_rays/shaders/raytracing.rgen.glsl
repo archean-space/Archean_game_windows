@@ -20,7 +20,7 @@ vec3 mapToSphere(vec2 uv) {
 	return normalize(spherePoint);
 }
 
-void ApplyMetallicReflection(inout RayPayload ray, inout vec3 transmittance, inout vec3 rayOrigin, inout vec3 rayDirection, in uint mask) {
+void ApplyMetallicReflection(inout RayPayload ray, inout vec3 reflectance, inout vec3 rayOrigin, inout vec3 rayDirection, in uint mask) {
 	float attenuation = 1;
 	for (int RAYLOOP = 0; RAYLOOP < 12; ++RAYLOOP) {
 		if (ray.metallic < 0.5) break;
@@ -31,7 +31,7 @@ void ApplyMetallicReflection(inout RayPayload ray, inout vec3 transmittance, ino
 		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT/*flags*/, mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 3/*payloadIndex*/);
 		ray3.emission *= attenuation;
 		ray3.albedo *= attenuation;
-		transmittance *= ray.albedo;
+		reflectance *= ray.albedo;
 		ray = ray3;
 		attenuation *= 0.5;
 	}
@@ -305,10 +305,12 @@ void main() {
 		if (ray0.t1 > 0 && attenuationDistance > 0) {
 			transmittance *= pow(1 - clamp(ray0.t1 / attenuationDistance, 0, 1), 4);
 		}
-	
-		ApplyMetallicReflection(ray0, transmittance, rayOrigin, rayDirection, mask);
 		
-		color += transmittance * ray0.emission.rgb;
+		vec3 reflectance = vec3(1);
+	
+		ApplyMetallicReflection(ray0, reflectance, rayOrigin, rayDirection, mask);
+		
+		color += transmittance * reflectance * ray0.emission.rgb;
 		
 		// Attenuation
 		if (dot(ray0.transmittance, vec3(1)) < 0) {
@@ -319,8 +321,8 @@ void main() {
 			break;
 		
 		rayOrigin += rayDirection * ray0.t1;
-		color += transmittance * GetDirectLighting(rayOrigin, rayDirection, ray0);
-		color += transmittance * GetAmbientLighting(rayOrigin, rayDirection, ray0);
+		color += transmittance * reflectance * GetDirectLighting(rayOrigin, rayDirection, ray0);
+		color += transmittance * reflectance * GetAmbientLighting(rayOrigin, rayDirection, ray0);
 		
 		if (ray0.reflectance > 0) {
 			vec3 reflectionRayOrigin = rayOrigin;
@@ -328,9 +330,9 @@ void main() {
 			float fresnel = Fresnel(-reflectionRayDirection, ray0.normal, ray0.ior);
 			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT/*flags*/, mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, reflectionRayOrigin, renderer.cameraZNear, reflectionRayDirection, xenonRendererData.config.zFar, 1/*payloadIndex*/);
 			mask &= ~ray1.mask;
-			ApplyMetallicReflection(ray1, transmittance, reflectionRayOrigin, reflectionRayDirection, mask);
+			ApplyMetallicReflection(ray1, reflectance, reflectionRayOrigin, reflectionRayDirection, mask);
 			reflectionRayOrigin += reflectionRayDirection * ray1.t1;
-			vec3 factor = transmittance * fresnel * ray0.reflectance;
+			vec3 factor = transmittance * fresnel * ray0.reflectance * reflectance;
 			color += factor * ray1.emission.rgb;
 			if (ray1.t1 != -1) {
 				color += factor * GetDirectLighting(reflectionRayOrigin, reflectionRayDirection, ray1);
