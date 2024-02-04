@@ -20,7 +20,7 @@ vec3 mapToSphere(vec2 uv) {
 	return normalize(spherePoint);
 }
 
-void ApplyMetallicReflection(inout RayPayload ray, inout vec3 rayOrigin, inout vec3 rayDirection, in uint mask) {
+void ApplyMetallicReflection(inout RayPayload ray, inout vec3 transmittance, inout vec3 rayOrigin, inout vec3 rayDirection, in uint mask) {
 	float attenuation = 1;
 	for (int RAYLOOP = 0; RAYLOOP < 12; ++RAYLOOP) {
 		if (ray.metallic < 0.5) break;
@@ -31,6 +31,7 @@ void ApplyMetallicReflection(inout RayPayload ray, inout vec3 rayOrigin, inout v
 		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT/*flags*/, mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 3/*payloadIndex*/);
 		ray3.emission *= attenuation;
 		ray3.albedo *= attenuation;
+		transmittance *= ray.albedo;
 		ray = ray3;
 		attenuation *= 0.5;
 	}
@@ -288,7 +289,7 @@ void main() {
 	vec3 hitNormal = vec3(0);
 	float attenuationDistance = -1;
 	
-	uint mask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA;
+	uint mask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE;
 	for (int RAYLOOP = 0; RAYLOOP < 12; ++RAYLOOP) {
 		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT/*flags*/, mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 		mask &= ~ray0.mask;
@@ -305,7 +306,7 @@ void main() {
 			transmittance *= pow(1 - clamp(ray0.t1 / attenuationDistance, 0, 1), 4);
 		}
 	
-		ApplyMetallicReflection(ray0, rayOrigin, rayDirection, mask);
+		ApplyMetallicReflection(ray0, transmittance, rayOrigin, rayDirection, mask);
 		
 		color += transmittance * ray0.emission.rgb;
 		
@@ -327,7 +328,7 @@ void main() {
 			float fresnel = Fresnel(-reflectionRayDirection, ray0.normal, ray0.ior);
 			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT/*flags*/, mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, reflectionRayOrigin, renderer.cameraZNear, reflectionRayDirection, xenonRendererData.config.zFar, 1/*payloadIndex*/);
 			mask &= ~ray1.mask;
-			ApplyMetallicReflection(ray1, reflectionRayOrigin, reflectionRayDirection, mask);
+			ApplyMetallicReflection(ray1, transmittance, reflectionRayOrigin, reflectionRayDirection, mask);
 			reflectionRayOrigin += reflectionRayDirection * ray1.t1;
 			vec3 factor = transmittance * fresnel * ray0.reflectance;
 			color += factor * ray1.emission.rgb;

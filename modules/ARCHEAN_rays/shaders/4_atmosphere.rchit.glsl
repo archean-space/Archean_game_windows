@@ -74,7 +74,7 @@ void main() {
 	float nextHitDistance = xenonRendererData.config.zFar;
 	if (recursions < RAY_MAX_RECURSION && !rayIsGi) {
 		RAY_RECURSION_PUSH
-			traceRayEXT(tlas, 0, (RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA) & ~ray.mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
+			traceRayEXT(tlas, 0, (RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE) & ~ray.mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
 			if (ray.t1 != -1) {
 				nextHitDistance = ray.t1;
 			}

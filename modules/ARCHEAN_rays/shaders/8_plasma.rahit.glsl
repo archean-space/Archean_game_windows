@@ -83,9 +83,22 @@ void main() {
 	// 	if (ray.hitDistance > 0 && t1 + t > ray.hitDistance) break;
 	// }
 	
-	// ray.plasma.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
-	// ray.plasma.a += accumulatedDensity;
+	// ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
+	// ray.emission.a += accumulatedDensity;
 	// ray.ssao = clamp(ray.ssao - accumulatedDensity * 0.2, 0.0, 1.0);
+	
+	// ray.albedo = vec3(0);
+	// ray.t1 = -1;
+	// ray.normal = -gl_WorldRayDirectionEXT;
+	// ray.t2 = -1;
+	// ray.transmittance = vec3(1);
+	// ray.ior = 1;
+	// ray.reflectance = 0;
+	// ray.metallic = 0;
+	// ray.roughness = 0;
+	// ray.specular = 0;
+	// ray.localPosition = vec3(0);
+	// ray.renderableIndex = -1;
 	
 	// ignoreIntersectionEXT;
 }
