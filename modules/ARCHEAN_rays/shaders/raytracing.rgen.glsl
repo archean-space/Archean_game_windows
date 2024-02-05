@@ -77,6 +77,7 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 
 vec3 GetDirectLighting(in vec3 position, in vec3 rayDirection, in RayPayload ray) {
 	if (dot(ray.albedo, ray.albedo) == 0) return vec3(0);
+	// if (dot(ray.transmittance, ray.transmittance) > 0) return vec3(0);
 	
 	position += ray.normal * ray.t1 * EPSILON;
 	
