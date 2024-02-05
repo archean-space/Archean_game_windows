@@ -203,7 +203,7 @@ vec3 GetAmbientLighting(in vec3 position, in vec3 rayDirection, in RayPayload ra
 				float avgHitDistance = 0;
 				for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
 					rayQueryEXT rq;
-					rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, position, ray.t1 * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
+					rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT | gl_RayFlagsTerminateOnFirstHitEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, position, ray.t1 * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
 					while (rayQueryProceedEXT(rq)) {
 						uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 						if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
