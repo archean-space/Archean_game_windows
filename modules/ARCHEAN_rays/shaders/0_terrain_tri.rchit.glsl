@@ -32,7 +32,7 @@ void main() {
 	surface.uv1 = vec2(0);
 	surface.specular = 0;
 	
-	executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
+	// executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
 	
 	// Fix black specs caused by skirts
 	if (dot(surface.normal, vec3(0,1,0)) < 0.15) surface.normal = vec3(0,1,0);
