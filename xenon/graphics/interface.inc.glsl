@@ -80,7 +80,7 @@
 	#extension GL_EXT_shader_explicit_arithmetic_types_float32 : enable
 	#extension GL_EXT_shader_explicit_arithmetic_types_float64 : enable
 	#extension GL_EXT_buffer_reference2 : require
-	#extension GL_ARB_gpu_shader_fp64 : require
+	#extension GL_ARB_gpu_shader_fp64 : enable
 	#extension GL_ARB_gpu_shader_int64 : require
 	
 	#define aligned_int8_t int8_t

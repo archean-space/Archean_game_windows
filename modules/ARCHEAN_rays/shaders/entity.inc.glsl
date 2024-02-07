@@ -18,7 +18,7 @@ void main() {
 	surface.uv1 = vec2(0);
 	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
 	
-	//executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
+	executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
 	
 	#ifdef ENTITY_AFTER_SURFACE
 		ENTITY_AFTER_SURFACE

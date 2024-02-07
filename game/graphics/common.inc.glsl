@@ -227,13 +227,12 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 		uint64_t geometryUv1Data;
 		uint64_t geometryUv2Data;
 	};
-	Surface surface;
-	// #if defined(SHADER_RCHIT)
-	// 	layout(location = SURFACE_CALLABLE_PAYLOAD) callableDataEXT Surface surface;
-	// #endif
-	// #if defined(SHADER_SURFACE)
-	// 	layout(location = SURFACE_CALLABLE_PAYLOAD) callableDataInEXT Surface surface;
-	// #endif
+	#if defined(SHADER_RCHIT)
+		layout(location = SURFACE_CALLABLE_PAYLOAD) callableDataEXT Surface surface;
+	#endif
+	#if defined(SHADER_SURFACE)
+		layout(location = SURFACE_CALLABLE_PAYLOAD) callableDataInEXT Surface surface;
+	#endif
 	
 	layout(buffer_reference, std430, buffer_reference_align = 2) buffer readonly IndexBuffer16 {uint16_t indices[];};
 	layout(buffer_reference, std430, buffer_reference_align = 4) buffer readonly IndexBuffer32 {uint32_t indices[];};
