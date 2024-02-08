@@ -62,13 +62,14 @@ void main() {
 	vec3 glassReflectionOrigin;
 	vec3 glassReflectionDirection;
 	float glassReflectionStrength;
+	vec4 color = vec4(0);
 	ray.plasma = vec4(0);
 	uint primaryRayMask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_PLASMA;
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_GI_LIGHTS) {
 		primaryRayMask |= RAYTRACE_MASK_LIGHT;
 	}
 	do {
-		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, initialRayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+		traceRayEXT(tlas, /*gl_RayFlagsCullBackFacingTrianglesEXT|*/gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, initialRayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 		// Aim
 		if (transparency == 1 && isMiddleOfScreen) {
 			renderer.aim.localPosition = ray.localPosition;
@@ -83,6 +84,7 @@ void main() {
 			renderer.aim.tlasInstanceIndex = ray.renderableIndex;
 		}
 		ray.color.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
+		ray.plasma.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
 		ssao *= ray.ssao;
 		if (ray.hitDistance == -1) {
 			break;
@@ -99,8 +101,9 @@ void main() {
 			glassReflectionOrigin = ray.worldPosition + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
 			glassReflectionDirection = reflect(initialRayDirection, ray.normal);
 		}
+		float rDotN = dot(initialRayDirection, ray.normal);
 		// Specular/Shadows on Glass
-		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0) {
+		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && rDotN < 0) {
 			RayPayload originalRay = ray;
 			glassSpecular += GetDirectLighting(originalRay.worldPosition, initialRayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 0, 0.5);
 			ray = originalRay;
@@ -108,14 +111,18 @@ void main() {
 		// Refraction on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
 			vec3 originalRayDirection = initialRayDirection;
-			initialRayDirection = refract(initialRayDirection, ray.normal, 1.0/1.1);
-			// Refract(initialRayDirection, ray.normal, 1.1);
+			float ior = 1.45;
+			if (rDotN < 0) ior = 1.0 / ior;
+			initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
 			if (dot(initialRayDirection, initialRayDirection) == 0.0) {
-				initialRayDirection = reflect(originalRayDirection, ray.normal);
+				initialRayDirection = reflect(originalRayDirection, sign(rDotN) * -ray.normal);
+				color.a += 1;
+			} else {
+				color.a += ray.color.a;
 			}
 		}
 	} while (ray.color.a < 1.0 && transparency > 0.1 && ray.hitDistance > 0.0);
-	vec4 color = ray.color + ray.plasma + vec4(glassSpecular, 0);
+	color += ray.color + ray.plasma + vec4(glassSpecular, 0);
 	
 	float hitDistance = ray.hitDistance;
 	if (hitDistance < 0) {
@@ -136,7 +143,7 @@ void main() {
 	color.rgb *= pow(renderer.globalLightingFactor, 4);
 	color.a = mix(1, color.a, renderer.globalLightingFactor);
 	
-	if (RAY_IS_UNDERWATER) {
+	if (RAY_IS_UNDERWATER || color.a > 1) {
 		color.a = 1;
 	}
 	
