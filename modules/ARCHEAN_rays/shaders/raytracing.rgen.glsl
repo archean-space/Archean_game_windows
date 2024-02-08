@@ -90,6 +90,9 @@ void main() {
 			break;
 		}
 		ssao *= ray.color.a;
+		if (xenonRendererData.config.debugViewMode != 0) {
+			break;
+		}
 		vec3 tint = ray.color.rgb;
 		transparency *= min(0.95, 1.0 - clamp(ray.color.a, 0, 1));
 		glassTint *= tint;
@@ -111,10 +114,9 @@ void main() {
 		// Refraction on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
 			vec3 originalRayDirection = initialRayDirection;
-			float ior = 1.1;
-			// if (rDotN < 0) ior = 1.0 / ior;
-			// initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
-			Refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
+			float ior = 1.05;
+			if (rDotN < 0) ior = 1.0 / ior;
+			initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
 			if (dot(initialRayDirection, initialRayDirection) == 0.0) {
 				initialRayDirection = reflect(originalRayDirection, sign(rDotN) * -ray.normal);
 				color.a += 1;

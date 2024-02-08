@@ -14,7 +14,7 @@ hitAttributeEXT SphereAttr sphereAttr;
 	const vec3 hitPoint1 = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * sphereAttr.t1;\
 	const vec3 hitPoint2 = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * sphereAttr.t2;\
 	if (gl_HitKindEXT == 1) /*Inside of sphere*/ {\
-		surface.normal = normalize(spherePosition - hitPoint2);\
+		surface.normal = normalize(hitPoint2 - spherePosition);\
 	} else /*Outside of sphere*/ {\
 		surface.normal = normalize(hitPoint1 - spherePosition);\
 	}\
