@@ -94,17 +94,17 @@ void main() {
 			break;
 		}
 		vec3 tint = ray.color.rgb;
-		transparency *= min(0.95, 1.0 - clamp(ray.color.a, 0, 1));
+		transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
 		glassTint *= tint;
 		rayOrigin += initialRayDirection * ray.hitDistance;
+		float rDotN = dot(initialRayDirection, ray.normal);
 		// Reflections on Glass
-		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && dot(ray.normal, initialRayDirection) < 0.0) {
+		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && rDotN < 0.0) {
 			glassReflection = true;
 			glassReflectionStrength = Fresnel(normalize((renderer.viewMatrix * vec4(ray.worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
 			glassReflectionOrigin = ray.worldPosition + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
 			glassReflectionDirection = reflect(initialRayDirection, ray.normal);
 		}
-		float rDotN = dot(initialRayDirection, ray.normal);
 		// Specular/Shadows on Glass
 		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && rDotN < 0) {
 			RayPayload originalRay = ray;
@@ -114,7 +114,7 @@ void main() {
 		// Refraction on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
 			vec3 originalRayDirection = initialRayDirection;
-			float ior = 1.05;
+			float ior = 1.5;
 			if (rDotN < 0) ior = 1.0 / ior;
 			initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
 			if (dot(initialRayDirection, initialRayDirection) == 0.0) {
@@ -124,7 +124,7 @@ void main() {
 				color.a += ray.color.a;
 			}
 		}
-	} while (ray.color.a < 1.0 && transparency > 0.1 && ray.hitDistance > 0.0);
+	} while (ray.color.a < 1.0 && transparency > 0.01 && ray.hitDistance > 0.0);
 	color += ray.color + ray.plasma + vec4(glassSpecular, 0);
 	
 	float hitDistance = ray.hitDistance;
