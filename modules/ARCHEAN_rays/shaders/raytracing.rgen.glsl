@@ -70,6 +70,14 @@ void main() {
 	}
 	do {
 		traceRayEXT(tlas, /*gl_RayFlagsCullBackFacingTrianglesEXT|*/gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, initialRayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+		float rDotN = dot(initialRayDirection, ray.normal);
+		if (rDotN > 0 && ray.color.a < 1.0) {
+			RayPayload originalRay = ray;
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance * 0.999, initialRayDirection, originalRay.hitDistance * 1.001, 0/*payloadIndex*/);
+			if (ray.hitDistance == -1) {
+				ray = originalRay;
+			}
+		}
 		// Aim
 		if (transparency == 1 && isMiddleOfScreen) {
 			renderer.aim.localPosition = ray.localPosition;
@@ -97,7 +105,6 @@ void main() {
 		transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
 		glassTint *= tint;
 		rayOrigin += initialRayDirection * ray.hitDistance;
-		float rDotN = dot(initialRayDirection, ray.normal);
 		// Reflections on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && rDotN < 0.0) {
 			glassReflection = true;
