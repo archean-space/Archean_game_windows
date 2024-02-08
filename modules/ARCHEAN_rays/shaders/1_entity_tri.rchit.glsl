@@ -1,7 +1,7 @@
 #define SHADER_RCHIT
 #include "common.inc.glsl"
 
-hitAttributeEXT vec2 hitAttribs;
+hitAttributeEXT vec3 hitAttribs;
 
 #define ENTITY_COMPUTE_SURFACE \
 	vec3 barycentric_coords = vec3(1.0f - hitAttribs.x - hitAttribs.y, hitAttribs.x, hitAttribs.y);\

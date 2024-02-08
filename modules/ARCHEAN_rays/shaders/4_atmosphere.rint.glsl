@@ -1,15 +1,37 @@
 #define SHADER_RINT
-#include "atmosphere.common.inc.glsl"
+#define SHADER_ATMOSPHERE
+#include "common.inc.glsl"
+
+hitAttributeEXT hit {
+	float t2;
+};
 
 void main() {
-	float T1;
-	float T2;
-	bool inside;
-	if (AtmosphereIntersection(T1, T2, inside)) {
-		if (inside) {
-			reportIntersectionEXT(max(gl_RayTminEXT, ATMOSPHERE_RAY_MIN_DISTANCE), 1);
-		} else {
+	AtmosphereData atmosphere = AtmosphereData(AABB.data);
+	if (uint64_t(atmosphere) == 0) return;
+	const vec3 spherePosition = gl_ObjectToWorldEXT[3].xyz;
+	const float r = atmosphere.outerRadius;
+	const vec3 oc = gl_WorldRayOriginEXT - spherePosition;
+	const float a = dot(gl_WorldRayDirectionEXT, gl_WorldRayDirectionEXT);
+	const float b = dot(oc, gl_WorldRayDirectionEXT);
+	const float c = dot(oc, oc) - r*r;
+	const float discriminantSqr = b * b - a * c;
+	
+	if (discriminantSqr >= 0) {
+		const float det = sqrt(discriminantSqr);
+		const float T1 = (-b - det) / a;
+		const float T2 = (-b + det) / a;
+		
+		// Outside of sphere
+		if (gl_RayTminEXT <= T1 && T1 < gl_RayTmaxEXT) {
+			t2 = T2;
 			reportIntersectionEXT(T1, 0);
+		}
+		
+		// Inside of sphere
+		if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
+			t2 = T2;
+			reportIntersectionEXT(max(gl_RayTminEXT, ATMOSPHERE_RAY_MIN_DISTANCE), 1);
 		}
 	}
 	DEBUG_RAY_INT_TIME

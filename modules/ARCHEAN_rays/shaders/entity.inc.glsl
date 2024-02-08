@@ -1,8 +1,22 @@
+#include "lighting.inc.glsl"
+
 void main() {
+	uint rayRecursions = RAY_RECURSIONS;
+	
+	ray.hitDistance = gl_HitTEXT;
+	ray.aimID = gl_InstanceCustomIndexEXT;
+	ray.renderableIndex = gl_InstanceID;
+	ray.geometryIndex = gl_GeometryIndexEXT;
+	ray.primitiveIndex = gl_PrimitiveID;
+	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
+	ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+	ray.t2 = 0;
+	ray.ssao = 1;
+	
 	ENTITY_COMPUTE_SURFACE
 	
-	surface.distance = gl_HitTEXT;
-	surface.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
+	surface.distance = ray.hitDistance;
+	surface.localPosition = ray.localPosition;
 	surface.metallic = GEOMETRY.material.metallic;
 	surface.roughness = GEOMETRY.material.roughness;
 	surface.emission = GEOMETRY.material.emission;
@@ -18,55 +32,49 @@ void main() {
 	surface.uv1 = vec2(0);
 	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
 	
-	executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
+	// if (OPTION_TEXTURES) {
+		executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
+	// }
 	
 	#ifdef ENTITY_AFTER_SURFACE
 		ENTITY_AFTER_SURFACE
 	#endif
 	
-	// Ray Payload
-	ray.albedo = surface.color.rgb * surface.color.a;
-	ray.t1 = gl_HitTEXT;
-	ray.normal = normalize(MODEL2WORLDNORMAL * surface.normal);
-	ray.t2 = 0;
-	ray.emission = surface.emission;
-	ray.transmittance = surface.color.rgb * (1 - surface.color.a);
-	ray.ior = surface.ior;
-	ray.reflectance = step(0.999, (1 - surface.metallic) * (1 - surface.roughness));
-	ray.metallic = surface.metallic;
-	ray.roughness = surface.roughness;
-	ray.specular = surface.specular;
-	ray.localPosition = surface.localPosition;
-	ray.renderableIndex = gl_InstanceID;
-
-	if (RAY_IS_SHADOW) {
+	// Debug UV1
+	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_UVS) {
+		if (!RAY_IS_SHADOW && rayRecursions == 0) imageStore(img_normal_or_debug, COORDS, vec4(surface.uv1, 0, 1));
+		ray.normal = vec3(0);
+		ray.color = vec4(0,0,0,1);
 		return;
 	}
 	
-	// Aim
-	if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
-		if (surface.renderableData != 0 && renderer.aim.monitorIndex == 0) {
+	ray.normal = normalize(MODEL2WORLDNORMAL * surface.normal);
+	
+	if (surface.color.a < 1.0 || RAY_IS_SHADOW) {
+		ray.color = surface.color;
+		return;
+	}
+	
+	if (rayRecursions == 0 || (rayRecursions == 1 && !RAY_IS_GI && !RAY_IS_SHADOW)) {
+		imageStore(img_primary_albedo_roughness, COORDS, vec4(surface.color.rgb, surface.roughness));
+		if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
 			renderer.aim.uv = surface.uv1;
-			renderer.aim.monitorIndex = RenderableData(surface.renderableData)[nonuniformEXT(surface.geometryIndex)].monitorIndex;
-		}
-		if (renderer.aim.aimID == 0) {
-			renderer.aim.uv = surface.uv1;
-			renderer.aim.localPosition = ray.localPosition;
-			renderer.aim.geometryIndex = gl_GeometryIndexEXT;
-			renderer.aim.aimID = gl_InstanceCustomIndexEXT;
-			renderer.aim.worldSpaceHitNormal = ray.normal;
-			renderer.aim.primitiveIndex = gl_PrimitiveID;
-			renderer.aim.worldSpacePosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-			renderer.aim.hitDistance = ray.t1;
-			renderer.aim.color = surface.color;
-			renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * ray.normal);
-			renderer.aim.tlasInstanceIndex = gl_InstanceID;
+			if (surface.renderableData != 0 && renderer.aim.monitorIndex == 0) {
+				renderer.aim.monitorIndex = RenderableData(surface.renderableData)[surface.geometryIndex].monitorIndex;
+			}
 		}
 	}
 	
-	// Debug
-	DEBUG_RAY_HIT_TIME
-	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_UVS) {
-		imageStore(img_normal_or_debug, COORDS, vec4(surface.uv1, 0, 1));
+	// Apply Lighting
+	ApplyDefaultLighting();
+	
+	// Glossy surfaces
+	if (surface.metallic == 0.0 && surface.roughness == 0.0) {
+		ray.color.a = 2.0;
+	}
+	
+	// Debug Time
+	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {
+		if (RAY_RECURSIONS == 0) WRITE_DEBUG_TIME
 	}
 }

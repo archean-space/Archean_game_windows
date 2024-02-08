@@ -8,8 +8,9 @@
 #endif
 
 #include "game/graphics/common.inc.glsl"
+#include "game/graphics/voxel.inc.glsl"
 
-#define RAY_MAX_RECURSION 1
+#define RAY_MAX_RECURSION 30
 
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
@@ -185,9 +186,9 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#define MVP_AA (xenonRendererData.config.projectionMatrixWithTAA * MODELVIEW)
 	#define MVP_HISTORY (xenonRendererData.config.projectionMatrix * MODELVIEW_HISTORY)
 	#ifdef SHADER_COMP_RAYS
-		#define INSTANCE(q,commited) renderer.renderableInstances[nonuniformEXT(rayQueryGetIntersectionInstanceIdEXT(q,commited))]
-		#define GEOMETRY(q,commited) INSTANCE(q,commited).geometries[nonuniformEXT(rayQueryGetIntersectionGeometryIndexEXT(q,commited))]
-		#define AABB(q,commited) GEOMETRY(q,commited).aabbs[nonuniformEXT(rayQueryGetIntersectionPrimitiveIndexEXT(q,commited))]
+		#define INSTANCE(q,commited) renderer.renderableInstances[rayQueryGetIntersectionInstanceIdEXT(q,commited)]
+		#define GEOMETRY(q,commited) INSTANCE(q,commited).geometries[rayQueryGetIntersectionGeometryIndexEXT(q,commited)]
+		#define AABB(q,commited) GEOMETRY(q,commited).aabbs[rayQueryGetIntersectionPrimitiveIndexEXT(q,commited)]
 		#define AABB_MIN(q,commited) vec3(AABB(q,commited).aabb[0], AABB(q,commited).aabb[1], AABB(q,commited).aabb[2])
 		#define AABB_MAX(q,commited) vec3(AABB(q,commited).aabb[3], AABB(q,commited).aabb[4], AABB(q,commited).aabb[5])
 		#define AABB_CENTER(q,commited) ((AABB_MIN(q,commited) + AABB_MAX(q,commited)) * 0.5)
@@ -204,9 +205,9 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 		#define RAY_STARTS_OUTSIDE_T1_T2(q) (rayQueryGetRayTMinEXT(q) <= T1 && T2 > T1)
 		#define RAY_STARTS_BETWEEN_T1_T2(q) (T1 <= rayQueryGetRayTMinEXT(q) && T2 >= rayQueryGetRayTMinEXT(q))
 	#else
-		#define INSTANCE renderer.renderableInstances[nonuniformEXT(gl_InstanceID)]
-		#define GEOMETRY INSTANCE.geometries[nonuniformEXT(gl_GeometryIndexEXT)]
-		#define AABB GEOMETRY.aabbs[nonuniformEXT(gl_PrimitiveID)]
+		#define INSTANCE renderer.renderableInstances[gl_InstanceID]
+		#define GEOMETRY INSTANCE.geometries[gl_GeometryIndexEXT]
+		#define AABB GEOMETRY.aabbs[gl_PrimitiveID]
 		#define AABB_MIN vec3(AABB.aabb[0], AABB.aabb[1], AABB.aabb[2])
 		#define AABB_MAX vec3(AABB.aabb[3], AABB.aabb[4], AABB.aabb[5])
 		#define AABB_CENTER ((AABB_MIN + AABB_MAX) * 0.5)
@@ -223,7 +224,6 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#endif
 	#define COORDS ivec2(gl_LaunchIDEXT.xy)
 	#define WRITE_DEBUG_TIME {float elapsedTime = imageLoad(img_normal_or_debug, COORDS).a + float(clockARB() - startTime); imageStore(img_normal_or_debug, COORDS, vec4(0,0,0, elapsedTime));}
-	#define DEBUG_RAY_HIT_TIME {if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) WRITE_DEBUG_TIME}
 	#define DEBUG_RAY_INT_TIME {if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYINT_TIME) WRITE_DEBUG_TIME}
 	#define traceRayEXT {if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_TRACE_RAY_COUNT) imageStore(img_normal_or_debug, COORDS, imageLoad(img_normal_or_debug, COORDS) + uvec4(0,0,0,1));} traceRayEXT
 	#define DEBUG_TEST(color) {if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_TEST) imageStore(img_normal_or_debug, COORDS, color);}
@@ -271,20 +271,18 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#endif
 	
 	struct RayPayload {
-		vec3 albedo;
-		float t1;
+		vec4 color;
 		vec3 normal;
-		float t2;
-		vec3 emission;
-		uint mask;
-		vec3 transmittance;
-		float ior;
-		float reflectance;
-		float metallic;
-		float roughness;
-		float specular;
+		float ssao;
 		vec3 localPosition;
+		float t2;
+		vec3 worldPosition;
+		float hitDistance;
+		int aimID;
 		int renderableIndex;
+		int geometryIndex;
+		int primitiveIndex;
+		vec4 plasma;
 	};
 
 	#if defined(SHADER_RGEN) || defined(SHADER_RCHIT) || defined(SHADER_COMP_RAYS)
@@ -305,4 +303,31 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 		layout(location = 0) rayPayloadInEXT RayPayload ray;
 	#endif
 
+	#if defined(SHADER_RCHIT) || defined(SHADER_RAHIT) || defined(SHADER_RINT)
+		bool IsValidVoxel(in ivec3 iPos, in vec3 gridOffset) {
+			if (iPos.x < 0 || iPos.y < 0 || iPos.z < 0) return false;
+			if (iPos.x >= VOXELS_X || iPos.y >= VOXELS_Y || iPos.z >= VOXELS_Z) return false;
+			if (iPos.x < AABB_MIN.x - gridOffset.x) return false;
+			if (iPos.y < AABB_MIN.y - gridOffset.y) return false;
+			if (iPos.z < AABB_MIN.z - gridOffset.z) return false;
+			if (iPos.x >= AABB_MAX.x - gridOffset.x) return false;
+			if (iPos.y >= AABB_MAX.y - gridOffset.y) return false;
+			if (iPos.z >= AABB_MAX.z - gridOffset.z) return false;
+			return true;
+		}
+		bool IsValidVoxelHD(in ivec3 iPos) {
+			if (iPos.x < 0 || iPos.y < 0 || iPos.z < 0) return false;
+			if (iPos.x >= VOXEL_GRID_SIZE_HD || iPos.y >= VOXEL_GRID_SIZE_HD || iPos.z >= VOXEL_GRID_SIZE_HD) return false;
+			return true;
+		}
+		const vec3[7] BOX_NORMAL_DIRS = {
+			vec3(-1,0,0),
+			vec3(0,-1,0),
+			vec3(0,0,-1),
+			vec3(+1,0,0),
+			vec3(0,+1,0),
+			vec3(0,0,+1),
+			vec3(0)
+		};
+	#endif
 #endif

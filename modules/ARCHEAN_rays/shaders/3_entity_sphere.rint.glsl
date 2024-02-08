@@ -24,22 +24,17 @@ void main() {
 	if (discriminantSqr >= 0) {
 		const float discriminant = sqrt(discriminantSqr);
 		
-		float T1 = (-b - discriminant) / a;
-		float T2 = (-b + discriminant) / a;
+		sphereAttr.t1 = (-b - discriminant) / a;
+		sphereAttr.t2 = (-b + discriminant) / a;
+		sphereAttr.radius = sphereRadius;
 		
 		// Outside of sphere
-		if (gl_RayTminEXT <= T1 && T1 < gl_RayTmaxEXT) {
-			sphereAttr.t1 = T1;
-			sphereAttr.t2 = T2;
-			sphereAttr.radius = sphereRadius;
-			reportIntersectionEXT(T1, 0);
+		if (gl_RayTminEXT <= sphereAttr.t1 && sphereAttr.t1 < gl_RayTmaxEXT) {
+			reportIntersectionEXT(sphereAttr.t1, 0);
 		}
 		// Inside of sphere
-		else if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
-			sphereAttr.t1 = T1;
-			sphereAttr.t2 = T2;
-			sphereAttr.radius = sphereRadius;
-			reportIntersectionEXT(T2, 1);
+		else if (sphereAttr.t1 <= gl_RayTminEXT && sphereAttr.t2 >= gl_RayTminEXT) {
+			reportIntersectionEXT(sphereAttr.t2, 1);
 		}
 	}
 	

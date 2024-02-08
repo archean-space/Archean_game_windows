@@ -3,7 +3,7 @@
 
 struct PipeAttr {
 	vec3 normal;
-	// vec3 axis;
+	vec3 axis;
 };
 
 hitAttributeEXT PipeAttr attr;
@@ -22,7 +22,7 @@ void BoxIntersection() {
 		else if (absMax.y < THRESHOLD) attr.normal = vec3( 0, 1, 0);
 		else if (absMax.z < THRESHOLD) attr.normal = vec3( 0, 0, 1);
 		else attr.normal = normalize(localPosition);
-		// attr.axis = vec3(1);
+		attr.axis = vec3(1);
 		reportIntersectionEXT(T1, 0);
 	}
 }
@@ -93,7 +93,7 @@ void CylinderIntersection() {
 			// attr.radius = r;
 			// attr.len = length(ba);
 			attr.normal = normalize((oc + rd*t1 - ba*y1/baba) / r);
-			// attr.axis = axis;
+			attr.axis = axis;
 			reportIntersectionEXT(t1, 0);
 			return;
 		}
@@ -103,12 +103,11 @@ void CylinderIntersection() {
 	const float capsT1 = (((y1<0.0)? 0.0 : baba) - baoc) / bard;
 	if (abs(k1+k2*capsT1) < h) {
 		if (gl_RayTminEXT <= capsT1) {
-			vec3 normal = normalize(ba*sign(y1)/baba);
-			if (dot(normal, rd) < 0) {
-				// attr.radius = r;
-				attr.normal = normal;
+			// attr.radius = r;
+			attr.normal = normalize(ba*sign(y1)/baba);
+			if (dot(attr.normal, rd) < 0) {
 				// attr.len = length(ba);
-				// attr.axis = axis;
+				attr.axis = axis;
 				reportIntersectionEXT(capsT1, 2);
 				return;
 			}
@@ -206,7 +205,7 @@ void CapsuleIntersection() {
 			// attr.len = length(ba);
 			const vec3 posa = (gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t1) - pa;
 			attr.normal = normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
-			// attr.axis = axis;
+			attr.axis = axis;
 			reportIntersectionEXT(t1, 0);
 			return;
 		}
@@ -222,13 +221,12 @@ void CapsuleIntersection() {
 		if (h > 0.0) {
 			const float t = -b - sqrt(h);
 			if (gl_RayTminEXT <= t) {
+				// attr.radius = r;
 				const vec3 posa = (gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t) - pa;
-				vec3 normal = normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
-				if (dot(normal, rd) < 0) {
-					// attr.radius = r;
-					attr.normal = normal;
+				attr.normal = normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
+				if (dot(attr.normal, rd) < 0) {
 					// attr.len = length(ba);
-					// attr.axis = axis;
+					attr.axis = axis;
 					reportIntersectionEXT(t, 2);
 					return;
 				}

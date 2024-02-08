@@ -3,7 +3,7 @@
 
 struct PipeAttr {
 	vec3 normal;
-	// vec3 axis;
+	vec3 axis;
 };
 
 hitAttributeEXT PipeAttr attr;

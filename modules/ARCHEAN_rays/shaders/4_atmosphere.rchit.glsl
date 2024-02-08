@@ -1,10 +1,14 @@
 #define SHADER_RCHIT
-#include "atmosphere.common.inc.glsl"
+#define SHADER_ATMOSPHERE
+#include "common.inc.glsl"
+#include "lighting.inc.glsl"
 
 // https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-1/
 
 const int RAYMARCH_LIGHT_STEPS = 5; // low=2, medium=3, high=5, ultra=8
 const float sunLuminosityThreshold = LIGHT_LUMINOSITY_VISIBLE_THRESHOLD;
+
+// #define SUN_SHAFTS
 
 bool RaySphereIntersection(in vec3 position, in vec3 rayDir, in float radius, out float t1, out float t2) {
 	const vec3 p = -position; // equivalent to cameraPosition - spherePosition (or negative position of sphere in view space)
@@ -21,29 +25,11 @@ bool RaySphereIntersection(in vec3 position, in vec3 rayDir, in float radius, ou
 	return inside || outside;
 }
 
+hitAttributeEXT hit {
+	float intersectionT2;
+};
+
 void main() {
-	float t1 = gl_HitTEXT;
-	float _t1;
-	float t2;
-	bool inside;
-
-	ray.albedo = vec3(0);
-	ray.t1 = -1;
-	ray.normal = -gl_WorldRayDirectionEXT;
-	ray.t2 = -1;
-	ray.emission = vec3(0);
-	ray.transmittance = vec3(1);
-	ray.ior = 1;
-	ray.reflectance = 0;
-	ray.metallic = 0;
-	ray.roughness = 0;
-	ray.specular = 0;
-	ray.renderableIndex = -1;
-	
-	if (!AtmosphereIntersection(_t1, t2, inside)) return;
-
-	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * (inside ? t2 : t1);
-	
 	bool rayIsShadow = RAY_IS_SHADOW;
 	bool rayIsGi = RAY_IS_GI;
 	bool rayIsUnderwater = RAY_IS_UNDERWATER;
@@ -51,6 +37,10 @@ void main() {
 	
 	int raymarchSteps = renderer.atmosphere_raymarch_steps;
 	
+	ray.hitDistance = -1;
+	ray.color = vec4(0);
+	
+	AtmosphereData atmosphere = AtmosphereData(AABB.data);
 	vec4 rayleigh = atmosphere.rayleigh;
 	vec4 mie = atmosphere.mie;
 	float outerRadius = atmosphere.outerRadius;
@@ -61,6 +51,8 @@ void main() {
 	vec3 atmospherePosition = gl_ObjectToWorldEXT[3].xyz;
 	vec3 origin = gl_WorldRayOriginEXT;
 	vec3 viewDir = gl_WorldRayDirectionEXT;
+	float t1 = gl_HitTEXT;
+	float t2 = intersectionT2;
 	
 	float startAltitude = distance(origin, atmospherePosition);
 	float thickness = outerRadius - innerRadius;
@@ -74,9 +66,15 @@ void main() {
 	float nextHitDistance = xenonRendererData.config.zFar;
 	if (recursions < RAY_MAX_RECURSION && !rayIsGi) {
 		RAY_RECURSION_PUSH
-			traceRayEXT(tlas, 0, (RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE) & ~ray.mask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
-			if (ray.t1 != -1) {
-				nextHitDistance = ray.t1;
+			// Trace Plasma
+			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
+			// Trace Opaque
+			traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
+			if (ray.hitDistance == -1 && !hitInnerRadius) {
+				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t2 * 1.0001, viewDir, xenonRendererData.config.zFar, 0);
+			}
+			if (ray.hitDistance != -1) {
+				nextHitDistance = ray.hitDistance;
 			}
 		RAY_RECURSION_POP
 	}
@@ -201,12 +199,11 @@ void main() {
 	else mieScattering = vec3(0);
 	vec4 fog = vec4(rayleighScattering + mieScattering + emission, pow(clamp(maxDepth/thickness, 0, 1), 2));
 	
-	float atten = smoothstep(ATMOSPHERE_RAY_MIN_DISTANCE, ATMOSPHERE_RAY_MIN_DISTANCE*4, nextHitDistance);
-	ray.emission += fog.rgb * atten;
-	float transparency = 1 - pow(fog.a, 32);
-	if (!hasHitSomethingWithinAtmosphere) ray.transmittance *= transparency;
-	ray.t1 = min(t2, nextHitDistance);
+	ray.plasma.rgb += fog.rgb * renderer.globalLightingFactor;
+	ray.color.a += pow(fog.a, 32);
 	
 	// Debug Time
-	DEBUG_RAY_HIT_TIME
+	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {
+		if (recursions == 0) WRITE_DEBUG_TIME
+	}
 }
