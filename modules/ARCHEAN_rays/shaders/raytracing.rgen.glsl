@@ -111,9 +111,10 @@ void main() {
 		// Refraction on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
 			vec3 originalRayDirection = initialRayDirection;
-			float ior = 1.45;
-			if (rDotN < 0) ior = 1.0 / ior;
-			initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
+			float ior = 1.5;
+			// if (rDotN < 0) ior = 1.0 / ior;
+			// initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
+			Refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
 			if (dot(initialRayDirection, initialRayDirection) == 0.0) {
 				initialRayDirection = reflect(originalRayDirection, sign(rDotN) * -ray.normal);
 				color.a += 1;
