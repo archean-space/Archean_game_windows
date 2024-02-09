@@ -146,7 +146,7 @@ void main() {
 		glassReflectionRay.hitDistance = -1;
 		glassReflectionRay.t2 = 0;
 		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, glassReflectionOrigin, 0, glassReflectionDirection, xenonRendererData.config.zFar, 1);
-		color.rgb = mix(color.rgb, glassReflectionRay.color.rgb, glassReflectionStrength * glassReflectionRay.color.a);
+		color.rgb = mix(color.rgb, glassReflectionRay.color.rgb, glassReflectionStrength * step(1.0, glassReflectionRay.color.a));
 		color.rgb += glassReflectionRay.plasma.rgb * glassReflectionStrength;
 	}
 	
