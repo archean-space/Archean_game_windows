@@ -13,12 +13,9 @@ hitAttributeEXT hit {
 };
 
 void SetHitWater() {
-	ray.aimID = gl_InstanceCustomIndexEXT;
 	ray.renderableIndex = gl_InstanceID;
 	ray.geometryIndex = gl_GeometryIndexEXT;
 	ray.primitiveIndex = gl_PrimitiveID;
-	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
-	ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 	ray.color.a = 1;
 }
 
@@ -111,7 +108,6 @@ void main() {
 	ray.hitDistance = gl_HitTEXT;
 	ray.normal = vec3(0,1,0);
 	ray.color = vec4(vec3(0), 1);
-	ray.aimID = 0;
 	ray.renderableIndex = -1;
 	
 	if (recursions >= RAY_MAX_RECURSION) {
@@ -126,7 +122,7 @@ void main() {
 	bool rayIsUnderwater = RAY_IS_UNDERWATER;
 	vec3 worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 	
-	if (rayIsShadow && rayIsUnderwater) {
+	if (rayIsShadow) {
 		// Underwater shadow
 		ray.hitDistance = gl_HitTEXT;
 		ray.t2 = t2;
@@ -203,7 +199,7 @@ void main() {
 				worldPosition += reflectDir * (ray.hitDistance + 0.01);
 			}
 		RAY_RECURSION_POP
-		reflection = ray.color.rgb + ray.plasma.rgb;
+		reflection = ray.color.rgb + ray.emission.rgb;
 		
 		// See through water (refraction)
 		vec3 rayDirection = gl_WorldRayDirectionEXT;
@@ -237,7 +233,7 @@ void main() {
 		ray.t2 = WATER_MAX_LIGHT_DEPTH;
 		ray.color.rgb = reflection * fresnel * 0.5 + refraction * (1-fresnel);
 		ray.color.a = 1;
-		ray.plasma.rgb = vec3(0);
+		ray.emission.rgb = vec3(0);
 		ray.normal = surfaceNormal;
 		
 		// if (gl_HitTEXT < giantWavesMaxDistance) {
@@ -304,7 +300,7 @@ void main() {
 						ray.hitDistance = maxLightDepth;
 					}
 					ray.color.rgb *= pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
-					ray.plasma.rgb *= pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
+					ray.emission.rgb *= pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
 				}
 				ray.hitDistance = distanceToSurface;
 				ray.t2 = max(distanceToSurface, maxRayDistance);
@@ -315,8 +311,8 @@ void main() {
 			float falloff = pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
 			ray.color.rgb *= WATER_TINT;
 			ray.color.rgb *= falloff;
-			ray.plasma.rgb *= WATER_TINT;
-			ray.plasma.rgb *= falloff;
+			ray.emission.rgb *= WATER_TINT;
+			ray.emission.rgb *= falloff;
 			
 		} else {
 			// See through water (underwater looking down)
@@ -344,8 +340,8 @@ void main() {
 				float falloff = pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
 				ray.color.rgb *= WATER_TINT;
 				ray.color.rgb *= falloff;
-				ray.plasma.rgb *= WATER_TINT;
-				ray.plasma.rgb *= falloff;
+				ray.emission.rgb *= WATER_TINT;
+				ray.emission.rgb *= falloff;
 			}
 			
 		}
@@ -363,7 +359,7 @@ void main() {
 					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, worldPosition, 0, -downDir, 10000, 0);
 				RAY_GI_POP
 			RAY_RECURSION_POP
-			waterLighting = ray.plasma.rgb * WATER_OPACITY * depthFalloff;
+			waterLighting = ray.emission.rgb * WATER_OPACITY * depthFalloff;
 			ray = originalRay;
 		}
 		ray.color.rgb = WATER_TINT * mix(ray.color.rgb, waterLighting, pow(clamp(ray.hitDistance / maxLightDepth, 0, 1), 0.5));

@@ -18,7 +18,7 @@ hitAttributeEXT SphereAttr sphereAttr;
 	} else /*Outside of sphere*/ {\
 		surface.normal = normalize(hitPoint1 - spherePosition);\
 	}\
-	surface.color = ComputeSurfaceColor(ray.localPosition) * GEOMETRY.material.color;\
+	surface.color = ComputeSurfaceColor(vec3(0)) * GEOMETRY.material.color;\
 	surface.aabbData = AABB.data;\
 }
 

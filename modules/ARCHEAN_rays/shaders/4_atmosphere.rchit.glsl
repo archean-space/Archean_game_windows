@@ -38,7 +38,6 @@ void main() {
 	int raymarchSteps = renderer.atmosphere_raymarch_steps;
 	
 	ray.hitDistance = -1;
-	ray.color = vec4(0);
 	
 	AtmosphereData atmosphere = AtmosphereData(AABB.data);
 	vec4 rayleigh = atmosphere.rayleigh;
@@ -66,6 +65,7 @@ void main() {
 	float nextHitDistance = xenonRendererData.config.zFar;
 	if (recursions < RAY_MAX_RECURSION && !rayIsGi) {
 		RAY_RECURSION_PUSH
+			float alpha = ray.color.a;
 			// Trace Plasma
 			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
 			// Trace Opaque
@@ -76,6 +76,7 @@ void main() {
 			if (ray.hitDistance != -1) {
 				nextHitDistance = ray.hitDistance;
 			}
+			ray.color.a = max(ray.color.a, alpha);
 		RAY_RECURSION_POP
 	}
 	
@@ -199,7 +200,7 @@ void main() {
 	else mieScattering = vec3(0);
 	vec4 fog = vec4(rayleighScattering + mieScattering + emission, pow(clamp(maxDepth/thickness, 0, 1), 2));
 	
-	ray.plasma.rgb += fog.rgb * renderer.globalLightingFactor;
+	ray.emission.rgb += fog.rgb * renderer.globalLightingFactor;
 	ray.color.a += pow(fog.a, 32);
 	
 	// Debug Time

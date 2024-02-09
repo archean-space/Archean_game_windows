@@ -83,8 +83,7 @@ void main() {
 		if (ray.hitDistance > 0 && t1 + t > ray.hitDistance) break;
 	}
 	
-	ray.plasma.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
-	ray.plasma.a += accumulatedDensity;
+	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
 	ray.ssao = clamp(ray.ssao - accumulatedDensity * 0.2, 0.0, 1.0);
 	
 	ignoreIntersectionEXT;

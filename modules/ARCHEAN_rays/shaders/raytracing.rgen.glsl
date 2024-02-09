@@ -1,11 +1,16 @@
 #define SHADER_RGEN
 #include "common.inc.glsl"
 
+ivec2 pixelInMiddleOfScreen = ivec2(gl_LaunchSizeEXT.xy) / 2;
+bool isMiddleOfScreen = (COORDS == pixelInMiddleOfScreen);
+vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
+vec2 screenSize = vec2(gl_LaunchSizeEXT.xy);
+vec2 uv = pixelCenter/screenSize;
+
 layout(location = 0) rayPayloadEXT RayPayload ray;
 layout(location = 1) rayPayloadEXT RayPayload glassReflectionRay;
 
 #include "lighting.inc.glsl"
-// GetDirectLighting(ray.worldPosition, gl_WorldRayDirectionEXT, ray.normal, albedo, gl_HitTEXT, surface.metallic, surface.roughness, surface.specular)
 
 vec3 mapToSphere(vec2 uv) {
 	// uv += vec2(RandomFloat(coherentSeed), RandomFloat(coherentSeed)) / 100;
@@ -20,17 +25,32 @@ vec3 mapToSphere(vec2 uv) {
 	return normalize(spherePoint);
 }
 
+void WriteMotionVectorsAndDepth(in vec3 worldPosition, in float hitDistance, in bool force) {
+	vec4 motion = imageLoad(img_motion, COORDS);
+	if (force || motion.w == 0) {
+		imageStore(img_motion, COORDS, vec4(motion.xyz, hitDistance));
+		vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(worldPosition, 1);
+		float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
+		imageStore(img_depth, COORDS, vec4(depth));
+	}
+}
+
+void ClearMotionVectorsAndDepth() {
+	vec4 ndc = vec4(uv * 2 - 1, 0, 1);
+	vec4 ndc_history = renderer.reprojectionMatrix * ndc;
+	ndc_history /= ndc_history.w;
+	vec3 motion = ndc_history.xyz - ndc.xyz;
+	imageStore(img_depth, COORDS, vec4(0));
+	imageStore(img_motion, COORDS, vec4(motion, 0));
+}
+
 void main() {
-	const ivec2 pixelInMiddleOfScreen = ivec2(gl_LaunchSizeEXT.xy) / 2;
-	const bool isMiddleOfScreen = (COORDS == pixelInMiddleOfScreen);
-	const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
-	const vec2 screenSize = vec2(gl_LaunchSizeEXT.xy);
-	const vec2 uv = pixelCenter/screenSize;
 	const vec3 initialRayPosition = inverse(renderer.viewMatrix)[3].xyz;
 	const mat4 projMatrix = isMiddleOfScreen? mat4(xenonRendererData.config.projectionMatrix) : mat4(xenonRendererData.config.projectionMatrixWithTAA);
 	vec3 viewDir = normalize(vec4(inverse(projMatrix) * vec4(uv*2-1, 1, 1)).xyz);
 	
 	if (isMiddleOfScreen) {
+		renderer.aim.aimID = 0;
 		renderer.aim.monitorIndex = 0;
 	}
 	
@@ -41,12 +61,15 @@ void main() {
 	}
 	
 	vec3 initialRayDirection = normalize(VIEW2WORLDNORMAL * viewDir);
+	vec3 rayDirection = initialRayDirection;
 	
 	imageStore(rtPayloadImage, COORDS, u8vec4(0));
 	imageStore(img_primary_albedo_roughness, COORDS, u8vec4(0));
 	if (xenonRendererData.config.debugViewMode != 0) {
 		imageStore(img_normal_or_debug, COORDS, vec4(0));
 	}
+	
+	ClearMotionVectorsAndDepth();
 	
 	ray.hitDistance = -1;
 	ray.t2 = 0;
@@ -63,91 +86,82 @@ void main() {
 	vec3 glassReflectionDirection;
 	float glassReflectionStrength;
 	vec4 color = vec4(0);
-	ray.plasma = vec4(0);
+	ray.emission = vec3(0);
 	uint primaryRayMask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_PLASMA;
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_GI_LIGHTS) {
 		primaryRayMask |= RAYTRACE_MASK_LIGHT;
 	}
 	do {
-		traceRayEXT(tlas, /*gl_RayFlagsCullBackFacingTrianglesEXT|*/gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, initialRayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
-		float rDotN = dot(initialRayDirection, ray.normal);
+		traceRayEXT(tlas, /*gl_RayFlagsCullBackFacingTrianglesEXT|*/gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+		float rDotN = dot(rayDirection, ray.normal);
 		if (rDotN > 0 && ray.color.a < 1.0) {
 			RayPayload originalRay = ray;
-			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance * 0.999, initialRayDirection, originalRay.hitDistance * 1.001, 0/*payloadIndex*/);
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance * 0.999, rayDirection, originalRay.hitDistance * 1.001, 0/*payloadIndex*/);
 			if (ray.hitDistance == -1) {
 				ray = originalRay;
 			}
 		}
-		// Aim
-		if (transparency == 1 && isMiddleOfScreen) {
-			renderer.aim.localPosition = ray.localPosition;
-			renderer.aim.geometryIndex = ray.geometryIndex;
-			renderer.aim.aimID = ray.aimID;
-			renderer.aim.worldSpaceHitNormal = ray.normal;
-			renderer.aim.primitiveIndex = ray.primitiveIndex;
-			renderer.aim.worldSpacePosition = ray.worldPosition;
-			renderer.aim.hitDistance = ray.hitDistance;
-			renderer.aim.color = ray.color;
-			renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * ray.normal);
-			renderer.aim.tlasInstanceIndex = ray.renderableIndex;
-		}
 		ray.color.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
-		ray.plasma.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
+		ray.emission.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
 		ssao *= ray.ssao;
 		if (ray.hitDistance == -1) {
 			break;
 		}
 		ssao *= ray.color.a;
-		if (xenonRendererData.config.debugViewMode != 0) {
+		if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_NORMALS) {
 			break;
 		}
 		vec3 tint = ray.color.rgb;
 		transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
 		glassTint *= tint;
-		rayOrigin += initialRayDirection * ray.hitDistance;
+		rayOrigin += rayDirection * ray.hitDistance;
 		// Reflections on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && rDotN < 0.0) {
 			glassReflection = true;
-			glassReflectionStrength = Fresnel(normalize((renderer.viewMatrix * vec4(ray.worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
-			glassReflectionOrigin = ray.worldPosition + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
-			glassReflectionDirection = reflect(initialRayDirection, ray.normal);
+			glassReflectionStrength = Fresnel(normalize((renderer.viewMatrix * vec4(rayOrigin, 1)).xyz), normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
+			glassReflectionOrigin = rayOrigin + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
+			glassReflectionDirection = reflect(rayDirection, ray.normal);
 		}
 		// Specular/Shadows on Glass
 		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && rDotN < 0) {
 			RayPayload originalRay = ray;
-			glassSpecular += GetDirectLighting(originalRay.worldPosition, initialRayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 0, 0.5);
+			glassSpecular += GetDirectLighting(rayOrigin, rayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 0, 0.5);
 			ray = originalRay;
 		}
 		// Refraction on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
-			vec3 originalRayDirection = initialRayDirection;
+			vec3 originalRayDirection = rayDirection;
 			float ior = 1.5;
-			if (rDotN < 0) ior = 1.0 / ior;
-			initialRayDirection = refract(initialRayDirection, sign(rDotN) * -ray.normal, ior);
-			if (dot(initialRayDirection, initialRayDirection) == 0.0) {
-				initialRayDirection = reflect(originalRayDirection, sign(rDotN) * -ray.normal);
+			if (rDotN < 0) {
+				ior = 1.0 / ior;
+			} else {
+				ssao = 0;
+			}
+			rayDirection = refract(rayDirection, sign(rDotN) * -ray.normal, ior);
+			if (dot(rayDirection, rayDirection) == 0.0) {
+				ssao = 0;
+				rayDirection = reflect(originalRayDirection, sign(rDotN) * -ray.normal);
 				color.a += 1;
 			} else {
 				color.a += ray.color.a;
+				if (dot(initialRayDirection, originalRayDirection) > 0.707 && transparency > 0.5 && ray.color.a < 0.5) {
+					ClearMotionVectorsAndDepth();
+				}
 			}
 		}
 	} while (ray.color.a < 1.0 && transparency > 0.01 && ray.hitDistance > 0.0);
-	color += ray.color + ray.plasma + vec4(glassSpecular, 0);
+	color += ray.color + vec4(ray.emission, 0) + vec4(glassSpecular, 0);
 	
-	float hitDistance = ray.hitDistance;
-	if (hitDistance < 0) {
-		hitDistance = xenonRendererData.config.zFar;
-	}
-
 	// Reflections on Glass / Glossy
 	if (glassReflection) {
 		glassReflectionRay.color = vec4(0);
-		glassReflectionRay.plasma = vec4(0);
+		glassReflectionRay.emission = vec3(0);
 		glassReflectionRay.hitDistance = -1;
 		glassReflectionRay.t2 = 0;
+		WriteMotionVectorsAndDepth(glassReflectionOrigin, distance(initialRayPosition, glassReflectionOrigin), false);
 		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, glassReflectionOrigin, 0, glassReflectionDirection, xenonRendererData.config.zFar, 1);
 		color.rgb = mix(color.rgb, glassReflectionRay.color.rgb, glassReflectionStrength * step(1.0, glassReflectionRay.color.a));
-		color.rgb += glassReflectionRay.plasma.rgb * glassReflectionStrength;
+		color.rgb += glassReflectionRay.emission.rgb * glassReflectionStrength;
 	}
 	
 	color.rgb *= pow(renderer.globalLightingFactor, 4);
@@ -158,46 +172,18 @@ void main() {
 	}
 	
 	bool hitSomething = ray.hitDistance >= 0 && ray.renderableIndex != -1;
-	vec3 motion;
-	float depth;
 	
-	// Motion Vectors
-	if (hitSomething) {
-		mat4 mvp = xenonRendererData.config.projectionMatrix * renderer.viewMatrix * mat4(transpose(renderer.tlasInstances[ray.renderableIndex].transform));
-		
-		// These two lines may cause problems on AMD if they didn't fix their bugs
-		renderer.mvpBuffer[ray.renderableIndex].mvp = mvp;
-		renderer.realtimeBuffer[ray.renderableIndex].mvpFrameIndex = xenonRendererData.frameIndex;
-		
-		vec4 ndc = mvp * vec4(ray.localPosition, 1);
-		ndc /= ndc.w;
-		mat4 mvpHistory;
-		if (renderer.realtimeBufferHistory[ray.renderableIndex].mvpFrameIndex == xenonRendererData.frameIndex - 1) {
-			mvpHistory = renderer.mvpBufferHistory[ray.renderableIndex].mvp;
-		} else {
-			mvpHistory = renderer.reprojectionMatrix * mvp;
-		}
-		vec4 ndc_history = mvpHistory * vec4(ray.localPosition, 1);
-		ndc_history /= ndc_history.w;
-		motion = ndc_history.xyz - ndc.xyz;
-		vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(ray.worldPosition, 1);
-		depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
-	} else {
-		vec4 ndc = vec4(uv * 2 - 1, 0, 1);
-		vec4 ndc_history = renderer.reprojectionMatrix * ndc;
-		ndc_history /= ndc_history.w;
-		motion = ndc_history.xyz - ndc.xyz;
-		depth = 0;
-	}
-	
-	// Negative depth means underwater
 	if (RAY_IS_UNDERWATER) {
-		hitDistance *= -1;
+		// Negative distance means underwater
+		imageStore(img_motion, COORDS, vec4(0,0,0,-1));
+	} else {
+		vec4 motion = imageLoad(img_motion, COORDS);
+		if (motion.a <= 0) {
+			imageStore(img_motion, COORDS, vec4(motion.xyz, xenonRendererData.config.zFar));
+		}
 	}
 	
 	imageStore(img_composite, COORDS, max(vec4(0), color));
-	imageStore(img_depth, COORDS, vec4(depth));
-	imageStore(img_motion, COORDS, vec4(motion, hitDistance));
 	
 	// Trace environment audio
 	const int MAX_AUDIO_BOUNCE = 2;
@@ -278,7 +264,7 @@ void main() {
 			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(float(imageLoad(img_normal_or_debug, COORDS).a / (10000000 * xenonRendererData.config.debugViewScale))), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_MOTION:
-			imageStore(img_normal_or_debug, COORDS, vec4(abs(motion * 1000 * xenonRendererData.config.debugViewScale), 1));
+			imageStore(img_normal_or_debug, COORDS, vec4(abs(imageLoad(img_motion, COORDS).rgb * 1000 * xenonRendererData.config.debugViewScale), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
 			imageStore(img_normal_or_debug, COORDS, vec4(hitSomething? HeatmapClamped(pow(ray.hitDistance / 1000 * xenonRendererData.config.debugViewScale, 0.4)) : vec3(0), 1));

@@ -3,18 +3,21 @@
 #include "lighting.inc.glsl"
 
 void main() {
+	uint rayRecursions = RAY_RECURSIONS;
+	
 	ray.hitDistance = gl_HitTEXT;
 	ray.t2 = 0;
-	ray.aimID = gl_InstanceCustomIndexEXT;
 	ray.renderableIndex = gl_InstanceID;
 	ray.geometryIndex = gl_GeometryIndexEXT;
 	ray.primitiveIndex = gl_PrimitiveID;
-	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
-	ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 	ray.ssao = 1;
 	ray.color.a = 1;
 	
-	vec3 pos = ray.localPosition;
+	if (RAY_IS_SHADOW) {
+		return;
+	}
+	
+	vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
 	vec2 e = vec2(0.0001,0);
 	vec3 normal = normalize(vec3(
 		Sdf(pos+e.xyy) - Sdf(pos-e.xyy),
@@ -35,13 +38,14 @@ void main() {
 	// Reverse gamma
 	surface.color.rgb = ReverseGamma(surface.color.rgb);
 	
+	// Aim
+	MakeAimable();
+
+	// Write Motion Vectors
+	WriteMotionVectorsAndDepth(ray.renderableIndex, gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT, gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT, ray.hitDistance, false);
+	
 	// Apply Lighting
 	ApplyDefaultLighting();
-	
-	// Store albedo and roughness (may remove this in the future)
-	if (RAY_RECURSIONS == 0) {
-		imageStore(img_primary_albedo_roughness, COORDS, vec4(surface.color.rgb, surface.roughness));
-	}
 	
 	// Debug Time
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {

@@ -5,12 +5,9 @@
 void main() {
 	ray.hitDistance = gl_HitTEXT;
 	ray.t2 = 0;
-	ray.aimID = gl_InstanceCustomIndexEXT;
 	ray.renderableIndex = gl_InstanceID;
 	ray.geometryIndex = gl_GeometryIndexEXT;
 	ray.primitiveIndex = gl_PrimitiveID;
-	ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
-	ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 	ray.ssao = 1;
 	ray.color.a = 1;
 	
@@ -18,7 +15,8 @@ void main() {
 		return;
 	}
 	
-	vec3 pos = ray.localPosition - rockPos;
+	vec3 localPos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
+	vec3 pos = localPos - rockPos;
 	float detailSize = GetDetailSize();
 	vec2 e = vec2(epsilon,0);
 	vec3 normal = normalize(vec3(
@@ -31,7 +29,7 @@ void main() {
 	const vec3 sandColor = vec3(0.5, 0.4, 0.3);
 	const vec3 rockColor = vec3(0.3);
 	surface.color = vec4(mix(sandColor, rockColor, rocky), 1);
-	surface.color.rgb *= mix(0.5, 1.0, pow(abs(FastSimplexFractal(ray.localPosition*255.658, detailOctavesTextures)) + (FastSimplexFractal(ray.localPosition*29.123, detailOctavesTextures)*0.5+0.5), 0.5));
+	surface.color.rgb *= mix(0.5, 1.0, pow(abs(FastSimplexFractal(localPos*255.658, detailOctavesTextures)) + (FastSimplexFractal(localPos*29.123, detailOctavesTextures)*0.5+0.5), 0.5));
 	surface.color.rgb *= pow(normal.y * 0.5 + 0.5, 0.25);
 	surface.normal = normal;
 	surface.metallic = 0;
@@ -46,13 +44,13 @@ void main() {
 	// Reverse gamma
 	surface.color.rgb = ReverseGamma(surface.color.rgb);
 	
+	MakeAimable();
+
+	// Write Motion Vectors
+	WriteMotionVectorsAndDepth(ray.renderableIndex, gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT, gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT, ray.hitDistance, false);
+	
 	// Apply Lighting
 	ApplyDefaultLighting();
-	
-	// Store albedo and roughness (may remove this in the future)
-	if (RAY_RECURSIONS == 0) {
-		imageStore(img_primary_albedo_roughness, COORDS, vec4(surface.color.rgb, surface.roughness));
-	}
 	
 	// Debug Time
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {

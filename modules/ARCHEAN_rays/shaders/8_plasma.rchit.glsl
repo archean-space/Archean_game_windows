@@ -54,17 +54,13 @@ void main() {
 	if (RAY_IS_GI || RAY_IS_SHADOW) {
 		ray.hitDistance = t1;
 		ray.t2 = t2;
-		ray.aimID = gl_InstanceCustomIndexEXT;
 		ray.renderableIndex = gl_InstanceID;
 		ray.geometryIndex = gl_GeometryIndexEXT;
 		ray.primitiveIndex = gl_PrimitiveID;
-		ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t1;
-		ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * t1;
 		ray.ssao = 0;
 		ray.color = vec4(0,0,0,1);
 		ray.normal = vec3(0);
-		ray.plasma.rgb = GetEmissionColor(exaustTemperature) * 0.5;
-		ray.plasma.a = 0;
+		ray.emission.rgb = GetEmissionColor(exaustTemperature) * 0.5;
 		return;
 	}
 	
@@ -79,7 +75,7 @@ void main() {
 			originalRay.color.rgb = ray.color.rgb;
 			originalRay.color.a = ray.color.a;
 		}
-		originalRay.plasma = ray.plasma;
+		originalRay.emission = ray.emission;
 		originalRay.ssao = min(ray.ssao, originalRay.ssao);
 		ray = originalRay;
 	RAY_RECURSION_POP
