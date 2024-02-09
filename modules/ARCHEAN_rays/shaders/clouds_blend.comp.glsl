@@ -10,7 +10,6 @@ void main() {
 	vec4 clouds = texture(sampler_cloud, uv);
 	vec4 color = imageLoad(img_post, compute_coord);
 	ivec2 render_coords = ivec2(uv * vec2(imageSize(img_normal_or_debug)));
-	const vec4 normalAndSsaoStrength = imageLoad(img_normal_or_debug, render_coords);
-	color.rgb = mix(color.rgb, clouds.rgb, clamp(clouds.a * normalAndSsaoStrength.a, 0, 1));
+	color.rgb = mix(color.rgb, clouds.rgb, clouds.a);
 	imageStore(img_post, compute_coord, color);
 }
