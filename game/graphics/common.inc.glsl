@@ -28,6 +28,8 @@
 #define PIPE_FLAG_BOX			(1u << 0)
 #define PIPE_FLAG_CAPSULE		(1u << 1)
 #define PIPE_FLAG_STRIPES		(1u << 2)
+#define PIPE_FLAG_CHROME		(1u << 3)
+#define PIPE_FLAG_GLOSSY		(1u << 5)
 
 // Up to 16 flags
 #define PLASMA_FLAG_AEROSPIKE	(1u << 0)
