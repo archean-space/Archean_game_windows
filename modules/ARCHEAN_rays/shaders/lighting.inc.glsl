@@ -94,7 +94,8 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	uint32_t nbLights = 0;
 	
 	while (rayQueryProceedEXT(q)) {
-		vec3 lightPosition = rayQueryGetIntersectionObjectToWorldEXT(q, false)[3].xyz; // may be broken on AMD...
+		mat4 lightTransform = mat4(rayQueryGetIntersectionObjectToWorldEXT(q, false));
+		vec3 lightPosition = lightTransform[3].xyz; // may be broken on AMD...
 		int lightID = rayQueryGetIntersectionInstanceIdEXT(q, false);
 		vec3 relativeLightPosition = lightPosition - position;
 		vec3 lightDir = normalize(relativeLightPosition);
@@ -105,7 +106,14 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			directLighting += lightSource.color * lightSource.power;
 			ray.ssao = 0;
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
-			float effectiveLightIntensity = max(0, lightSource.power / (4.0 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
+			float penombra = 1;
+			if (lightSource.angle > 0) {
+				vec3 spotlightDirection = (lightTransform * vec4(lightSource.direction, 0)).xyz;
+				float spotlightHalfAngle = lightSource.angle * 0.5;
+				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dot(-lightDir, spotlightDirection))));
+				if (penombra == 0) continue;
+			}
+			float effectiveLightIntensity = max(0, lightSource.power / (4.0 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
 			uint index = nbLights;
 			#ifdef SORT_LIGHTS
 				for (index = 0; index < nbLights; ++index) {
