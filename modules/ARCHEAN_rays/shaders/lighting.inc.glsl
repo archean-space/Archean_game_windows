@@ -202,7 +202,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 					vec3 light = lightsColor[i] * lightsPower[i];
 					vec3 diffuse = albedo * light * clamp(dot(normal, shadowRayDir), 0, 1) * (1 - metallic) * mix(0.5, 1, roughness);
 					vec3 reflectDir = reflect(-shadowRayDir, normal);
-					vec3 spec = light * pow(max(dot(-rayDirection, reflectDir), 0.0), mix(16, 4, metallic)) * mix(vec3(1), albedo, metallic);
+					vec3 spec = light * pow(max(dot(-rayDirection, reflectDir), 0.0), mix(mix(400, 16, roughness), 4, metallic)) * mix(vec3(1), albedo, metallic);
 					directLighting += colorFilter * (1 - clamp(opacity,0,1)) * mix(diffuse, (diffuse + spec) * 0.5, step(1, float(renderer.options & RENDERER_OPTION_SPECULAR_SURFACES)) * specular);
 					
 					// if (++usefulLights == 2) {

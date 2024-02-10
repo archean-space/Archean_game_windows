@@ -3,6 +3,8 @@
 #include "common.inc.glsl"
 #include "xenon/renderer/shaders/perlint.inc.glsl"
 
+#include "lighting.inc.glsl"
+
 #define WATER_IOR 1.33
 #define WATER_OPACITY 0.1
 #define WATER_TINT vec3(0.4,0.7,0.8)
@@ -57,7 +59,7 @@ float RainDrops(vec3 pos) {
 	return dot(circles, circles);
 }
 
-const float smallWavesMaxDistance = 10;
+const float smallWavesMaxDistance = 20;
 const float mediumWavesMaxDistance = 100;
 const float bigWavesMaxDistance = 500;
 const float giantWavesMaxDistance = 100000;
@@ -92,8 +94,8 @@ float WaterMap(vec3 p, float freq) {
 float WaterWaves(vec3 pos) {
 	return 0
 		// + smallWavesStrength * RainDrops(pos)*4
-		+ smallWavesStrength * Simplex(pos*5 + float(renderer.timestamp - pos.z)*2) * 0.1
-		+ mediumWavesStrength * Simplex(pos*vec3(0.5, 0.8, 0.5) + float(renderer.timestamp - pos.z)*0.5)
+		+ smallWavesStrength * SimplexFractal(pos*4 + float(renderer.timestamp - pos.z), 3) * 0.2
+		+ mediumWavesStrength * SimplexFractal(pos*vec3(0.5, 0.8, 0.5) + float(renderer.timestamp - pos.z)*0.5, 3)
 		+ bigWavesStrength * Simplex(pos*vec3(0.02, 0.06, 0.03) + float(renderer.timestamp - pos.z)*0.2) * 5
 		+ mediumWavesStrength * WaterMap(pos, 0.1) * 2
 		+ bigWavesStrength * WaterMap(pos, 0.03) * 4
@@ -175,6 +177,7 @@ void main() {
 		
 		vec3 reflection = vec3(0);
 		vec3 refraction = vec3(0);
+		vec3 lighting = vec3(0);
 		
 		if ((renderer.options & RENDERER_OPTION_WATER_WAVES) != 0 && waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance) {
 			vec3 wavesPosition = hitPoint1;
@@ -200,6 +203,8 @@ void main() {
 			}
 		RAY_RECURSION_POP
 		reflection = ray.color.rgb + ray.emission.rgb;
+		
+		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, WATER_TINT * WATER_OPACITY * 0.5, t1, 0, 0, 1) * 0.5;
 		
 		// See through water (refraction)
 		vec3 rayDirection = gl_WorldRayDirectionEXT;
@@ -231,7 +236,7 @@ void main() {
 		}
 		ray.hitDistance = gl_HitTEXT;
 		ray.t2 = WATER_MAX_LIGHT_DEPTH;
-		ray.color.rgb = reflection * fresnel * 0.5 + refraction * (1-fresnel);
+		ray.color.rgb = reflection * fresnel * 0.5 + refraction * (1-fresnel) + lighting;
 		ray.color.a = 1;
 		ray.emission.rgb = vec3(0);
 		ray.normal = surfaceNormal;
