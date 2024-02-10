@@ -107,13 +107,15 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			ray.ssao = 0;
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
+			float surfaceArea = 4 * PI;
 			if (lightSource.angle > 0) {
+				surfaceArea = 2 * lightSource.angle;
 				vec3 spotlightDirection = (lightTransform * vec4(lightSource.direction, 0)).xyz;
 				float spotlightHalfAngle = lightSource.angle * 0.5;
 				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dot(-lightDir, spotlightDirection))));
 				if (penombra == 0) continue;
 			}
-			float effectiveLightIntensity = max(0, lightSource.power / (4.0 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
+			float effectiveLightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
 			uint index = nbLights;
 			#ifdef SORT_LIGHTS
 				for (index = 0; index < nbLights; ++index) {
