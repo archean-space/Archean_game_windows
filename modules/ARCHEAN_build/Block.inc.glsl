@@ -92,24 +92,30 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			}
 		}
 		
+		// Amount of space in the box occupied by the block
+		double GetOccupancyRatio() const {
+			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
+			return type==0? 1.0:0.5;
+		}
+		
 		// for better handling of drag, lift and bouyancy
 		double GetVolumeDisplacementRatio() const {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			switch (material) {
 			case 0: // Composite
-				return 0.2 * (type==0? 1.0:0.5);
+				return 0.2 * GetOccupancyRatio();
 			case 1: // Concrete
-				return 0.25 * (type==0? 1.0:0.5);
+				return 0.25 * GetOccupancyRatio();
 			case 2: // Steel
-				return 0.01 * (type==0? 1.0:0.5);
+				return 0.01 * GetOccupancyRatio();
 			case 3: // Aluminum
-				return 0.01 * (type==0? 1.0:0.5);
+				return 0.01 * GetOccupancyRatio();
 			case 4: // Glass
-				return 0.02 * (type==0? 1.0:0.5);
+				return 0.02 * GetOccupancyRatio();
 			case 5: // Lead
-				return 1.0 * (type==0? 1.0:0.5);
+				return 1.0 * GetOccupancyRatio();
 			default:
-				return 1.00 * (type==0? 1.0:0.5);
+				return 1.00 * GetOccupancyRatio();
 			}
 		}
 		
