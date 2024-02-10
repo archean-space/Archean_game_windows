@@ -125,7 +125,7 @@ void main() {
 		// Specular/Shadows on Glass
 		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && rDotN < 0) {
 			RayPayload originalRay = ray;
-			glassSpecular += GetDirectLighting(rayOrigin, rayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 0, 0.5);
+			glassSpecular += GetDirectLighting(rayOrigin, rayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 1, 0.5);
 			ray = originalRay;
 		}
 		// Refraction on Glass

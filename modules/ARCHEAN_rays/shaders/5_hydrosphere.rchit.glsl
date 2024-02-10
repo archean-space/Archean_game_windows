@@ -204,7 +204,7 @@ void main() {
 		RAY_RECURSION_POP
 		reflection = ray.color.rgb + ray.emission.rgb;
 		
-		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, WATER_TINT * WATER_OPACITY * 0.5, t1, 0, 0, 1) * 0.5;
+		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, vec3(WATER_OPACITY*WATER_OPACITY), t1, 0, 0, 1) * 0.5;
 		
 		// See through water (refraction)
 		vec3 rayDirection = gl_WorldRayDirectionEXT;
@@ -227,7 +227,7 @@ void main() {
 					ray.hitDistance = WATER_MAX_LIGHT_DEPTH;
 					ray.color = vec4(0);
 				}
-				refraction = ray.color.rgb * WATER_TINT * (1-clamp(ray.hitDistance / WATER_MAX_LIGHT_DEPTH, 0, 1));
+				refraction = ray.color.rgb * (1-clamp(ray.hitDistance / WATER_MAX_LIGHT_DEPTH, 0, 1));
 			}
 		}
 		
@@ -314,9 +314,9 @@ void main() {
 				ray.renderableIndex = -1;
 			}
 			float falloff = pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
-			ray.color.rgb *= WATER_TINT;
+			// ray.color.rgb *= WATER_TINT;
 			ray.color.rgb *= falloff;
-			ray.emission.rgb *= WATER_TINT;
+			// ray.emission.rgb *= WATER_TINT;
 			ray.emission.rgb *= falloff;
 			
 		} else {
@@ -343,9 +343,9 @@ void main() {
 				SetHitWater();
 			} else {
 				float falloff = pow(1.0 - clamp(ray.hitDistance / maxLightDepth, 0, 1), 2);
-				ray.color.rgb *= WATER_TINT;
+				// ray.color.rgb *= WATER_TINT;
 				ray.color.rgb *= falloff;
-				ray.emission.rgb *= WATER_TINT;
+				// ray.emission.rgb *= WATER_TINT;
 				ray.emission.rgb *= falloff;
 			}
 			

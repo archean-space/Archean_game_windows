@@ -240,8 +240,8 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#define RAY_UNDERWATER_PUSH imageStore(rtPayloadImage, COORDS, imageLoad(rtPayloadImage, COORDS) + u8vec4(0,0,0,1));
 	#define RAY_UNDERWATER_POP imageStore(rtPayloadImage, COORDS, imageLoad(rtPayloadImage, COORDS) - u8vec4(0,0,0,1));
 	#define ATMOSPHERE_RAY_MIN_DISTANCE 200
-	#define WATER_MAX_LIGHT_DEPTH 128
-	#define WATER_MAX_LIGHT_DEPTH_VERTICAL 256
+	#define WATER_MAX_LIGHT_DEPTH 50
+	#define WATER_MAX_LIGHT_DEPTH_VERTICAL 100
 
 	layout(set = 1, binding = SET1_BINDING_RENDERER_DATA) uniform RendererDataBuffer { RendererData renderer; };
 	layout(set = 1, binding = SET1_BINDING_RT_PAYLOAD_IMAGE, rgba8ui) uniform uimage2D rtPayloadImage; // Recursions, Shadow, Gi, Underwater
