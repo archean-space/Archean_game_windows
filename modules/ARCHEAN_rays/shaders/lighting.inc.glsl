@@ -359,7 +359,7 @@ void ApplyDefaultLighting() {
 					RAY_GI_PUSH
 					for (int i = 0; i < renderer.ambientAtmosphereSamples; ++i) {
 						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, worldPosition, 1.0, normalize(originalRay.normal + RandomInUnitSphere(fakeGiSeed)), 10000, 0);
-						ambient += pow(ray.emission.rgb, vec3(0.5)) / renderer.ambientAtmosphereSamples * ambientFactor * renderer.baseAmbientBrightness;
+						ambient += pow(ray.emission.rgb, vec3(0.5)) / renderer.ambientAtmosphereSamples * ambientFactor;
 					}
 					RAY_GI_POP
 				RAY_RECURSION_POP
