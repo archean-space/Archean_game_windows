@@ -112,8 +112,6 @@ void main() {
 	}
 	if (skirtIndex != -1) {
 		skirtIndex = int(computeSize*computeSize + skirtIndex);
-		
-		posNorm = normalize((chunk.transform * dvec4(GetVertex(skirtIndex), 1)).xyz);
 		height = min(height, GetHeightMap(posNorm));
 		position = (chunk.inverseTransform * dvec4(posNorm * height, 1)).xyz;
 		vertices[nonuniformEXT(skirtIndex * 3 + 0)].vertex = float(position.x);
