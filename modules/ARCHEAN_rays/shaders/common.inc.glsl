@@ -309,7 +309,7 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 					renderer.aim.worldSpaceHitNormal = ray.normal;
 					renderer.aim.primitiveIndex = gl_PrimitiveID;
 					renderer.aim.worldSpacePosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-					renderer.aim.hitDistance = ray.hitDistance;
+					renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), renderer.aim.worldSpacePosition);
 					renderer.aim.color = surface.color;
 					renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * ray.normal);
 					renderer.aim.tlasInstanceIndex = gl_InstanceID;

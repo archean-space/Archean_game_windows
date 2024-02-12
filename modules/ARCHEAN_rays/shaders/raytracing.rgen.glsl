@@ -52,6 +52,7 @@ void main() {
 	if (isMiddleOfScreen) {
 		renderer.aim.aimID = 0;
 		renderer.aim.monitorIndex = 0;
+		renderer.aim.hitDistance = 1e100;
 	}
 	
 	// Warp drive

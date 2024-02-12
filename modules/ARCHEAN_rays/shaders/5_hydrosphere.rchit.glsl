@@ -172,6 +172,10 @@ void main() {
 	vec3 downDir = normalize(spherePosition);
 	float dotUp = dot(gl_WorldRayDirectionEXT, -downDir);
 	
+	// Aim
+	uint monitorIndex = renderer.aim.monitorIndex;
+	uint aimID = renderer.aim.aimID;
+	
 	if (gl_HitKindEXT == 0) {
 		// Above water
 		
@@ -202,6 +206,12 @@ void main() {
 				worldPosition += reflectDir * (ray.hitDistance + 0.01);
 			}
 		RAY_RECURSION_POP
+		// Restore Aim
+		if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
+			renderer.aim.monitorIndex = monitorIndex;
+			renderer.aim.aimID = aimID;
+			renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), hitPoint1);
+		}
 		reflection = ray.color.rgb + ray.emission.rgb;
 		
 		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, vec3(WATER_OPACITY*WATER_OPACITY), t1, 0, 0, 1) * 0.5;
@@ -285,8 +295,10 @@ void main() {
 				rayPosition += rayDirection * distanceToSurface;
 				float maxRayDistance = xenonRendererData.config.zFar;
 				if ((renderer.options & RENDERER_OPTION_WATER_TRANSPARENCY) != 0) {
+					bool shouldRestoreAim = false;
 					if (!Refract(rayDirection, surfaceNormal, 1.0 / WATER_IOR)) {
 						maxRayDistance = maxLightDepth;
+						shouldRestoreAim = true;
 					}
 					RAY_RECURSION_PUSH
 						ray.color = vec4(0);
@@ -299,6 +311,14 @@ void main() {
 							rayPosition += rayDirection * (ray.hitDistance + 0.01);
 						}
 					RAY_RECURSION_POP
+					// Restore Aim
+					if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
+						if (shouldRestoreAim) {
+							renderer.aim.monitorIndex = monitorIndex;
+							renderer.aim.aimID = aimID;
+						}
+						renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), hitPoint2);
+					}
 				}
 				if (maxRayDistance == maxLightDepth) {
 					if (ray.hitDistance == -1) {
