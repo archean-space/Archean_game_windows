@@ -95,7 +95,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	
 	while (rayQueryProceedEXT(q)) {
 		mat4 lightTransform = mat4(rayQueryGetIntersectionObjectToWorldEXT(q, false));
-		vec3 lightPosition = lightTransform[3].xyz; // may be broken on AMD...
+		vec3 lightPosition = lightTransform[3].xyz;
 		int lightID = rayQueryGetIntersectionInstanceIdEXT(q, false);
 		vec3 relativeLightPosition = lightPosition - position;
 		vec3 lightDir = normalize(relativeLightPosition);
