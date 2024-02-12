@@ -93,7 +93,7 @@ void main() {
 		primaryRayMask |= RAYTRACE_MASK_LIGHT;
 	}
 	do {
-		traceRayEXT(tlas, /*gl_RayFlagsCullBackFacingTrianglesEXT|*/gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 		float rDotN = dot(rayDirection, ray.normal);
 		if (rDotN > 0 && ray.color.a < 1.0) {
 			RayPayload originalRay = ray;
@@ -160,7 +160,7 @@ void main() {
 		glassReflectionRay.hitDistance = -1;
 		glassReflectionRay.t2 = 0;
 		WriteMotionVectorsAndDepth(glassReflectionOrigin, distance(initialRayPosition, glassReflectionOrigin), false);
-		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, glassReflectionOrigin, 0, glassReflectionDirection, xenonRendererData.config.zFar, 1);
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, glassReflectionOrigin, 0, glassReflectionDirection, xenonRendererData.config.zFar, 1);
 		color.rgb = mix(color.rgb, glassReflectionRay.color.rgb, glassReflectionStrength * step(1.0, glassReflectionRay.color.a));
 		color.rgb += glassReflectionRay.emission.rgb * glassReflectionStrength;
 	}
@@ -199,7 +199,7 @@ void main() {
 			ray.hitDistance = -1;
 			uint rayMask = RAYTRACE_MASK_TERRAIN | RAYTRACE_MASK_ENTITY | RAYTRACE_MASK_HYDROSPHERE | (hitPlasma?0:RAYTRACE_MASK_PLASMA);
 			RAY_SHADOW_PUSH
-				traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, rayMask/*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, 1000, 0/*payloadIndex*/);
+				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, rayMask/*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, 1000, 0/*payloadIndex*/);
 			RAY_SHADOW_POP
 			if (ray.hitDistance == -1 || ray.renderableIndex == -1) {
 				ray.hitDistance = 1000;
