@@ -298,10 +298,10 @@ void ApplyDefaultLighting() {
 			RAY_RECURSION_PUSH
 				float transparency = 1;
 				do {
-					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, reflectDirection, xenonRendererData.config.zFar, 0);
+					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, xenonRendererData.config.zNear, reflectDirection, xenonRendererData.config.zFar, 0);
 					ray.color.rgb *= transparency;
 					ray.emission.rgb *= transparency;
-					rayOrigin += reflectDirection * ray.hitDistance - ray.normal * max(2.0, ray.hitDistance) * EPSILON;
+					rayOrigin += reflectDirection * ray.hitDistance;
 					transparency *= 1.0 - clamp(ray.color.a, 0, 1);
 					if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
 						Refract(reflectDirection, ray.normal, ray.ior);
