@@ -79,11 +79,11 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 }
 
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular) {
-	vec3 position = worldPosition + normal;
+	vec3 position = worldPosition + normal * referenceDistance * 0.001;
 	vec3 directLighting = vec3(0);
 	
 	rayQueryEXT q;
-	rayQueryInitializeEXT(q, tlas_lights, 0, 0xff, position, referenceDistance * EPSILON, vec3(0,1,0), 0);
+	rayQueryInitializeEXT(q, tlas_lights, 0, 0xff, position, 0, vec3(0,1,0), 0);
 	
 	vec3 lightsDir[NB_LIGHTS];
 	float lightsDistance[NB_LIGHTS];
@@ -102,7 +102,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		float nDotL = dot(normal, lightDir);
 		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
 		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius - referenceDistance * EPSILON;
-		if (distanceToLightSurface < EPSILON) {
+		if (distanceToLightSurface <= 0.001) {
 			ray.emission = lightSource.color * lightSource.power;
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
