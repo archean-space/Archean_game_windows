@@ -183,7 +183,8 @@ void main() {
 		vec3 refraction = vec3(0);
 		vec3 lighting = vec3(0);
 		
-		if ((renderer.options & RENDERER_OPTION_WATER_WAVES) != 0 && waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance) {
+		bool waterWavesVisible = (renderer.options & RENDERER_OPTION_WATER_WAVES) != 0 && waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance;
+		if (waterWavesVisible) {
 			vec3 wavesPosition = hitPoint1;
 			APPLY_NORMAL_BUMP_NOISE(WaterWaves, wavesPosition, surfaceNormal, waterWavesStrength * 0.05)
 		}
@@ -192,7 +193,7 @@ void main() {
 		// Reflection on top of water surface
 		vec3 reflectDir = normalize(reflect(gl_WorldRayDirectionEXT, surfaceNormal));
 		vec3 upDir = -normalize(spherePosition);
-		while (dot(reflectDir, upDir) < 0.001) {
+		while (waterWavesVisible && dot(reflectDir, upDir) < 0.001) {
 			reflectDir = normalize(upDir * 0.01 + reflectDir);
 		}
 		uint reflectionMask = ((renderer.options & RENDERER_OPTION_WATER_REFLECTIONS) != 0)? rayMask : RAYTRACE_MASK_ATMOSPHERE;
