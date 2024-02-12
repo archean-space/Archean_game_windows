@@ -65,15 +65,10 @@ void main() {
 	}
 	
 	RAY_RECURSION_PUSH
-		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
-		if (ray.hitDistance > 0) {
-			t2 = min(t2, ray.hitDistance);
-		}
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, max(t1, xenonRendererData.config.zNear), gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
 		RayPayload originalRay = ray;
 		traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, ray.hitDistance<=0? xenonRendererData.config.zFar : ray.hitDistance, 0);
-		if (ray.hitDistance > 0) {
-			originalRay.emission.rgb += ray.emission.rgb;
-		}
+		originalRay.emission.rgb = max(originalRay.emission.rgb, ray.emission.rgb);
 		ray = originalRay;
 	RAY_RECURSION_POP
 	

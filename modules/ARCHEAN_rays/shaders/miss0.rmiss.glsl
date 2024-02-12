@@ -9,5 +9,6 @@ void main() {
 	ray.geometryIndex = -1;
 	ray.primitiveIndex = -1;
 	ray.color = vec4(0);
+	ray.normal = vec3(0);
 	ray.ior = 1.0;
 }

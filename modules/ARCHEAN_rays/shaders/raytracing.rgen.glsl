@@ -89,19 +89,19 @@ void main() {
 	vec4 color = vec4(0);
 	ray.emission = vec3(0);
 	uint primaryRayMask = RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA;
-	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_GI_LIGHTS) {
-		primaryRayMask |= RAYTRACE_MASK_LIGHT;
-	}
+	// if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_GI_LIGHTS) {
+	// 	primaryRayMask |= RAYTRACE_MASK_LIGHT;
+	// }
 	do {
 		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 		float rDotN = dot(rayDirection, ray.normal);
 		if (rDotN > 0 && ray.color.a < 1.0) {
 			RayPayload originalRay = ray;
 			float epsilon = clamp(EPSILON * ray.hitDistance, EPSILON, 0.1);
-			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance - epsilon, rayDirection, originalRay.hitDistance + epsilon, 0/*payloadIndex*/);
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance - epsilon, rayDirection, originalRay.hitDistance + epsilon, 0/*payloadIndex*/);
 			if (ray.hitDistance == -1) {
 				ray = originalRay;
-			}\
+			}
 		}
 		ray.color.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
 		ray.emission.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
