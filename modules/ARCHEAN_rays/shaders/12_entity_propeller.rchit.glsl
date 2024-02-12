@@ -10,7 +10,6 @@ void main() {
 	ray.renderableIndex = gl_InstanceID;
 	ray.geometryIndex = gl_GeometryIndexEXT;
 	ray.primitiveIndex = gl_PrimitiveID;
-	ray.ssao = 1;
 	ray.color.a = 1;
 	
 	if (RAY_IS_SHADOW) {
@@ -34,6 +33,8 @@ void main() {
 	
 	// Apply world space normal
 	ray.normal = normalize(MODEL2WORLDNORMAL * surface.normal);
+	
+	ray.ior = surface.ior;
 	
 	// Reverse gamma
 	surface.color.rgb = ReverseGamma(surface.color.rgb);

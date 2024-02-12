@@ -40,7 +40,7 @@ void main() {
 			if (surface.renderableData != 0) {
 				emissionPower = surface.emission;
 			}
-			surface.emission = emissionPower * ReverseGamma(texture(nonuniformEXT(textures[tex_emission]), surface.uv1).rgb);
+			surface.emission = vec3(0.001)/*prevent ssao*/ + emissionPower * ReverseGamma(texture(nonuniformEXT(textures[tex_emission]), surface.uv1).rgb);
 		}
 	}
 	

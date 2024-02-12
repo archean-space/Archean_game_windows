@@ -29,7 +29,7 @@ void main() {
 	float front = boundingRadius * 32;
 	{
 		rayQueryEXT rq;
-		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
+		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
 		while (rayQueryProceedEXT(rq)) {
 			uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 			if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
@@ -49,7 +49,7 @@ void main() {
 		rayOrigin += rayDir * boundingRadius * 2;
 		rayDir *= -1;
 		rayQueryEXT rq;
-		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
+		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
 		while (rayQueryProceedEXT(rq)) {
 			uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 			if (type == gl_RayQueryCandidateIntersectionAABBEXT) {

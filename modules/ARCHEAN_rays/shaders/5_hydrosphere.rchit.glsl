@@ -106,7 +106,7 @@ float WaterWaves(vec3 pos) {
 void main() {
 	uint recursions = RAY_RECURSIONS;
 	ray.t2 = 0;
-	ray.ssao = 0;
+	ray.ior = WATER_IOR;
 	ray.hitDistance = gl_HitTEXT;
 	ray.normal = vec3(0,1,0);
 	ray.color = vec4(vec3(0), 1);
@@ -138,7 +138,7 @@ void main() {
 			vec3 rayDirection = gl_WorldRayDirectionEXT;
 			RayPayload originalRay = ray;
 			RAY_RECURSION_PUSH
-				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, gl_RayTminEXT, rayDirection, t2, 0);
+				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, gl_RayTminEXT, rayDirection, t2, 0);
 			RAY_RECURSION_POP
 			if (ray.hitDistance > 0) {
 				originalRay.t2 = min(ray.hitDistance * 0.99, originalRay.t2);
@@ -149,7 +149,7 @@ void main() {
 		return;
 	}
 	
-	uint rayMask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_CLUTTER;
+	uint rayMask = RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE;
 	if (rayIsGi && rayIsUnderwater) {
 		rayMask &= ~RAYTRACE_MASK_CLUTTER;
 	}
@@ -210,7 +210,9 @@ void main() {
 		if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
 			renderer.aim.monitorIndex = monitorIndex;
 			renderer.aim.aimID = aimID;
-			renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), hitPoint1);
+			if (aimID == 0) {
+				renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), hitPoint1);
+			}
 		}
 		reflection = ray.color.rgb + ray.emission.rgb;
 		
@@ -317,7 +319,9 @@ void main() {
 							renderer.aim.monitorIndex = monitorIndex;
 							renderer.aim.aimID = aimID;
 						}
-						renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), hitPoint2);
+						if (aimID == 0) {
+							renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), hitPoint2);
+						}
 					}
 				}
 				if (maxRayDistance == maxLightDepth) {
@@ -389,6 +393,8 @@ void main() {
 		}
 		ray.color.rgb = WATER_TINT * mix(ray.color.rgb, waterLighting, pow(clamp(ray.hitDistance / maxLightDepth, 0, 1), 0.5));
 	}
+	
+	ray.ior = WATER_IOR;
 	
 	// Debug Time
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_RAYHIT_TIME) {

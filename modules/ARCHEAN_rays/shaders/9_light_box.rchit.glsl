@@ -11,7 +11,6 @@ void main() {
 	ray.geometryIndex = gl_GeometryIndexEXT;
 	ray.primitiveIndex = gl_PrimitiveID;
 	ray.t2 = t2;
-	ray.ssao = 0;
 	ray.normal = vec3(0);
 	ray.color = vec4(0);
 	ray.emission = GEOMETRY.material.emission;

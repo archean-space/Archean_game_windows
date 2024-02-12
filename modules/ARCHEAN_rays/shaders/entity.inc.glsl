@@ -8,7 +8,6 @@ void main() {
 	ray.geometryIndex = gl_GeometryIndexEXT;
 	ray.primitiveIndex = gl_PrimitiveID;
 	ray.t2 = 0;
-	ray.ssao = 1;
 	
 	ENTITY_COMPUTE_SURFACE
 	
@@ -17,7 +16,7 @@ void main() {
 	surface.metallic = GEOMETRY.material.metallic;
 	surface.roughness = GEOMETRY.material.roughness;
 	surface.emission = GEOMETRY.material.emission;
-	surface.ior = 1.45;
+	surface.ior = 1.5;
 	surface.renderableData = INSTANCE.data;
 	surface.renderableIndex = gl_InstanceID;
 	surface.geometryIndex = gl_GeometryIndexEXT;
@@ -28,8 +27,6 @@ void main() {
 	surface.geometryUv2Data = GEOMETRY.material.uv2;
 	surface.uv1 = vec2(0);
 	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
-	
-	if (dot(surface.emission,surface.emission) > 0) ray.ssao = 0; // only remove ssao if emission is coming from geometry data, not from texture (monitor, etc)
 	
 	// if (OPTION_TEXTURES) {
 		executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
@@ -48,6 +45,7 @@ void main() {
 	}
 	
 	ray.normal = normalize(MODEL2WORLDNORMAL * surface.normal);
+	ray.ior = surface.ior;
 	
 	if (RAY_IS_SHADOW) {
 		ray.color = surface.color;

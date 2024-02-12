@@ -212,7 +212,6 @@
 // 	ray.renderableIndex = gl_InstanceID;
 // 	ray.geometryIndex = gl_GeometryIndexEXT;
 // 	ray.primitiveIndex = gl_PrimitiveID;
-// 	ray.ssao = 1;
 // 	ray.t2 = t2;
 	
 // 	// Opacity

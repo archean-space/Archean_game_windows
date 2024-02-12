@@ -103,8 +103,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
 		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius - referenceDistance * EPSILON;
 		if (distanceToLightSurface <= 0.001) {
-			directLighting += lightSource.color * lightSource.power;
-			ray.ssao = 0;
+			ray.emission = lightSource.color * lightSource.power;
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
 			float surfaceArea = 4 * PI;
@@ -181,7 +180,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			// }
 			if (dot(shadowRayDir, normal) > 0) {
 				vec3 rayDir = shadowRayDir;
-				uint shadowTraceMask = RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER;
+				uint shadowTraceMask = RAYTRACE_MASK_SOLID;
 				if (rayIsUnderWater) {
 					if (j == 0) {
 						shadowTraceMask |= RAYTRACE_MASK_HYDROSPHERE;
@@ -299,14 +298,13 @@ void ApplyDefaultLighting() {
 			RAY_RECURSION_PUSH
 				float transparency = 1;
 				do {
-					traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, reflectDirection, xenonRendererData.config.zFar, 0);
+					traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, reflectDirection, xenonRendererData.config.zFar, 0);
 					ray.color.rgb *= transparency;
 					ray.emission.rgb *= transparency;
-					originalRay.ssao *= ray.ssao;
 					rayOrigin += reflectDirection * ray.hitDistance - ray.normal * max(2.0, ray.hitDistance) * EPSILON;
 					transparency *= 1.0 - clamp(ray.color.a, 0, 1);
 					if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
-						Refract(reflectDirection, ray.normal, 1.5);
+						Refract(reflectDirection, ray.normal, ray.ior);
 					}
 				} while (transparency > 0.1 && ray.hitDistance > 0);
 			RAY_RECURSION_POP
@@ -328,7 +326,7 @@ void ApplyDefaultLighting() {
 					float avgHitDistance = 0;
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
 						rayQueryEXT rq;
-						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, worldPosition, ray.hitDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
+						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, worldPosition, ray.hitDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
 						while (rayQueryProceedEXT(rq)) {
 							uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 							if (type == gl_RayQueryCandidateIntersectionAABBEXT) {

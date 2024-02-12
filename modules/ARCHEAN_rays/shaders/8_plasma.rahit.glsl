@@ -84,7 +84,7 @@ void main() {
 	}
 	
 	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
-	ray.ssao = clamp(ray.ssao - accumulatedDensity * 0.2, 0.0, 1.0);
+	ray.ior = 1.0;
 	
 	ignoreIntersectionEXT;
 }

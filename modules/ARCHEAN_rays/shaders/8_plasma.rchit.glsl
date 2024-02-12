@@ -51,13 +51,14 @@ void main() {
 	float exaustDensity = PlasmaData(AABB.data).density;
 	float exaustTemperature = PlasmaData(AABB.data).temperature;
 	
+	ray.ior = 1.0;
+	
 	if (RAY_IS_GI || RAY_IS_SHADOW) {
 		ray.hitDistance = t1;
 		ray.t2 = t2;
 		ray.renderableIndex = gl_InstanceID;
 		ray.geometryIndex = gl_GeometryIndexEXT;
 		ray.primitiveIndex = gl_PrimitiveID;
-		ray.ssao = 0;
 		ray.color = vec4(0,0,0,1);
 		ray.normal = vec3(0);
 		ray.emission.rgb = GetEmissionColor(exaustTemperature) * 0.5;
@@ -65,7 +66,7 @@ void main() {
 	}
 	
 	RAY_RECURSION_PUSH
-		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
+		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
 		if (ray.hitDistance > 0) {
 			t2 = min(t2, ray.hitDistance);
 		}
@@ -76,7 +77,6 @@ void main() {
 			originalRay.color.a = ray.color.a;
 		}
 		originalRay.emission = ray.emission;
-		originalRay.ssao = min(ray.ssao, originalRay.ssao);
 		ray = originalRay;
 	RAY_RECURSION_POP
 	
