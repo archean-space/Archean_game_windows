@@ -97,10 +97,11 @@ void main() {
 		float rDotN = dot(rayDirection, ray.normal);
 		if (rDotN > 0 && ray.color.a < 1.0) {
 			RayPayload originalRay = ray;
-			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, min(originalRay.hitDistance * 0.999, originalRay.hitDistance - EPSILON), rayDirection, max(originalRay.hitDistance * 1.001, originalRay.hitDistance + EPSILON), 0/*payloadIndex*/);
+			float epsilon = clamp(EPSILON * ray.hitDistance, EPSILON, 0.1);
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance - epsilon, rayDirection, originalRay.hitDistance + epsilon, 0/*payloadIndex*/);
 			if (ray.hitDistance == -1) {
 				ray = originalRay;
-			}
+			}\
 		}
 		ray.color.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
 		ray.emission.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
