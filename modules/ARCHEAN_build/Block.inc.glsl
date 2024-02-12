@@ -18,6 +18,9 @@ BUFFER_REFERENCE_STRUCT_READONLY(4) BlockColor {
 		uint8_t roughness : 3;
 		uint8_t metallic : 1;
 		bool IsTransparent() const { return opacity < 15; }
+		uint8_t GetAlpha() const { return uint8_t((int(opacity) + 1) * 16 - 1); }
+		uint8_t GetRoughness() const { return uint8_t(int(roughness) * 255 / 7); }
+		uint8_t GetMetallic() const { return uint8_t(int(metallic) * 255); }
 	#else
 		aligned_uint8_t a;
 		// opacity = (float(a & 0xf) + 1) / 16.0
@@ -89,24 +92,30 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			}
 		}
 		
+		// Amount of space in the box occupied by the block
+		double GetOccupancyRatio() const {
+			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
+			return type==0? 1.0:0.5;
+		}
+		
 		// for better handling of drag, lift and bouyancy
 		double GetVolumeDisplacementRatio() const {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			switch (material) {
 			case 0: // Composite
-				return 0.2 * (type==0? 1.0:0.5);
+				return 0.2 * GetOccupancyRatio();
 			case 1: // Concrete
-				return 0.25 * (type==0? 1.0:0.5);
+				return 0.25 * GetOccupancyRatio();
 			case 2: // Steel
-				return 0.01 * (type==0? 1.0:0.5);
+				return 0.01 * GetOccupancyRatio();
 			case 3: // Aluminum
-				return 0.01 * (type==0? 1.0:0.5);
+				return 0.01 * GetOccupancyRatio();
 			case 4: // Glass
-				return 0.02 * (type==0? 1.0:0.5);
+				return 0.02 * GetOccupancyRatio();
 			case 5: // Lead
-				return 1.0 * (type==0? 1.0:0.5);
+				return 1.0 * GetOccupancyRatio();
 			default:
-				return 1.00 * (type==0? 1.0:0.5);
+				return 1.00 * GetOccupancyRatio();
 			}
 		}
 		

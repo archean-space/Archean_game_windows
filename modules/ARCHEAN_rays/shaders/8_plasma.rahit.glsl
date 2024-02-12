@@ -47,12 +47,12 @@ void main() {
 		t2 = min(t2, ray.hitDistance);
 		vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * ray.hitDistance;
 		if (mask == 0) {
-			ray.color.rgb += GetEmissionColor(exaustTemperature * density(pos));
+			ray.emission.rgb += GetEmissionColor(exaustTemperature * density(pos));
 		} else {
 			vec2 uv = pos.xz / radius * 0.5 + 0.5;
 			float d = texture(textures[nonuniformEXT(mask)], uv).r;
 			if (d > 0 && d < radius*2 && pos.y < d + 0.125) {
-				ray.color.rgb += GetEmissionColor(min(exaustTemperature * 3, 2500));
+				ray.emission.rgb += GetEmissionColor(min(exaustTemperature * 3, 2500));
 			}
 		}
 	}
@@ -83,9 +83,7 @@ void main() {
 		if (ray.hitDistance > 0 && t1 + t > ray.hitDistance) break;
 	}
 	
-	ray.plasma.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
-	ray.plasma.a += accumulatedDensity;
-	ray.ssao = clamp(ray.ssao - accumulatedDensity * 0.2, 0.0, 1.0);
+	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
 	
 	ignoreIntersectionEXT;
 }

@@ -28,6 +28,8 @@
 #define PIPE_FLAG_BOX			(1u << 0)
 #define PIPE_FLAG_CAPSULE		(1u << 1)
 #define PIPE_FLAG_STRIPES		(1u << 2)
+#define PIPE_FLAG_CHROME		(1u << 3)
+#define PIPE_FLAG_GLOSSY		(1u << 5)
 
 // Up to 16 flags
 #define PLASMA_FLAG_AEROSPIKE	(1u << 0)
@@ -244,10 +246,10 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 	layout(buffer_reference, std430, buffer_reference_align = 4) buffer readonly VertexUV {float uv[];};
 	
 	vec3 ComputeSurfaceNormal(in uint64_t geometries, in uint geometryIndex, in uint primitiveID, in vec3 barycentricCoordsOrLocalPosition) {
-		GeometryData geometry = GeometryData(geometries)[geometryIndex];
+		GeometryData geometry = GeometryData(geometries)[nonuniformEXT(geometryIndex)];
 		if (uint64_t(geometry.aabbs) != 0) {
-			const vec3 aabb_min = vec3(geometry.aabbs[primitiveID].aabb[0], geometry.aabbs[primitiveID].aabb[1], geometry.aabbs[primitiveID].aabb[2]);
-			const vec3 aabb_max = vec3(geometry.aabbs[primitiveID].aabb[3], geometry.aabbs[primitiveID].aabb[4], geometry.aabbs[primitiveID].aabb[5]);
+			const vec3 aabb_min = vec3(geometry.aabbs[nonuniformEXT(primitiveID)].aabb[0], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[1], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[2]);
+			const vec3 aabb_max = vec3(geometry.aabbs[nonuniformEXT(primitiveID)].aabb[3], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[4], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[5]);
 			const float THRESHOLD = EPSILON ;// * ray.hitDistance;
 			const vec3 absMin = abs(barycentricCoordsOrLocalPosition - aabb_min.xyz);
 			const vec3 absMax = abs(barycentricCoordsOrLocalPosition - aabb_max.xyz);
@@ -263,28 +265,28 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 		uint index1 = primitiveID * 3 + 1;
 		uint index2 = primitiveID * 3 + 2;
 		if (geometry.indices16 != 0) {
-			index0 = IndexBuffer16(geometry.indices16).indices[index0];
-			index1 = IndexBuffer16(geometry.indices16).indices[index1];
-			index2 = IndexBuffer16(geometry.indices16).indices[index2];
+			index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
+			index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
+			index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
 		} else if (geometry.indices32 != 0) {
-			index0 = IndexBuffer32(geometry.indices32).indices[index0];
-			index1 = IndexBuffer32(geometry.indices32).indices[index1];
-			index2 = IndexBuffer32(geometry.indices32).indices[index2];
+			index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
+			index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
+			index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
 		}
 		vec3 normal;
 		if (geometry.normals != 0) {
 			VertexNormal vertexNormals = VertexNormal(geometry.normals);
 			normal = normalize(
-				+ vec3(vertexNormals.normals[index0*3], vertexNormals.normals[index0*3+1], vertexNormals.normals[index0*3+2]) * barycentricCoordsOrLocalPosition.x
-				+ vec3(vertexNormals.normals[index1*3], vertexNormals.normals[index1*3+1], vertexNormals.normals[index1*3+2]) * barycentricCoordsOrLocalPosition.y
-				+ vec3(vertexNormals.normals[index2*3], vertexNormals.normals[index2*3+1], vertexNormals.normals[index2*3+2]) * barycentricCoordsOrLocalPosition.z
+				+ vec3(vertexNormals.normals[nonuniformEXT(index0*3)], vertexNormals.normals[nonuniformEXT(index0*3+1)], vertexNormals.normals[nonuniformEXT(index0*3+2)]) * barycentricCoordsOrLocalPosition.x
+				+ vec3(vertexNormals.normals[nonuniformEXT(index1*3)], vertexNormals.normals[nonuniformEXT(index1*3+1)], vertexNormals.normals[nonuniformEXT(index1*3+2)]) * barycentricCoordsOrLocalPosition.y
+				+ vec3(vertexNormals.normals[nonuniformEXT(index2*3)], vertexNormals.normals[nonuniformEXT(index2*3+1)], vertexNormals.normals[nonuniformEXT(index2*3+2)]) * barycentricCoordsOrLocalPosition.z
 			);
 			
 		} else if (geometry.vertices != 0) {
 			VertexBuffer vertexBuffer = VertexBuffer(geometry.vertices);
-			vec3 v0 = vec3(vertexBuffer.vertices[index0*3], vertexBuffer.vertices[index0*3+1], vertexBuffer.vertices[index0*3+2]);
-			vec3 v1 = vec3(vertexBuffer.vertices[index1*3], vertexBuffer.vertices[index1*3+1], vertexBuffer.vertices[index1*3+2]);
-			vec3 v2 = vec3(vertexBuffer.vertices[index2*3], vertexBuffer.vertices[index2*3+1], vertexBuffer.vertices[index2*3+2]);
+			vec3 v0 = vec3(vertexBuffer.vertices[nonuniformEXT(index0*3)], vertexBuffer.vertices[nonuniformEXT(index0*3+1)], vertexBuffer.vertices[nonuniformEXT(index0*3+2)]);
+			vec3 v1 = vec3(vertexBuffer.vertices[nonuniformEXT(index1*3)], vertexBuffer.vertices[nonuniformEXT(index1*3+1)], vertexBuffer.vertices[nonuniformEXT(index1*3+2)]);
+			vec3 v2 = vec3(vertexBuffer.vertices[nonuniformEXT(index2*3)], vertexBuffer.vertices[nonuniformEXT(index2*3+1)], vertexBuffer.vertices[nonuniformEXT(index2*3+2)]);
 			normal = normalize(cross(v1 - v0, v2 - v0));
 		} else {
 			return normalize(barycentricCoordsOrLocalPosition);
@@ -295,57 +297,57 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 		return normal;
 	}
 	vec4 ComputeSurfaceColor(in uint64_t geometries, in uint geometryIndex, in uint primitiveID, in vec3 barycentricCoordsOrLocalPosition) {
-		GeometryData geometry = GeometryData(geometries)[geometryIndex];
+		GeometryData geometry = GeometryData(geometries)[nonuniformEXT(geometryIndex)];
 		if (geometry.colors_u8 != 0) {
 			VertexColorU8 vertexColors = VertexColorU8(geometry.colors_u8);
 			if (uint64_t(geometry.aabbs) != 0) {
-				return clamp(vec4(vertexColors.colors[primitiveID]) / 255.0, vec4(0), vec4(1));
+				return clamp(vec4(vertexColors.colors[nonuniformEXT(primitiveID)]) / 255.0, vec4(0), vec4(1));
 			}
 			uint index0 = primitiveID * 3;
 			uint index1 = primitiveID * 3 + 1;
 			uint index2 = primitiveID * 3 + 2;
 			if (geometry.indices16 != 0) {
-				index0 = IndexBuffer16(geometry.indices16).indices[index0];
-				index1 = IndexBuffer16(geometry.indices16).indices[index1];
-				index2 = IndexBuffer16(geometry.indices16).indices[index2];
+				index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
+				index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
+				index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
 			} else if (geometry.indices32 != 0) {
-				index0 = IndexBuffer32(geometry.indices32).indices[index0];
-				index1 = IndexBuffer32(geometry.indices32).indices[index1];
-				index2 = IndexBuffer32(geometry.indices32).indices[index2];
+				index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
+				index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
+				index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
 			}
 			return clamp(
-				+ vec4(vertexColors.colors[index0]) / 255.0 * barycentricCoordsOrLocalPosition.x
-				+ vec4(vertexColors.colors[index1]) / 255.0 * barycentricCoordsOrLocalPosition.y
-				+ vec4(vertexColors.colors[index2]) / 255.0 * barycentricCoordsOrLocalPosition.z
+				+ vec4(vertexColors.colors[nonuniformEXT(index0)]) / 255.0 * barycentricCoordsOrLocalPosition.x
+				+ vec4(vertexColors.colors[nonuniformEXT(index1)]) / 255.0 * barycentricCoordsOrLocalPosition.y
+				+ vec4(vertexColors.colors[nonuniformEXT(index2)]) / 255.0 * barycentricCoordsOrLocalPosition.z
 			, vec4(0), vec4(1));
 		} else if (geometry.colors_f32 != 0) {
 			VertexColorF32 vertexColors = VertexColorF32(geometry.colors_f32);
 			if (uint64_t(geometry.aabbs) != 0) {
-				return clamp(vertexColors.colors[primitiveID], vec4(0), vec4(1));
+				return clamp(vertexColors.colors[nonuniformEXT(primitiveID)], vec4(0), vec4(1));
 			}
 			uint index0 = primitiveID * 3;
 			uint index1 = primitiveID * 3 + 1;
 			uint index2 = primitiveID * 3 + 2;
 			if (geometry.indices16 != 0) {
-				index0 = IndexBuffer16(geometry.indices16).indices[index0];
-				index1 = IndexBuffer16(geometry.indices16).indices[index1];
-				index2 = IndexBuffer16(geometry.indices16).indices[index2];
+				index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
+				index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
+				index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
 			} else if (geometry.indices32 != 0) {
-				index0 = IndexBuffer32(geometry.indices32).indices[index0];
-				index1 = IndexBuffer32(geometry.indices32).indices[index1];
-				index2 = IndexBuffer32(geometry.indices32).indices[index2];
+				index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
+				index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
+				index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
 			}
 			return clamp(
-				+ vertexColors.colors[index0] * barycentricCoordsOrLocalPosition.x
-				+ vertexColors.colors[index1] * barycentricCoordsOrLocalPosition.y
-				+ vertexColors.colors[index2] * barycentricCoordsOrLocalPosition.z
+				+ vertexColors.colors[nonuniformEXT(index0)] * barycentricCoordsOrLocalPosition.x
+				+ vertexColors.colors[nonuniformEXT(index1)] * barycentricCoordsOrLocalPosition.y
+				+ vertexColors.colors[nonuniformEXT(index2)] * barycentricCoordsOrLocalPosition.z
 			, vec4(0), vec4(1));
 		} else {
 			return vec4(1);
 		}
 	}
 	vec2 ComputeSurfaceUV1(in uint64_t geometries, in uint geometryIndex, in uint primitiveID, in vec3 barycentricCoordsOrLocalPosition) {
-		GeometryData geometry = GeometryData(geometries)[geometryIndex];
+		GeometryData geometry = GeometryData(geometries)[nonuniformEXT(geometryIndex)];
 		if (uint64_t(geometry.aabbs) != 0) {
 			return vec2(0);
 		}
@@ -353,27 +355,27 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 		uint index1 = primitiveID * 3 + 1;
 		uint index2 = primitiveID * 3 + 2;
 		if (geometry.indices16 != 0) {
-			index0 = IndexBuffer16(geometry.indices16).indices[index0];
-			index1 = IndexBuffer16(geometry.indices16).indices[index1];
-			index2 = IndexBuffer16(geometry.indices16).indices[index2];
+			index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
+			index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
+			index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
 		} else if (geometry.indices32 != 0) {
-			index0 = IndexBuffer32(geometry.indices32).indices[index0];
-			index1 = IndexBuffer32(geometry.indices32).indices[index1];
-			index2 = IndexBuffer32(geometry.indices32).indices[index2];
+			index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
+			index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
+			index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
 		}
 		if (geometry.material.uv1 != 0) {
 			VertexUV vertexUV = VertexUV(geometry.material.uv1);
 			return (
-				+ vec2(vertexUV.uv[index0*2], vertexUV.uv[index0*2+1]) * barycentricCoordsOrLocalPosition.x
-				+ vec2(vertexUV.uv[index1*2], vertexUV.uv[index1*2+1]) * barycentricCoordsOrLocalPosition.y
-				+ vec2(vertexUV.uv[index2*2], vertexUV.uv[index2*2+1]) * barycentricCoordsOrLocalPosition.z
+				+ vec2(vertexUV.uv[nonuniformEXT(index0*2)], vertexUV.uv[nonuniformEXT(index0*2+1)]) * barycentricCoordsOrLocalPosition.x
+				+ vec2(vertexUV.uv[nonuniformEXT(index1*2)], vertexUV.uv[nonuniformEXT(index1*2+1)]) * barycentricCoordsOrLocalPosition.y
+				+ vec2(vertexUV.uv[nonuniformEXT(index2*2)], vertexUV.uv[nonuniformEXT(index2*2+1)]) * barycentricCoordsOrLocalPosition.z
 			);
 		} else {
 			return vec2(0);
 		}
 	}
 	vec2 ComputeSurfaceUV2(in uint64_t geometries, in uint geometryIndex, in uint primitiveID, in vec3 barycentricCoordsOrLocalPosition) {
-		GeometryData geometry = GeometryData(geometries)[geometryIndex];
+		GeometryData geometry = GeometryData(geometries)[nonuniformEXT(geometryIndex)];
 		if (uint64_t(geometry.aabbs) != 0) {
 			return vec2(0);
 		}
@@ -381,20 +383,20 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 		uint index1 = primitiveID * 3 + 1;
 		uint index2 = primitiveID * 3 + 2;
 		if (geometry.indices16 != 0) {
-			index0 = IndexBuffer16(geometry.indices16).indices[index0];
-			index1 = IndexBuffer16(geometry.indices16).indices[index1];
-			index2 = IndexBuffer16(geometry.indices16).indices[index2];
+			index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
+			index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
+			index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
 		} else if (geometry.indices32 != 0) {
-			index0 = IndexBuffer32(geometry.indices32).indices[index0];
-			index1 = IndexBuffer32(geometry.indices32).indices[index1];
-			index2 = IndexBuffer32(geometry.indices32).indices[index2];
+			index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
+			index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
+			index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
 		}
 		if (geometry.material.uv2 != 0) {
 			VertexUV vertexUV = VertexUV(geometry.material.uv2);
 			return (
-				+ vec2(vertexUV.uv[index0*2], vertexUV.uv[index0*2+1]) * barycentricCoordsOrLocalPosition.x
-				+ vec2(vertexUV.uv[index1*2], vertexUV.uv[index1*2+1]) * barycentricCoordsOrLocalPosition.y
-				+ vec2(vertexUV.uv[index2*2], vertexUV.uv[index2*2+1]) * barycentricCoordsOrLocalPosition.z
+				+ vec2(vertexUV.uv[nonuniformEXT(index0*2)], vertexUV.uv[nonuniformEXT(index0*2+1)]) * barycentricCoordsOrLocalPosition.x
+				+ vec2(vertexUV.uv[nonuniformEXT(index1*2)], vertexUV.uv[nonuniformEXT(index1*2+1)]) * barycentricCoordsOrLocalPosition.y
+				+ vec2(vertexUV.uv[nonuniformEXT(index2*2)], vertexUV.uv[nonuniformEXT(index2*2+1)]) * barycentricCoordsOrLocalPosition.z
 			);
 		} else {
 			return vec2(0);

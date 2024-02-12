@@ -171,8 +171,7 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 		color.rgb = ApplyGamma(color.rgb);
 	}
 
-	float Fresnel(const vec3 position, const vec3 normal, const float indexOfRefraction) {
-		vec3 incident = normalize(position);
+	float Fresnel(const vec3 incident, const vec3 normal, const float indexOfRefraction) {
 		float cosi = clamp(dot(incident, normal), -1, 1);
 		float etai;
 		float etat;
