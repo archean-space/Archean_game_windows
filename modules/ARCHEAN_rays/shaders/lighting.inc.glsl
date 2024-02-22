@@ -327,6 +327,7 @@ void ApplyDefaultLighting() {
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
 						rayQueryEXT rq;
 						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, worldPosition, ray.hitDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
+						bool hitSomething = false;
 						while (rayQueryProceedEXT(rq)) {
 							uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 							if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
@@ -341,13 +342,15 @@ void ApplyDefaultLighting() {
 								const float T2 = min(_tmax.x, min(_tmax.y, _tmax.z));
 								if (rayQueryGetRayTMinEXT(rq) <= T1 && T2 > T1) {
 									rayQueryGenerateIntersectionEXT(rq, T1);
+									hitSomething = true;
 								}
 							} else {
 								rayQueryConfirmIntersectionEXT(rq);
+								hitSomething = true;
 							}
 						}
 						float hitDistance = rayQueryGetIntersectionTEXT(rq, true);
-						avgHitDistance += hitDistance>0? hitDistance : maxAmbientDistance;
+						avgHitDistance += hitSomething? max(0, hitDistance) : maxAmbientDistance;
 					}
 					ambientFactor = pow(clamp(avgHitDistance / maxAmbientDistance / renderer.ambientOcclusionSamples, 0, 1), 2);
 				}
