@@ -68,7 +68,7 @@ void main() {
 	
 	if (surface.color.a < 1.0) {
 		ray.color = surface.color;
-		ray.emission = surface.emission;
+		ray.emission += surface.emission;
 		return;
 	}
 	

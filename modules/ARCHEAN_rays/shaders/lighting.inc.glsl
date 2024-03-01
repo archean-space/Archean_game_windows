@@ -103,7 +103,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
 		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius - referenceDistance * EPSILON;
 		if (distanceToLightSurface <= 0.001) {
-			ray.emission = lightSource.color * lightSource.power;
+			ray.emission += lightSource.color * lightSource.power;
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
 			float surfaceArea = 4 * PI;
@@ -318,7 +318,7 @@ void ApplyDefaultLighting() {
 	else if (!rayIsUnderWater) {
 		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * renderer.baseAmbientBrightness * 0.1;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
-			if (recursions <= 1) {
+			if (recursions <= 2) {
 				float ambientFactor = 1;
 				if (renderer.ambientOcclusionSamples > 0) {
 					ambient /= renderer.ambientOcclusionSamples;

@@ -242,7 +242,7 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#define RAY_UNDERWATER imageLoad(rtPayloadImage, COORDS).a
 	#define RAY_UNDERWATER_PUSH imageStore(rtPayloadImage, COORDS, imageLoad(rtPayloadImage, COORDS) + u8vec4(0,0,0,1));
 	#define RAY_UNDERWATER_POP imageStore(rtPayloadImage, COORDS, imageLoad(rtPayloadImage, COORDS) - u8vec4(0,0,0,1));
-	#define ATMOSPHERE_RAY_MIN_DISTANCE 200
+	#define ATMOSPHERE_RAY_MIN_DISTANCE 1000
 	#define WATER_MAX_LIGHT_DEPTH 100
 	#define WATER_MAX_LIGHT_DEPTH_VERTICAL 200
 

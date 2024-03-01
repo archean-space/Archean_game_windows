@@ -62,7 +62,7 @@ float RainDrops(vec3 pos) {
 const float smallWavesMaxDistance = 20;
 const float mediumWavesMaxDistance = 100;
 const float bigWavesMaxDistance = 500;
-const float giantWavesMaxDistance = 100000;
+const float giantWavesMaxDistance = 10000;
 
 float smallWavesStrength = smoothstep(smallWavesMaxDistance, 0, gl_HitTEXT);
 float mediumWavesStrength = smoothstep(mediumWavesMaxDistance, 0, gl_HitTEXT) * (1-smallWavesStrength);
@@ -130,6 +130,7 @@ void main() {
 		ray.t2 = t2;
 		ray.normal = vec3(0);
 		SetHitWater();
+		ray.color = vec4(vec3(1), 0);
 		if (gl_HitKindEXT != 0) {
 			// Underwater
 			
@@ -141,11 +142,14 @@ void main() {
 				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, gl_RayTminEXT, rayDirection, t2, 0);
 			RAY_RECURSION_POP
 			if (ray.hitDistance > 0) {
-				originalRay.t2 = min(ray.hitDistance * 0.99, originalRay.t2);
+				originalRay.color.rgb *= ray.color.rgb;
+				originalRay.color.a = min(1, originalRay.color.a + ray.color.a);
+				if (ray.color.a > 0.5) {
+					originalRay.t2 = min(ray.hitDistance * 0.99, originalRay.t2);
+				}
 			}
 			ray = originalRay;
 		}
-		ray.color = vec4(vec3(1), 0);
 		return;
 	}
 	
@@ -264,6 +268,7 @@ void main() {
 		float maxLightDepth = mix(WATER_MAX_LIGHT_DEPTH, WATER_MAX_LIGHT_DEPTH_VERTICAL, max(0, dotUp));
 		float depth = float(water.radius - length(dvec3(gl_WorldRayOriginEXT) - water.center));
 		float depthFalloff = pow(1.0 - clamp(depth / WATER_MAX_LIGHT_DEPTH_VERTICAL, 0, 1), 2);
+		vec3 colorFilter = vec3(1);
 		
 		RAY_UNDERWATER_PUSH
 		
@@ -289,6 +294,8 @@ void main() {
 						ray.color.a = 1;
 						break;
 					}
+					colorFilter *= ray.color.rgb;
+					colorFilter *= 1 - ray.color.a;
 					rayPosition += rayDirection * (ray.hitDistance + 0.01);
 				}
 			RAY_RECURSION_POP
@@ -357,6 +364,8 @@ void main() {
 						ray.color.a = 1;
 						break;
 					}
+					colorFilter *= ray.color.rgb;
+					colorFilter *= 1 - ray.color.a;
 					rayPosition += rayDirection * (ray.hitDistance + 0.01);
 				}
 			RAY_RECURSION_POP
@@ -393,6 +402,8 @@ void main() {
 			ray = originalRay;
 		}
 		ray.color.rgb = WATER_TINT * mix(ray.color.rgb, waterLighting, pow(clamp(ray.hitDistance / maxLightDepth, 0, 1), 0.5));
+		ray.emission.rgb *= colorFilter;
+		ray.color.rgb *= colorFilter;
 	}
 	
 	ray.ior = WATER_IOR;
