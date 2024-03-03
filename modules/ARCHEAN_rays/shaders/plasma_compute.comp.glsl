@@ -43,6 +43,7 @@ void main() {
 			}
 		}
 	}
+	front = max(0, front - boundingRadius * 2 / 256);
 	
 	float back = boundingRadius * 32;
 	{

@@ -87,6 +87,7 @@ void main() {
 	vec3 glassReflectionDirection;
 	float glassReflectionStrength;
 	vec4 color = vec4(0);
+	vec3 emission = vec3(0);
 	ray.emission = vec3(0);
 	uint primaryRayMask = RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA;
 	// if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_GI_LIGHTS) {
@@ -104,11 +105,11 @@ void main() {
 			}
 		}
 		ray.color.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
-		ray.emission.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
+		emission += ray.emission.rgb * clamp(transparency, 0.0, 1.0) * glassTint;
+		ray.emission.rgb = vec3(0);
 		if (ray.hitDistance == -1) {
 			break;
 		}
-		if (dot(ray.emission,ray.emission) > 0) ssao = 0;
 		ssao *= ray.color.a;
 		if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_NORMALS) {
 			break;
@@ -152,7 +153,8 @@ void main() {
 			}
 		}
 	} while (ray.color.a < 1.0 && transparency > 0.01 && ray.hitDistance > 0.0);
-	color += ray.color + vec4(ray.emission, 0) + vec4(glassSpecular, 0);
+	
+	color += ray.color + vec4(glassSpecular, 0);
 	
 	// Reflections on Glass / Glossy
 	if (glassReflection) {
@@ -165,6 +167,9 @@ void main() {
 		color.rgb = mix(color.rgb, glassReflectionRay.color.rgb, glassReflectionStrength * step(1.0, glassReflectionRay.color.a));
 		color.rgb += glassReflectionRay.emission.rgb * glassReflectionStrength;
 	}
+	
+	ssao *= clamp(1 - length(emission), 0, 1);
+	color.rgb += emission;
 	
 	color.rgb *= pow(renderer.globalLightingFactor, 4);
 	color.a = clamp(mix(1, color.a, renderer.globalLightingFactor), 0, 1);

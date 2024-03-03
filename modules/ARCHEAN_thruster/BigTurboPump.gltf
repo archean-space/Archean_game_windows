@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.6",
+		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -24,7 +24,7 @@
 			],
 			"translation":[
 				0.2782849371433258,
-				0.04631996154785156,
+				0,
 				5.1117048263549805
 			]
 		}

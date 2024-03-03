@@ -59,7 +59,7 @@ void main() {
 		ray.primitiveIndex = gl_PrimitiveID;
 		ray.color = vec4(0,0,0,1);
 		ray.normal = vec3(0);
-		ray.emission.rgb = GetEmissionColor(exaustTemperature) * 0.5;
+		ray.emission.rgb += GetEmissionColor(exaustTemperature) * 0.5;
 		ray.ior = 1.0;
 		return;
 	}

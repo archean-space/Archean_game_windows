@@ -44,6 +44,8 @@ void main() {
 		}
 	}
 	
+	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
+	
 	// Rough metal
 	if (surface.metallic > 0 && surface.roughness > 0) {
 		vec3 scale = vec3(20);
