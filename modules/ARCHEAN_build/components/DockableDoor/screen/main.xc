@@ -1,3 +1,6 @@
+var $buttonOpenRequest = 0
+var $buttonDockRequest = 0
+
 tick
 	blank(black)
 	
@@ -5,11 +8,13 @@ tick
 		write(12,2, green, "DOOR")
 		if button(4,11, white, 40, 18)
 			close()
+			$buttonOpenRequest = 0
 		write(9,16, black, "CLOSE")
 	elseif isClosed
 		write(12,2, red, "DOOR")
 		if button(4,11, white, 40, 18)
 			open()
+			$buttonOpenRequest = 1
 		write(12,16, black, "OPEN")
 	elseif isOpening
 		write(3,14, yellow, "OPENING")
@@ -22,16 +27,19 @@ tick
 		write(6,32+2, green, "DOCKED")
 		if button(4,32+11, white, 40, 18)
 			undock()
+			$buttonDockRequest = 0
 		write(6,32+16, black, "UNDOCK")
 	elseif canDock
 		write(3,32+2, green, "DOCKING")
 		if button(4,32+11, white, 40, 18)
 			undock()
+			$buttonDockRequest = 0
 		write(6,32+16, black, "DISARM")
 	else
 		write(3,32+2, red, "DOCKING")
 		if button(4,32+11, white, 40, 18)
 			dock()
+			$buttonDockRequest = 1
 		write(15,32+16, black, "ARM")
 	
 	output.0 (isOpen)
@@ -42,9 +50,10 @@ input.0 ($door:number, $dock:number)
 		if isClosed
 			open()
 	else
-		if isOpen
+		if isOpen and !$buttonOpenRequest
 			close()
 	if $dock
 		dock()
 	else
-		undock()
+		if !$buttonDockRequest
+			undock()
