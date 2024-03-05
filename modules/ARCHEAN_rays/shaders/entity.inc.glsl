@@ -28,6 +28,12 @@ void main() {
 	surface.uv1 = vec2(0);
 	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
 	
+	// Back Face: flip normal and inverse index of refraction
+	if (dot(normalize(MODEL2WORLDNORMAL * surface.normal), gl_WorldRayDirectionEXT) > 0) {
+		surface.ior = 1.0 / surface.ior;
+		surface.normal *= -1;
+	}
+	
 	// if (OPTION_TEXTURES) {
 		executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
 	// }
@@ -76,7 +82,7 @@ void main() {
 	ApplyDefaultLighting();
 	
 	// Glossy surfaces
-	if (surface.metallic == 0.0 && surface.roughness == 0.0) {
+	if (surface.metallic == 0.0 && surface.roughness == 0.0 && surface.ior > 1) {
 		ray.color.a = 2.0;
 	}
 	

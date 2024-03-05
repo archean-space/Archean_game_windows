@@ -90,13 +90,10 @@ void main() {
 	vec3 emission = vec3(0);
 	ray.emission = vec3(0);
 	uint primaryRayMask = RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA;
-	// if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_GI_LIGHTS) {
-	// 	primaryRayMask |= RAYTRACE_MASK_LIGHT;
-	// }
+	bool isFirstRay = true;
 	do {
 		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
-		float rDotN = dot(rayDirection, ray.normal);
-		if (rDotN > 0 && ray.color.a < 1.0) {
+		if (ray.ior < 1) {
 			RayPayload originalRay = ray;
 			float epsilon = clamp(EPSILON * ray.hitDistance, EPSILON, 0.1);
 			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance - epsilon, rayDirection, originalRay.hitDistance + epsilon, 0/*payloadIndex*/);
@@ -119,14 +116,17 @@ void main() {
 		glassTint *= tint;
 		rayOrigin += rayDirection * ray.hitDistance;
 		// Reflections on Glass
-		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && rDotN < 0.0) {
+		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && ray.ior > 1) {
 			glassReflection = true;
 			glassReflectionStrength = Fresnel(normalize((renderer.viewMatrix * vec4(rayOrigin, 1)).xyz), normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
 			glassReflectionOrigin = rayOrigin + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
 			glassReflectionDirection = reflect(rayDirection, ray.normal);
 		}
+		if (isFirstRay && ray.ior < 1 && ray.color.a < 1.0) {
+			ray.ior = 1.0 / ray.ior;
+		}
 		// Specular/Shadows on Glass
-		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && rDotN < 0) {
+		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && ray.ior > 1) {
 			RayPayload originalRay = ray;
 			glassSpecular += GetDirectLighting(rayOrigin, rayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 1, 0.5);
 			ray = originalRay;
@@ -134,16 +134,10 @@ void main() {
 		// Refraction on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFRACTION) != 0 && ray.color.a < 1.0) {
 			vec3 originalRayDirection = rayDirection;
-			float ior = ray.ior;
-			if (rDotN < 0) {
-				ior = 1.0 / ior;
-			} else {
-				ssao = 0;
-			}
-			rayDirection = refract(rayDirection, sign(rDotN) * -ray.normal, ior);
+			rayDirection = refract(rayDirection, ray.normal, 1.0/ray.ior);
 			if (dot(rayDirection, rayDirection) == 0.0) {
 				ssao = 0;
-				rayDirection = reflect(originalRayDirection, sign(rDotN) * -ray.normal);
+				rayDirection = reflect(originalRayDirection, ray.normal);
 				color.a += 1;
 			} else {
 				color.a += ray.color.a;
@@ -152,6 +146,7 @@ void main() {
 				}
 			}
 		}
+		isFirstRay = false;
 	} while (ray.color.a < 1.0 && transparency > 0.01 && ray.hitDistance > 0.0);
 	
 	color += ray.color + vec4(glassSpecular, 0);

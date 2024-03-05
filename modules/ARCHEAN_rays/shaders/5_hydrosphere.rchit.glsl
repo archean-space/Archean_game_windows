@@ -143,7 +143,6 @@ void main() {
 			RAY_RECURSION_POP
 			if (ray.hitDistance > 0) {
 				originalRay.color.rgb *= ray.color.rgb;
-				originalRay.color.a = min(1, originalRay.color.a + ray.color.a);
 				if (ray.color.a > 0.5) {
 					originalRay.t2 = min(ray.hitDistance * 0.99, originalRay.t2);
 				}
