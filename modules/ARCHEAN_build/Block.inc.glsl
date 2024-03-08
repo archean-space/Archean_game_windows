@@ -213,9 +213,12 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		
 	#else
 		uint32_t data;
-		// damage = float(data&0x3F)/63.0
-		// dirt = float((data>>6)&0x3)/3.0
-		// extra = float((data>>8)&0xf)/15.0
+		// _damage = float(data&0xff)/255.0
+		// material = uint32_t((data>>8)&0xff)
+		// extra = uint32_t((data>>16)&0xf)
+		// size_x = uint32_t((data>>20)&0xf)
+		// size_y = uint32_t((data>>24)&0xf)
+		// size_z = uint32_t((data>>28)&0xf)
 		uint16_t id;
 	#endif
 	
