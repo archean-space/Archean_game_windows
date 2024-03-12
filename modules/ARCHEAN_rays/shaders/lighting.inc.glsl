@@ -308,8 +308,8 @@ void ApplyDefaultLighting() {
 					}
 				} while (transparency > 0.1 && ray.hitDistance > 0);
 			RAY_RECURSION_POP
-			originalRay.color.rgb += ray.color.rgb * albedo * min(surface.metallic, 0.9);
-			originalRay.emission.rgb += ray.emission.rgb * albedo * min(surface.metallic, 0.9);
+			originalRay.color.rgb += ray.color.rgb * albedo * min(surface.metallic, 0.75);
+			originalRay.emission.rgb += ray.emission.rgb * albedo * min(surface.metallic, 0.75);
 			ray = originalRay;
 		}
 	}

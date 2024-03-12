@@ -5,7 +5,7 @@
 #include "game/graphics/common.inc.glsl"
 
 float SurfaceDetail(vec3 position) {
-	return SimplexFractal(position, 3) * 0.5 + 0.5;
+	return SimplexFractal(position, 6) * 0.5 + 0.5;
 }
 
 void main() {
@@ -40,7 +40,7 @@ void main() {
 			if (surface.renderableData != 0) {
 				emissionPower = surface.emission;
 			}
-			surface.emission = vec3(0.001)/*prevent ssao*/ + emissionPower * ReverseGamma(texture(nonuniformEXT(textures[tex_emission]), surface.uv1).rgb);
+			surface.emission = emissionPower * ReverseGamma(texture(nonuniformEXT(textures[tex_emission]), surface.uv1).rgb);
 		}
 	}
 	
@@ -48,10 +48,12 @@ void main() {
 	
 	// Rough metal
 	if (surface.metallic > 0 && surface.roughness > 0) {
-		vec3 scale = vec3(20);
-		if (abs(dot(surface.normal, vec3(1,0,0))) < 0.4) scale.x = 400;
-		else if (abs(dot(surface.normal, vec3(0,1,0))) < 0.4) scale.y = 400;
-		else if (abs(dot(surface.normal, vec3(0,0,1))) < 0.4) scale.z = 400;
-		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition * scale, surface.normal, surface.roughness * 0.01)
+		vec3 scale = vec3(8);
+		if (abs(dot(surface.normal, vec3(1,0,0))) < 0.4) scale.x = 100;
+		else if (abs(dot(surface.normal, vec3(0,1,0))) < 0.4) scale.y = 100;
+		else if (abs(dot(surface.normal, vec3(0,0,1))) < 0.4) scale.z = 100;
+		vec3 oldNormal = surface.normal;
+		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition * scale, surface.normal, surface.roughness * 0.005)
+		surface.color.rgb *= pow(dot(oldNormal, surface.normal), 100);
 	}
 }

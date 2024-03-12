@@ -16,7 +16,7 @@ void main() {
 		float weight = gaussian(float(i), sigma);
 		vec4 sampleColor = imageLoad(img_post, compute_coord + ivec2(i, 0));
 		float brightness = dot(sampleColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-		blurredColor += sampleColor * weight * smoothstep(0.94, 0.9999, brightness);
+		blurredColor += sampleColor * weight * smoothstep(0.98, 0.9999, brightness);
 		weightSum += weight;
 	}
 	blurredColor /= weightSum;

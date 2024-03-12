@@ -49,7 +49,7 @@ update
 
 	; Built-in values
 	$num_value = time ; the current time as decimal unix timestamp in seconds with microsecond precision
-	$num_value = delta_time ; the time interval between ticks in seconds
+	$num_value = delta_time ; the time interval between ticks in seconds (equivalent to 1.0 / system_frequency)
 	
 	$num_value = char_w ; the width of a character in pixels, taking into consideration the current text size
 	$num_value = char_h ; the height of a character in pixels, taking into consideration the current text size
