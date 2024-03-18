@@ -71,8 +71,8 @@ update
 	reboot() ; reboots the computer (calls the shutdown entry point and loads the bios or main program)
 	
 	; Random Generator
-	$num_value = random(0, 100) ; returns a random integer value between 0 and 100
-	$num_value = random ; returns a random float value between 0.0 and 1.0
+	$num_value = random(0, 100) ; returns a random integer value between 0 and 100 inclusively
+	$num_value = random ; returns a random float value between 0.0 and 1.0 (hitting exactly 0.0 or 1.0 is statistically improbable)
 	
 	; Color
 	var $blue = color(0, 0, 255) ; returns an RGB color given three values between 0 and 255
@@ -102,7 +102,7 @@ update
 	draw(50, 50, red, 10, 10) ; draw a 10x10 pixel red square starting (top-left) at coordinates 50,50 in the screen
 	draw(screen_w/2, screen_h/2, white) ; draw a single white pixel in the middle of the screen
 
-	set_text_size(2) ; sets text size to two times native, only valid for following writes in current tick until next set_text_size()
+	text_size(2) ; sets text size to two times native, only valid for following writes in current tick until next text_size()
 
 	if button(0, 0, gray, 100, 50) ; draw a 100x50 gray rectangle button in the top left corner of the screen. Evaluates to true if clicked.
 		if user == owner

@@ -251,16 +251,17 @@ GLSL_FUNCTION vec4 smoothCurve(vec4 x) {
 		if (uint64_t(geometry.aabbs) != 0) {
 			const vec3 aabb_min = vec3(geometry.aabbs[nonuniformEXT(primitiveID)].aabb[0], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[1], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[2]);
 			const vec3 aabb_max = vec3(geometry.aabbs[nonuniformEXT(primitiveID)].aabb[3], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[4], geometry.aabbs[nonuniformEXT(primitiveID)].aabb[5]);
-			const float THRESHOLD = EPSILON ;// * ray.hitDistance;
 			const vec3 absMin = abs(barycentricCoordsOrLocalPosition - aabb_min.xyz);
 			const vec3 absMax = abs(barycentricCoordsOrLocalPosition - aabb_max.xyz);
-				 if (absMin.x < THRESHOLD) return vec3(-1, 0, 0);
-			else if (absMin.y < THRESHOLD) return vec3( 0,-1, 0);
-			else if (absMin.z < THRESHOLD) return vec3( 0, 0,-1);
-			else if (absMax.x < THRESHOLD) return vec3( 1, 0, 0);
-			else if (absMax.y < THRESHOLD) return vec3( 0, 1, 0);
-			else if (absMax.z < THRESHOLD) return vec3( 0, 0, 1);
-			else return normalize(barycentricCoordsOrLocalPosition);
+			float smallestValue = 1e100;
+			vec3 normal;
+			if (absMin.x < smallestValue) {smallestValue = absMin.x; normal = vec3(-1, 0, 0);}
+			if (absMin.y < smallestValue) {smallestValue = absMin.y; normal = vec3( 0,-1, 0);}
+			if (absMin.z < smallestValue) {smallestValue = absMin.z; normal = vec3( 0, 0,-1);}
+			if (absMax.x < smallestValue) {smallestValue = absMax.x; normal = vec3( 1, 0, 0);}
+			if (absMax.y < smallestValue) {smallestValue = absMax.y; normal = vec3( 0, 1, 0);}
+			if (absMax.z < smallestValue) {smallestValue = absMax.z; normal = vec3( 0, 0, 1);}
+			return normal;
 		}
 		uint index0 = primitiveID * 3;
 		uint index1 = primitiveID * 3 + 1;

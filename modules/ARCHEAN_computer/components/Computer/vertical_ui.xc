@@ -29,7 +29,7 @@ click ($x:number, $y:number)
 
 ; Should call this before starting to draw UI within the 'tick' entrypoint
 function @begin()
-	set_text_size(1)
+	text_size(1)
 	@_clear()
 
 ; Should call this after finishing to draw UI within the 'tick' entrypoint
