@@ -9,41 +9,45 @@
 			"name":"Scene",
 			"nodes":[
 				0,
-				1,
-				2
+				1
 			]
 		}
 	],
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"dataport",
+			"name":"Dashboard.001",
 			"translation":[
 				0,
-				-0.0037500017788261175,
-				0.0037499989848583937
+				0,
+				0.16268804669380188
 			]
 		},
 		{
 			"mesh":1,
-			"name":"PushButton",
-			"translation":[
-				0.10000000149011612,
-				-0.003750000149011612,
-				0.023749999701976776
-			]
-		},
-		{
-			"mesh":2,
-			"name":"ToggleButton",
+			"name":"dataport",
 			"translation":[
 				0,
-				-0.003750000149011612,
-				0.023749999701976776
+				0,
+				0.4854758083820343
 			]
 		}
 	],
 	"materials":[
+		{
+			"doubleSided":true,
+			"name":"dashboard-body",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					1,
+					1,
+					1,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":0.764064371585846
+			}
+		},
 		{
 			"doubleSided":true,
 			"name":"data-connector",
@@ -57,25 +61,11 @@
 				"metallicFactor":1,
 				"roughnessFactor":1
 			}
-		},
-		{
-			"doubleSided":true,
-			"name":"metal",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					1,
-					1,
-					1,
-					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
-			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"data_adapter_data",
+			"name":"Cube.007",
 			"primitives":[
 				{
 					"attributes":{
@@ -88,7 +78,7 @@
 			]
 		},
 		{
-			"name":"Cube.006",
+			"name":"data_adapter_data",
 			"primitives":[
 				{
 					"attributes":{
@@ -99,24 +89,39 @@
 					"material":1
 				}
 			]
-		},
-		{
-			"name":"Cube",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":6,
-						"NORMAL":7
-					},
-					"indices":8,
-					"material":1
-				}
-			]
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				0.75,
+				0.5,
+				0.02500000037252903
+			],
+			"min":[
+				-0.75,
+				-0.5,
+				-0.02500000037252903
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":1,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":2,
+			"componentType":5123,
+			"count":36,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":3,
 			"componentType":5126,
 			"count":376,
 			"max":[
@@ -132,133 +137,59 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":1,
+			"bufferView":4,
 			"componentType":5126,
 			"count":376,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":2,
-			"componentType":5123,
-			"count":1020,
-			"type":"SCALAR"
-		},
-		{
-			"bufferView":3,
-			"componentType":5126,
-			"count":24,
-			"max":[
-				0.035037651658058167,
-				0.035037651658058167,
-				0.02500000037252903
-			],
-			"min":[
-				-0.035037651658058167,
-				-0.035037651658058167,
-				1.210719347000122e-08
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":4,
-			"componentType":5126,
-			"count":24,
-			"type":"VEC3"
-		},
-		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":36,
-			"type":"SCALAR"
-		},
-		{
-			"bufferView":6,
-			"componentType":5126,
-			"count":40,
-			"max":[
-				0.039380162954330444,
-				0.009609049186110497,
-				0.07826671004295349
-			],
-			"min":[
-				-0.039380162954330444,
-				-0.009609049186110497,
-				-1.877792499271891e-08
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":7,
-			"componentType":5126,
-			"count":40,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":8,
-			"componentType":5123,
-			"count":60,
+			"count":1020,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":4512,
+			"byteLength":288,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4512,
-			"byteOffset":4512,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":2040,
-			"byteOffset":9024,
-			"target":34963
-		},
-		{
-			"buffer":0,
 			"byteLength":288,
-			"byteOffset":11064,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":288,
-			"byteOffset":11352,
+			"byteOffset":288,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":72,
-			"byteOffset":11640,
+			"byteOffset":576,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":480,
-			"byteOffset":11712,
+			"byteLength":4512,
+			"byteOffset":648,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":480,
-			"byteOffset":12192,
+			"byteLength":4512,
+			"byteOffset":5160,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":120,
-			"byteOffset":12672,
+			"byteLength":2040,
+			"byteOffset":9672,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":12792,
+			"byteLength":11712,
 			"uri":"Dashboard.bin"
 		}
 	]

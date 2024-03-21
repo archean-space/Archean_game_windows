@@ -50,6 +50,7 @@ update
 	; Built-in values
 	$num_value = time ; the current time as decimal unix timestamp in seconds with microsecond precision
 	$num_value = delta_time ; the time interval between ticks in seconds (equivalent to 1.0 / system_frequency)
+	$num_value = tick ; the index of the current tick since the computer has started
 	
 	$num_value = char_w ; the width of a character in pixels, taking into consideration the current text size
 	$num_value = char_h ; the height of a character in pixels, taking into consideration the current text size
@@ -64,6 +65,9 @@ update
 	$num_value = system_frequency ; the frequency of the system clock in hertz (ticks per second)
 	$num_value = programs_count ; the number of programs currently on the virtual HDD
 	
+	$num_value = pi ; 3.14159265.....
+	$num_value = 2pi ; 3.14159265 * 2
+	
 	
 	; Built-in functions
 	var $programName = program_name(0) ; returns a program name, given an index between 0 and programs_count-1
@@ -74,10 +78,23 @@ update
 	$num_value = random(0, 100) ; returns a random integer value between 0 and 100 inclusively
 	$num_value = random ; returns a random float value between 0.0 and 1.0 (hitting exactly 0.0 or 1.0 is statistically improbable)
 	
-	; Color
-	var $blue = color(0, 0, 255) ; returns an RGB color given three values between 0 and 255
-	var $translucentRed = color(255, 0, 0, 128) ; returns an RGBA color given four values between 0 and 255
+	
+	; IO
+	
+	; input_[number|text](aliasOrIoNumber, channelIndex) ; returns the value of the input with the given alias and index
+	var $someNumber = input_number("", 0)
+	var $someText = input_text("", 0)
+	
+	; output_[number|text](aliasOrIoNumber, channelIndex, value) ; sends the given value to the output with the given alias and index
+	output_number(0, 0, $num_value) ; send a number to output with alias computer
+	output_number("computer", 0, $num_value) ; send a number to output with alias computer
+	output_text("computer", 0, "hello") ; send text hello to output with alias computer
 
+	
+	; Color
+	var $blue = color(0, 0, 255) ; returns an RGB color given three values between 0 and 255. This will always assume full opacity (as if 255 is passed in the a component).
+	var $translucentRed = color(255, 0, 0, 128) ; returns an RGBA color given four values between 0 and 255. A value of 128 in the a component will effectively be 50% opacity. 0 would mean transparent.
+	var $redComponent = color_r($translucentRed) ; is effectively the reverse of the previous function to get back the 255 value. Same can be done with color_g, color_b and color_a.
 
 	; Built-in colors
 	var $black = black
@@ -90,35 +107,46 @@ update
 	var $orange = orange
 	var $cyan = cyan
 	var $gray = gray
+	var $purple = purple
+	var $brown = brown
 	
 	
-	; Monitor rendering functions (draw on the virtual screen)
+	; Screen Rendering functions (draw on a virtual screen)
 	
 	blank($black) ; clears the screen with a given color
 
 	write(0, 0, green, "Hello") ; write a green Hello message in the top left corner of the screen
-	write(0, char_h+1, blue, "Hey") ; write a blue Hey message just one pixel under the first message
+	write(0, char_h, blue, "Hey") ; write a blue Hey message just under the first message
+	; Note that char_w and char_h return the size of one character in pixels + 1 additional pixel, to serve as a multiplier to jump lines or to count the width of a text.
 
-	draw(50, 50, red, 10, 10) ; draw a 10x10 pixel red square starting (top-left) at coordinates 50,50 in the screen
-	draw(screen_w/2, screen_h/2, white) ; draw a single white pixel in the middle of the screen
+	text_size(2) ; sets text size to two times native, only valid for following writes in the current cycle until the next call to text_size()
 
-	text_size(2) ; sets text size to two times native, only valid for following writes in current tick until next text_size()
-
-	if button(0, 0, gray, 100, 50) ; draw a 100x50 gray rectangle button in the top left corner of the screen. Evaluates to true if clicked.
+	; Draw functions take positions X and Y where 0,0 = top-left, in pixels.
+	; draw_point(x, y, color)
+	draw_point(screen_w/2, screen_h/2, white) ; draw a single white pixel in the middle of the screen
+	; draw_line(x1, y1, x2, y2, color)
+	draw_line(0, 0, screen_w, screen_h, yellow) ; draw a yellow line going from top left to bottom right of the screen
+	; draw_rect(x1, y1, x2, y2, color [, fillcolor])
+	draw_rect(50, 50, 60, 60, red) ; draw a red square starting at coordinates 50,50 inclusive through 60,60 exclusive, it will effectively have a size of 10x10.
+	; draw_triangle(x1, y1, x2, y2, x3, y3, color [, fillcolor])
+	draw_triangle(screen_w/2, 0, 0, screen_h, screen_w, screen_h, blue) ; draw a blue triangle from the top middle to the bottom corners of the screen
+	; draw_circle(x, y, radius, color [, fillcolor])
+	draw_circle(screen_w/2, screen_h/2, 50, green) ; draw a green circle with a radius of 50 pixels in the middle of the screen
+	
+	; Draw functions may also be turned into Buttons. Works with rect, triangle and circle.
+	if button_rect(0, 0, 40, 10, gray) ; draw a gray rectangle button in the top left corner of the screen. Evaluates to true if clicked.
 		if user == owner
 			print("The owner of this computer clicked the button")
 		else
 			print("The button was clicked by " & user) ; prints a message to the console (when the button was clicked, in this case)
 	; Here we also happen to use the built-ins 'user' and 'owner' which are player usernames
 	
+	var $somePixelColor = pixel(10, 10) ; get the current color of the pixel at coordinates 10,10
+	
+	; For rendering to external screens, you may define a screen object and call any of the above Screen Rendering functions.
+	; The screen() constructor takes in two arguments 0 or two arguments. If no arguments are provided, it will refer to the computer's screen, if available.
+	; The arguments are ioNumber and channelIndex.
+	var $dash = screen(0,1) ; declare a screen plugged into port 0 using the channel 1
+	$dash.draw_circle($dash.width/2, $dash.height/2, 50, green) ; draw a green circle with a radius of 50 pixels in the middle of the external screen
+	; Note that screen_w and screen_h are now width and height respectively. Everything else is the same.
 
-	; IO
-	
-	; input_[number|text](aliasOrIoNumber, channelIndex) ; returns the value of the input with the given alias and index
-	var $someNumber = input_number("", 0)
-	var $someText = input_text("", 0)
-	
-	; output_[number|text](aliasOrIoNumber, channelIndex, value) ; sends the given value to the output with the given alias and index
-	output_number(0, 0, $num_value) ; send a number to output with alias computer
-	output_number("computer", 0, $num_value) ; send a number to output with alias computer
-	output_text("computer", 0, "hello") ; send text hello to output with alias computer

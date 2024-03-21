@@ -12,6 +12,21 @@ void main() {
 		vec3 pos = (surface.localPosition - aabb_min) / aabb_size;
 		surface.uv1 = step(0.5, pos.z) * vec2(pos.x, 1 - pos.y);
 	}
+	if (geometry.vertices != 0) {
+		const vec3 aabb_min = vec3(
+			VertexBuffer(geometry.vertices).vertices[0],
+			VertexBuffer(geometry.vertices).vertices[1],
+			VertexBuffer(geometry.vertices).vertices[2]
+		);
+		const vec3 aabb_max = vec3(
+			VertexBuffer(geometry.vertices).vertices[6*3],
+			VertexBuffer(geometry.vertices).vertices[6*3+1],
+			VertexBuffer(geometry.vertices).vertices[6*3+2]
+		);
+		vec3 aabb_size = abs(aabb_max - aabb_min);
+		vec3 pos = (surface.localPosition - aabb_min) / aabb_size;
+		surface.uv1 = step(0.5, pos.z) * vec2(pos.x, 1 - pos.y);
+	}
 	if (surface.renderableData != 0) {
 		RenderableData data = RenderableData(surface.renderableData)[surface.geometryIndex];
 		surface.metallic = surface.metallic; // mix(surface.metallic, data.pbrMetallic, data.pbrMix);
@@ -19,7 +34,7 @@ void main() {
 		if (data.monitorIndex > 0) {
 			vec4 tex = texture(nonuniformEXT(textures[data.monitorIndex]), surface.uv1);
 			vec3 color = ReverseGamma(tex.rgb);
-			surface.color = vec4(color, tex.a);
+			surface.color = vec4(color, max(1-length(color), tex.a));
 		} else {
 			surface.color = surface.color; // mix(surface.color, data.color, data.colorMix);
 		}

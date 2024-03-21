@@ -5,12 +5,26 @@
 
 void main() {
 	GeometryData geometry = GeometryData(surface.geometries)[surface.geometryIndex];
-	if (uint64_t(geometry.aabbs) != 0) {
-		const vec3 aabb_min = vec3(geometry.aabbs[surface.primitiveIndex].aabb[0], geometry.aabbs[surface.primitiveIndex].aabb[1], geometry.aabbs[surface.primitiveIndex].aabb[2]);
-		const vec3 aabb_max = vec3(geometry.aabbs[surface.primitiveIndex].aabb[3], geometry.aabbs[surface.primitiveIndex].aabb[4], geometry.aabbs[surface.primitiveIndex].aabb[5]);
+	if (geometry.vertices != 0) {
+		const vec3 aabb_min = vec3(
+			VertexBuffer(geometry.vertices).vertices[0],
+			VertexBuffer(geometry.vertices).vertices[1],
+			VertexBuffer(geometry.vertices).vertices[2]
+		);
+		const vec3 aabb_max = vec3(
+			VertexBuffer(geometry.vertices).vertices[6*3],
+			VertexBuffer(geometry.vertices).vertices[6*3+1],
+			VertexBuffer(geometry.vertices).vertices[6*3+2]
+		);
 		vec3 aabb_size = abs(aabb_max - aabb_min);
 		vec3 pos = (surface.localPosition - aabb_min) / aabb_size;
-		surface.uv1 = step(0.5, pos.z) * vec2(pos.x, 1 - pos.y);
+		surface.uv1 = vec2(pos.x, 1 - pos.y);
+		if (pos.z > 0.01) {
+			surface.color = vec4(1,1,1,0);
+			surface.metallic = 0;
+			surface.roughness = 0;
+			return;
+		}
 	}
 	if (surface.renderableData != 0) {
 		RenderableData data = RenderableData(surface.renderableData)[surface.geometryIndex];

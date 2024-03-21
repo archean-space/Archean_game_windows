@@ -91,8 +91,9 @@ void main() {
 	ray.emission = vec3(0);
 	uint primaryRayMask = RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_PLASMA;
 	bool isFirstRay = true;
+	float zNear = renderer.cameraZNear;
 	do {
-		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, renderer.cameraZNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, primaryRayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, zNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 		if (ray.ior < 1) {
 			RayPayload originalRay = ray;
 			float epsilon = clamp(EPSILON * ray.hitDistance, EPSILON, 0.1);
@@ -101,6 +102,7 @@ void main() {
 				ray = originalRay;
 			}
 		}
+		zNear = 0.001;
 		ray.color.rgb *= clamp(transparency, 0.0, 1.0) * glassTint;
 		emission += ray.emission.rgb * clamp(transparency, 0.0, 1.0) * glassTint;
 		ray.emission.rgb = vec3(0);

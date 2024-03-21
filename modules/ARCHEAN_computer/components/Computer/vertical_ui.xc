@@ -39,7 +39,7 @@ function @end()
 
 ; Write text on the screen
 function @writeLine($text:text)
-	write(1,$_current_y,green, $text)
+	write(1,$_current_y,cyan, $text)
 	$_current_y += char_h + 2
 
 ; Draw a button on the screen, returns true if it was clicked
@@ -56,7 +56,7 @@ function @button($text:text):number
 	draw($btn_horizontal_padding, $_current_y, $border_color, screen_w - $btn_horizontal_padding * 2, char_h + 8)
 	draw($btn_horizontal_padding + 1, $_current_y + 1, color(1, 1, 1), screen_w - ($btn_horizontal_padding + 1) * 2, char_h + 6)
 	draw($btn_horizontal_padding + 4, $_current_y + 4, $border_color, char_h, char_h)
-	write($btn_horizontal_padding + 17, $_current_y + 4, green, $text)
+	write($btn_horizontal_padding + 17, $_current_y + 4, cyan, $text)
 	$_current_y += char_h + 9
 	$_buttons_y.append($_current_y)
 	return $is_clicked

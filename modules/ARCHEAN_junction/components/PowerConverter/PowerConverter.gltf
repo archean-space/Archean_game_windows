@@ -68,23 +68,26 @@
 			"primitives":[
 				{
 					"attributes":{
-						"POSITION":0
+						"POSITION":0,
+						"NORMAL":1
 					},
-					"indices":1,
+					"indices":2,
 					"material":0
 				},
 				{
 					"attributes":{
-						"POSITION":2
+						"POSITION":3,
+						"NORMAL":4
 					},
-					"indices":3,
+					"indices":5,
 					"material":1
 				},
 				{
 					"attributes":{
-						"POSITION":4
+						"POSITION":6,
+						"NORMAL":7
 					},
-					"indices":5,
+					"indices":8,
 					"material":2
 				}
 			]
@@ -109,12 +112,18 @@
 		},
 		{
 			"bufferView":1,
+			"componentType":5126,
+			"count":72,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":2,
 			"componentType":5123,
 			"count":132,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":2,
+			"bufferView":3,
 			"componentType":5126,
 			"count":312,
 			"max":[
@@ -130,13 +139,19 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":3,
+			"bufferView":4,
+			"componentType":5126,
+			"count":312,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
 			"componentType":5123,
 			"count":996,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":4,
+			"bufferView":6,
 			"componentType":5126,
 			"count":696,
 			"max":[
@@ -152,7 +167,13 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":5,
+			"bufferView":7,
+			"componentType":5126,
+			"count":696,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":8,
 			"componentType":5123,
 			"count":2148,
 			"type":"SCALAR"
@@ -167,38 +188,56 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":264,
+			"byteLength":864,
 			"byteOffset":864,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":264,
+			"byteOffset":1728,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":3744,
-			"byteOffset":1128,
+			"byteOffset":1992,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3744,
+			"byteOffset":5736,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1992,
-			"byteOffset":4872,
+			"byteOffset":9480,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":8352,
-			"byteOffset":6864,
+			"byteOffset":11472,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":8352,
+			"byteOffset":19824,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4296,
-			"byteOffset":15216,
+			"byteOffset":28176,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":19512,
+			"byteLength":32472,
 			"uri":"PowerConverter.bin"
 		}
 	]
