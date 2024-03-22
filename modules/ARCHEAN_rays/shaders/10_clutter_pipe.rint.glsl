@@ -15,13 +15,13 @@ void BoxIntersection() {
 		const float THRESHOLD = EPSILON;
 		const vec3 absMin = abs(localPosition - AABB_MIN.xyz);
 		const vec3 absMax = abs(localPosition - AABB_MAX.xyz);
-				if (absMin.x < THRESHOLD) attr.normal = vec3(-1, 0, 0);
-		else if (absMin.y < THRESHOLD) attr.normal = vec3( 0,-1, 0);
-		else if (absMin.z < THRESHOLD) attr.normal = vec3( 0, 0,-1);
-		else if (absMax.x < THRESHOLD) attr.normal = vec3( 1, 0, 0);
-		else if (absMax.y < THRESHOLD) attr.normal = vec3( 0, 1, 0);
-		else if (absMax.z < THRESHOLD) attr.normal = vec3( 0, 0, 1);
-		else attr.normal = normalize(localPosition);
+		float smallestValue = 1e100;
+		if (absMin.x < smallestValue) {smallestValue = absMin.x; attr.normal = vec3(-1, 0, 0);}
+		if (absMin.y < smallestValue) {smallestValue = absMin.y; attr.normal = vec3( 0,-1, 0);}
+		if (absMin.z < smallestValue) {smallestValue = absMin.z; attr.normal = vec3( 0, 0,-1);}
+		if (absMax.x < smallestValue) {smallestValue = absMax.x; attr.normal = vec3( 1, 0, 0);}
+		if (absMax.y < smallestValue) {smallestValue = absMax.y; attr.normal = vec3( 0, 1, 0);}
+		if (absMax.z < smallestValue) {smallestValue = absMax.z; attr.normal = vec3( 0, 0, 1);}
 		attr.axis = vec3(1);
 		if (T1 > gl_RayTminEXT) {
 			reportIntersectionEXT(T1, 0);

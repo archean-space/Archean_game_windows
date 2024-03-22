@@ -78,7 +78,7 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 	return pow(l,7.)*25.;
 }
 
-vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular) {
+vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular, in float specularHardness) {
 	vec3 position = worldPosition + normal * referenceDistance * 0.001;
 	vec3 directLighting = vec3(0);
 	
@@ -199,10 +199,12 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				if (ray.hitDistance == -1) {
 					// lit
 					vec3 light = lightsColor[i] * lightsPower[i];
-					vec3 diffuse = albedo * light * clamp(dot(normal, shadowRayDir), 0, 1) * (1 - metallic) * mix(0.5, 1, roughness);
-					vec3 reflectDir = reflect(-shadowRayDir, normal);
-					vec3 spec = light * pow(max(dot(-rayDirection, reflectDir), 0.0), mix(mix(400, 16, roughness), 4, metallic)) * mix(vec3(1), albedo, metallic);
-					directLighting += colorFilter * (1 - clamp(opacity,0,1)) * mix(diffuse, (diffuse + spec) * 0.5, step(1, float(renderer.options & RENDERER_OPTION_SPECULAR_SURFACES)) * specular);
+					float NdotL = clamp(dot(normal, shadowRayDir), 0, 1);
+					vec3 diffuse = albedo * NdotL * (1 - metallic) * mix(0.5, 1, roughness);
+					vec3 H = normalize(shadowRayDir - rayDirection);
+					float NdotH = clamp(dot(normal, H), 0, 1);
+					vec3 spec = pow(NdotH, specularHardness) * mix(vec3(1), albedo, metallic); // Fresnel is applied to specular from the caller
+					directLighting += colorFilter * (1 - clamp(opacity,0,1)) * light * (diffuse + spec * step(1, float(renderer.options & RENDERER_OPTION_SPECULAR_SURFACES)) * specular);
 					
 					// if (++usefulLights == 2) {
 					// 	ray = originalRay;
@@ -281,7 +283,8 @@ void ApplyDefaultLighting() {
 	vec3 directLighting = vec3(0);
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0) {
 		if (recursions < RAY_MAX_RECURSION && surface.metallic - surface.roughness < 1.0) {
-			directLighting = GetDirectLighting(worldPosition, gl_WorldRayDirectionEXT, ray.normal, albedo, gl_HitTEXT, surface.metallic, surface.roughness, surface.specular);
+			float referenceDistance = distance(worldPosition, inverse(renderer.viewMatrix)[3].xyz);
+			directLighting = GetDirectLighting(worldPosition, gl_WorldRayDirectionEXT, ray.normal, albedo, referenceDistance, surface.metallic, surface.roughness, surface.specular * mix(pow(Fresnel(gl_WorldRayDirectionEXT, ray.normal, surface.ior), 0.25), 1.0, surface.metallic), mix(mix(256, 32, surface.roughness), 8, surface.metallic));
 		}
 	}
 	ray.color = vec4(mix(directLighting * renderer.globalLightingFactor, vec3(0), clamp(surface.metallic - surface.roughness, 0, 1)), 1);

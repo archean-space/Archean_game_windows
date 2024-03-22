@@ -191,7 +191,8 @@ void main() {
 			vec3 wavesPosition = hitPoint1;
 			APPLY_NORMAL_BUMP_NOISE(WaterWaves, wavesPosition, surfaceNormal, waterWavesStrength * 0.05)
 		}
-		float fresnel = Fresnel(normalize((renderer.viewMatrix * vec4(worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * surfaceNormal), WATER_IOR);
+		// float fresnel = Fresnel(normalize((renderer.viewMatrix * vec4(worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * surfaceNormal), WATER_IOR);
+		float fresnel = Fresnel(gl_WorldRayDirectionEXT, surfaceNormal, WATER_IOR);
 		
 		// Reflection on top of water surface
 		vec3 reflectDir = normalize(reflect(gl_WorldRayDirectionEXT, surfaceNormal));
@@ -219,8 +220,9 @@ void main() {
 			}
 		}
 		reflection = ray.color.rgb + ray.emission.rgb;
+		ray.emission.rgb = vec3(0);
 		
-		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, vec3(WATER_OPACITY*WATER_OPACITY), t1, 0, 0, 1) * 0.5;
+		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, vec3(WATER_OPACITY*WATER_OPACITY), t1, 0, 0, 0, 0) * 0.25;
 		
 		// See through water (refraction)
 		vec3 rayDirection = gl_WorldRayDirectionEXT;
@@ -252,9 +254,8 @@ void main() {
 		}
 		ray.hitDistance = gl_HitTEXT;
 		ray.t2 = WATER_MAX_LIGHT_DEPTH;
-		ray.color.rgb = reflection * fresnel * 0.5 + refraction * (1-fresnel) + lighting;
+		ray.color.rgb = reflection * fresnel * 0.9 + refraction * (1-fresnel) + lighting;
 		ray.color.a = 1;
-		ray.emission.rgb = vec3(0);
 		ray.normal = surfaceNormal;
 		
 		// if (gl_HitTEXT < giantWavesMaxDistance) {
@@ -293,6 +294,7 @@ void main() {
 						ray.color.a = 1;
 						break;
 					}
+					ray.emission.rgb *= colorFilter;
 					colorFilter *= ray.color.rgb;
 					colorFilter *= 1 - ray.color.a;
 					rayPosition += rayDirection * (ray.hitDistance + 0.01);
@@ -363,6 +365,7 @@ void main() {
 						ray.color.a = 1;
 						break;
 					}
+					ray.emission.rgb *= colorFilter;
 					colorFilter *= ray.color.rgb;
 					colorFilter *= 1 - ray.color.a;
 					rayPosition += rayDirection * (ray.hitDistance + 0.01);
@@ -401,7 +404,7 @@ void main() {
 			ray = originalRay;
 		}
 		ray.color.rgb = WATER_TINT * mix(ray.color.rgb, waterLighting, pow(clamp(ray.hitDistance / maxLightDepth, 0, 1), 0.5));
-		ray.emission.rgb *= colorFilter;
+		// ray.emission.rgb *= colorFilter;
 		ray.color.rgb *= colorFilter;
 	}
 	
