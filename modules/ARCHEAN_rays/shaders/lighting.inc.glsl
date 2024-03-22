@@ -79,7 +79,7 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 }
 
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular, in float specularHardness) {
-	vec3 position = worldPosition + normal * referenceDistance * 0.0001;
+	vec3 position = worldPosition + normal * referenceDistance * 0.001;
 	vec3 directLighting = vec3(0);
 	
 	rayQueryEXT q;
