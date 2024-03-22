@@ -79,7 +79,7 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 }
 
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular, in float specularHardness) {
-	vec3 position = worldPosition + normal * referenceDistance * 0.001;
+	vec3 position = worldPosition + normal * referenceDistance * 0.0001;
 	vec3 directLighting = vec3(0);
 	
 	rayQueryEXT q;
@@ -283,7 +283,8 @@ void ApplyDefaultLighting() {
 	vec3 directLighting = vec3(0);
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0) {
 		if (recursions < RAY_MAX_RECURSION && surface.metallic - surface.roughness < 1.0) {
-			directLighting = GetDirectLighting(worldPosition, gl_WorldRayDirectionEXT, ray.normal, albedo, gl_HitTEXT, surface.metallic, surface.roughness, surface.specular * mix(pow(Fresnel(gl_WorldRayDirectionEXT, ray.normal, surface.ior), 0.25), 1.0, surface.metallic), mix(mix(256, 32, surface.roughness), 8, surface.metallic));
+			float referenceDistance = distance(worldPosition, inverse(renderer.viewMatrix)[3].xyz);
+			directLighting = GetDirectLighting(worldPosition, gl_WorldRayDirectionEXT, ray.normal, albedo, referenceDistance, surface.metallic, surface.roughness, surface.specular * mix(pow(Fresnel(gl_WorldRayDirectionEXT, ray.normal, surface.ior), 0.25), 1.0, surface.metallic), mix(mix(256, 32, surface.roughness), 8, surface.metallic));
 		}
 	}
 	ray.color = vec4(mix(directLighting * renderer.globalLightingFactor, vec3(0), clamp(surface.metallic - surface.roughness, 0, 1)), 1);
