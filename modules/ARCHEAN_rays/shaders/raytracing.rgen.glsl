@@ -120,7 +120,7 @@ void main() {
 		// Reflections on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < ATMOSPHERE_RAY_MIN_DISTANCE && ray.ior > 1) {
 			glassReflection = true;
-			glassReflectionStrength = Fresnel(normalize((renderer.viewMatrix * vec4(rayOrigin, 1)).xyz), normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
+			glassReflectionStrength = Fresnel(rayDirection, ray.normal, ray.ior) * 0.9;
 			glassReflectionOrigin = rayOrigin + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
 			glassReflectionDirection = reflect(rayDirection, ray.normal);
 		}
@@ -130,7 +130,7 @@ void main() {
 		// Specular/Shadows on Glass
 		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0 && ray.color.a < 1.0 && ray.ior > 1) {
 			RayPayload originalRay = ray;
-			glassSpecular += GetDirectLighting(rayOrigin, rayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 1, 0.5);
+			glassSpecular += GetDirectLighting(rayOrigin, rayDirection, originalRay.normal, vec3(0), originalRay.hitDistance, 0, 1, Fresnel(rayDirection, originalRay.normal, ray.ior), 32);
 			ray = originalRay;
 		}
 		// Refraction on Glass
@@ -143,7 +143,7 @@ void main() {
 				color.a += 1;
 			} else {
 				color.a += ray.color.a;
-				if (dot(initialRayDirection, originalRayDirection) > 0.707 && transparency > 0.5 && ray.color.a < 0.5) {
+				if (dot(initialRayDirection, rayDirection) > 0.707 && transparency > 0.5 && ray.color.a < 0.5) {
 					ClearMotionVectorsAndDepth();
 				}
 			}

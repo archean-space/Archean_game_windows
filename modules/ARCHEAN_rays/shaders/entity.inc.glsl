@@ -16,7 +16,7 @@ void main() {
 	surface.metallic = GEOMETRY.material.metallic;
 	surface.roughness = GEOMETRY.material.roughness;
 	surface.emission = GEOMETRY.material.emission;
-	surface.ior = 1.5;
+	surface.ior = 1.3;
 	surface.renderableData = INSTANCE.data;
 	surface.renderableIndex = gl_InstanceID;
 	surface.geometryIndex = gl_GeometryIndexEXT;
