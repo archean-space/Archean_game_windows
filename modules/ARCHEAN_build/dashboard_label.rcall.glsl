@@ -33,8 +33,7 @@ void main() {
 		surface.roughness = surface.roughness; // mix(surface.roughness, data.pbrRoughness, data.pbrMix);
 		if (data.monitorIndex > 0) {
 			vec4 tex = texture(nonuniformEXT(textures[data.monitorIndex]), surface.uv1);
-			vec3 color = ReverseGamma(tex.rgb);
-			surface.color = vec4(color, max(1-length(color), tex.a));
+			surface.color = vec4(tex.rgb, max(1-length(tex.rgb), tex.a));
 		} else {
 			surface.color = surface.color; // mix(surface.color, data.color, data.colorMix);
 		}
