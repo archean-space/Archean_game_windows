@@ -14,6 +14,11 @@ function @selectProgram($program:text)
 	load_program($program)
 
 tick
+	if processor_type == "XPU64-MINI"
+		if programs_count == 1
+			load_program(program_name(0))
+		return
+	
 	blank(black)
 	$rndload += random(1,6)
 	draw(21,81,color(100,100,100),clamp($rndload,0,159),19)

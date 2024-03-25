@@ -21,6 +21,9 @@ BUFFER_REFERENCE_STRUCT_READONLY(4) BlockColor {
 		uint8_t GetAlpha() const { return uint8_t((int(opacity) + 1) * 16 - 1); }
 		uint8_t GetRoughness() const { return uint8_t(int(roughness) * 255 / 7); }
 		uint8_t GetMetallic() const { return uint8_t(int(metallic) * 255); }
+		float GetGammaCorrectedRed(float gamma) const { return pow(float(r) / 255.0f, 1.0f/gamma); }
+		float GetGammaCorrectedGreen(float gamma) const { return pow(float(g) / 255.0f, 1.0f/gamma); }
+		float GetGammaCorrectedBlue(float gamma) const { return pow(float(b) / 255.0f, 1.0f/gamma); }
 	#else
 		aligned_uint8_t a;
 		// opacity = (float(a & 0xf) + 1) / 16.0
