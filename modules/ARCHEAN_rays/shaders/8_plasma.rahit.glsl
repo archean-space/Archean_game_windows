@@ -52,7 +52,7 @@ void main() {
 			vec2 uv = pos.xz / radius * 0.5 + 0.5;
 			float d = texture(textures[nonuniformEXT(mask)], uv).r;
 			if (d > 0 && d < radius*2 && pos.y < d + 0.125) {
-				ray.emission.rgb += GetEmissionColor(min(exaustTemperature * 3, 2500));
+				ray.emission.rgb += GetEmissionColor(min(exaustTemperature * 2, 2500));
 			}
 		}
 	}
