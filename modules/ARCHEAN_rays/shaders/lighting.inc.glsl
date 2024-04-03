@@ -164,20 +164,16 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		float opacity = 0;
 		const float MAX_SHADOW_TRANSPARENCY_RAYS = 5;
 		for (int j = 0; j < MAX_SHADOW_TRANSPARENCY_RAYS; ++j) {
+			
 			// // Soft Shadows
-			// if ((xenonRendererData.config.options & RENDER_OPTION_GROUND_TRUTH) != 0) {
-			// 	#ifdef USE_BLUE_NOISE
-			// 		vec2 rnd = GetBlueNoiseFloat2();
-			// 	#else
-			// 		vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
-			// 	#endif
-			// 	float pointRadius = lightsRadius[i] / lightsDistance[i] * rnd.x;
-			// 	float pointAngle = rnd.y * 2.0 * PI;
-			// 	vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
-			// 	vec3 lightTangent = normalize(cross(shadowRayDir, normal));
-			// 	vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
-			// 	shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
-			// }
+			// vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
+			// float pointRadius = lightsRadius[i] / lightsDistance[i] * rnd.x;
+			// float pointAngle = rnd.y * 2.0 * PI;
+			// vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
+			// vec3 lightTangent = normalize(cross(shadowRayDir, normal));
+			// vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
+			// shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
+			
 			if (dot(shadowRayDir, normal) > 0) {
 				vec3 rayDir = shadowRayDir;
 				uint shadowTraceMask = RAYTRACE_MASK_SOLID;
@@ -329,8 +325,7 @@ void ApplyDefaultLighting() {
 					float avgHitDistance = 0;
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
 						rayQueryEXT rq;
-						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, worldPosition, ray.hitDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
-						bool hitSomething = false;
+						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, worldPosition, realDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
 						while (rayQueryProceedEXT(rq)) {
 							uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 							if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
@@ -345,15 +340,13 @@ void ApplyDefaultLighting() {
 								const float T2 = min(_tmax.x, min(_tmax.y, _tmax.z));
 								if (rayQueryGetRayTMinEXT(rq) <= T1 && T2 > T1) {
 									rayQueryGenerateIntersectionEXT(rq, T1);
-									hitSomething = true;
 								}
 							} else {
 								rayQueryConfirmIntersectionEXT(rq);
-								hitSomething = true;
 							}
 						}
 						float hitDistance = rayQueryGetIntersectionTEXT(rq, true);
-						avgHitDistance += hitSomething? max(0, hitDistance) : maxAmbientDistance;
+						avgHitDistance += hitDistance>0? hitDistance : maxAmbientDistance;
 					}
 					ambientFactor = pow(clamp(avgHitDistance / maxAmbientDistance / renderer.ambientOcclusionSamples, 0, 1), 2);
 				}
