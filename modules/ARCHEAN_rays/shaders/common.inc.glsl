@@ -98,6 +98,7 @@
 		/* 11	RENDERABLE_TYPE_CLUTTER_ROCK */		RAYTRACE_MASK_COMPLEX_CLUTTER,
 		/* 12	RENDERABLE_TYPE_PROPELLER */		RAYTRACE_MASK_ENTITY,
 		/* 13	RENDERABLE_TYPE_CLUTTER_BOX */		RAYTRACE_MASK_SIMPLE_CLUTTER,
+		/* 14	RENDERABLE_TYPE_CLOUD */			RAYTRACE_MASK_PLASMA,
 	};
 #endif
 
@@ -288,6 +289,31 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 		#extension GL_EXT_ray_query : require
 		layout(set = 1, binding = SET1_BINDING_TLAS) uniform accelerationStructureEXT tlas;
 		layout(set = 1, binding = SET1_BINDING_LIGHTS_TLAS) uniform accelerationStructureEXT tlas_lights;
+		
+		float RayQueryHitT(in uint rayMask, in vec3 rayOrigin, in float minDistance, in vec3 rayDirection, in float maxDistance) {
+			rayQueryEXT rq;
+			rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, rayMask, rayOrigin, minDistance, rayDirection, maxDistance);
+			while (rayQueryProceedEXT(rq)) {
+				uint type = rayQueryGetIntersectionTypeEXT(rq, false);
+				if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
+					vec3 _rayOrigin = rayQueryGetIntersectionObjectRayOriginEXT(rq,false);
+					vec3 _rayDirection = rayQueryGetIntersectionObjectRayDirectionEXT(rq,false);
+					AabbData aabbData = renderer.renderableInstances[rayQueryGetIntersectionInstanceIdEXT(rq,false)].geometries[rayQueryGetIntersectionGeometryIndexEXT(rq,false)].aabbs[rayQueryGetIntersectionPrimitiveIndexEXT(rq,false)];
+					const vec3 _tbot = (vec3(aabbData.aabb[0], aabbData.aabb[1], aabbData.aabb[2]) - _rayOrigin) / _rayDirection;
+					const vec3 _ttop = (vec3(aabbData.aabb[3], aabbData.aabb[4], aabbData.aabb[5]) - _rayOrigin) / _rayDirection;
+					const vec3 _tmin = min(_ttop, _tbot);
+					const vec3 _tmax = max(_ttop, _tbot);
+					const float T1 = max(max(_tmin.x, max(_tmin.y, _tmin.z)), rayQueryGetRayTMinEXT(rq));
+					const float T2 = min(_tmax.x, min(_tmax.y, _tmax.z));
+					if (T2 > T1 && T1 < rayQueryGetIntersectionTEXT(rq, true)) {
+						rayQueryGenerateIntersectionEXT(rq, T1);
+					}
+				} else {
+					rayQueryConfirmIntersectionEXT(rq);
+				}
+			}
+			return rayQueryGetIntersectionTEXT(rq, true);
+		}
 	#endif
 
 	#if defined(SHADER_RGEN) || defined(SHADER_RCHIT) || defined(SHADER_RAHIT) || defined(SHADER_RINT) || defined(SHADER_RMISS)

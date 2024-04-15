@@ -24,6 +24,22 @@ void main() {
 		color.rgb = mix(color.rgb, debug.rgb, debug.a);
 	}
 	
+	// int offset_y = 400;
+	// int w = 860;
+	// int h = 380;
+	// int start_x = (compute_size.x - w) / 2;
+	// int start_y = offset_y + (1240 - h) / 2;
+	// int end_x = start_x + w;
+	// int end_y = start_y + h;
+	
+	// if (compute_coord.x > start_x && compute_coord.x < end_x && compute_coord.y > start_y && compute_coord.y < end_y) {
+	// 	color.rgb += 0.1;
+	// }
+	
+	// if (compute_coord.y < offset_y || compute_coord.y > offset_y + 1240) {
+	// 	color.rgb = vec3(0);
+	// }
+	
 	// This performs a blend like a rasterization pipeline would, to add the rendered image on top of say a background that could have been added via PostCommands
 	vec4 swapchain = imageLoad(img_swapchain, compute_coord);
 	imageStore(img_swapchain, compute_coord, vec4(swapchain.rgb * (1-color.a) + color.rgb, 1));

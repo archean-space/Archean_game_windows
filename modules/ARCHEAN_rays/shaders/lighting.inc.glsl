@@ -78,6 +78,111 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 	return pow(l,7.)*25.;
 }
 
+bool GetDirectLight(in vec3 worldPosition, out vec3 lightDirection, out float lightDistance, out vec3 lightColor, out float lightPower) {
+	lightPower = 0;
+
+	rayQueryEXT q;
+	rayQueryInitializeEXT(q, tlas_lights, 0, 0xff, worldPosition, 0, vec3(0,1,0), 0);
+	
+	vec3 lightsDir[NB_LIGHTS];
+	float lightsDistance[NB_LIGHTS];
+	vec3 lightsColor[NB_LIGHTS];
+	float lightsPower[NB_LIGHTS];
+	float lightsRadius[NB_LIGHTS];
+	uint32_t nbLights = 0;
+	
+	while (rayQueryProceedEXT(q)) {
+		mat4 lightTransform = mat4(rayQueryGetIntersectionObjectToWorldEXT(q, false));
+		vec3 lightPosition = lightTransform[3].xyz;
+		int lightID = rayQueryGetIntersectionInstanceIdEXT(q, false);
+		vec3 relativeLightPosition = lightPosition - worldPosition;
+		vec3 lightDir = normalize(relativeLightPosition);
+		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
+		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius;
+		if (distanceToLightSurface < lightSource.maxDistance) {
+			float penombra = 1;
+			float surfaceArea = 4 * PI;
+			if (lightSource.angle > 0) {
+				surfaceArea = 2 * lightSource.angle;
+				vec3 spotlightDirection = (lightTransform * vec4(lightSource.direction, 0)).xyz;
+				float spotlightHalfAngle = lightSource.angle * 0.5;
+				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dot(-lightDir, spotlightDirection))));
+				if (penombra == 0) continue;
+			}
+			float effectiveLightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
+			uint index = nbLights;
+			for (index = 0; index < nbLights; ++index) {
+				if (effectiveLightIntensity > lightsPower[index]) {
+					for (int i = min(NB_LIGHTS-1, int(nbLights)); i > int(index); --i) {
+						lightsDir[i] = lightsDir[i-1];
+						lightsDistance[i] = lightsDistance[i-1];
+						lightsColor[i] = lightsColor[i-1];
+						lightsPower[i] = lightsPower[i-1];
+						lightsRadius[i] = lightsRadius[i-1];
+					}
+					break;
+				}
+			}
+			if (index == NB_LIGHTS) continue;
+			lightsDir[index] = lightDir;
+			lightsDistance[index] = distanceToLightSurface;
+			lightsColor[index] = lightSource.color;
+			lightsPower[index] = effectiveLightIntensity;
+			lightsRadius[index] = lightSource.innerRadius;
+			if (nbLights < NB_LIGHTS) ++nbLights;
+		}
+	}
+	
+	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_DIRECT_LIGHTS) {
+		imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(float(nbLights) / float(NB_LIGHTS)), 1));
+	}
+	
+	RayPayload originalRay = ray;
+	int usefulLights = 0;
+	for (uint i = 0; i < nbLights; ++i) {
+		float shadowRayStart = 0;
+		vec3 colorFilter = vec3(1);
+		float opacity = 0;
+		const float MAX_SHADOW_TRANSPARENCY_RAYS = 5;
+		for (int j = 0; j < MAX_SHADOW_TRANSPARENCY_RAYS; ++j) {
+			RAY_RECURSION_PUSH
+				RAY_SHADOW_PUSH
+					ray.color = vec4(0);
+					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, worldPosition, shadowRayStart, lightsDir[i], lightsDistance[i] - EPSILON, 0);
+				RAY_SHADOW_POP
+			RAY_RECURSION_POP
+			if (ray.hitDistance == -1) {
+				// lit
+				float intensity = lightsPower[i] * (1 - clamp(opacity,0,1));
+				if (lightPower < intensity) {
+					lightDirection = lightsDir[i];
+					lightDistance = lightsDistance[i];
+					lightColor = lightsColor[i] * colorFilter;
+					lightPower = intensity;
+				}
+				break;
+				
+			} else {
+				if (ray.color.a == 1) {
+					opacity = 1;
+					break;
+				}
+				
+				colorFilter *= ray.color.rgb;
+				
+				float transparency = 1.0 - min(1, opacity);
+				transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
+				opacity = 1.0 - transparency;
+				
+				shadowRayStart = max(ray.hitDistance, ray.t2) * 1.0001;
+			}
+			if (opacity > 0.99) break;
+		}
+	}
+	ray = originalRay;
+	return lightPower > 0;
+}
+
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular, in float specularHardness) {
 	vec3 position = worldPosition + normal * referenceDistance * 0.001;
 	vec3 directLighting = vec3(0);
@@ -324,29 +429,7 @@ void ApplyDefaultLighting() {
 					const float maxAmbientDistance = renderer.ambientOcclusionSamples * 4;
 					float avgHitDistance = 0;
 					for (int i = 0; i < renderer.ambientOcclusionSamples; ++i) {
-						rayQueryEXT rq;
-						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, worldPosition, realDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
-						while (rayQueryProceedEXT(rq)) {
-							uint type = rayQueryGetIntersectionTypeEXT(rq, false);
-							if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
-								vec3 _rayOrigin = rayQueryGetIntersectionObjectRayOriginEXT(rq,false);
-								vec3 _rayDirection = rayQueryGetIntersectionObjectRayDirectionEXT(rq,false);
-								AabbData aabbData = renderer.renderableInstances[rayQueryGetIntersectionInstanceIdEXT(rq,false)].geometries[rayQueryGetIntersectionGeometryIndexEXT(rq,false)].aabbs[rayQueryGetIntersectionPrimitiveIndexEXT(rq,false)];
-								const vec3 _tbot = (vec3(aabbData.aabb[0], aabbData.aabb[1], aabbData.aabb[2]) - _rayOrigin) / _rayDirection;
-								const vec3 _ttop = (vec3(aabbData.aabb[3], aabbData.aabb[4], aabbData.aabb[5]) - _rayOrigin) / _rayDirection;
-								const vec3 _tmin = min(_ttop, _tbot);
-								const vec3 _tmax = max(_ttop, _tbot);
-								const float T1 = max(_tmin.x, max(_tmin.y, _tmin.z));
-								const float T2 = min(_tmax.x, min(_tmax.y, _tmax.z));
-								if (rayQueryGetRayTMinEXT(rq) <= T1 && T2 > T1) {
-									rayQueryGenerateIntersectionEXT(rq, T1);
-								}
-							} else {
-								rayQueryConfirmIntersectionEXT(rq);
-							}
-						}
-						float hitDistance = rayQueryGetIntersectionTEXT(rq, true);
-						avgHitDistance += hitDistance>0? hitDistance : maxAmbientDistance;
+						avgHitDistance += RayQueryHitT(RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, worldPosition, realDistance * 0.001, normalize(ray.normal + RandomInUnitSphere(seed)), maxAmbientDistance);
 					}
 					ambientFactor = pow(clamp(avgHitDistance / maxAmbientDistance / renderer.ambientOcclusionSamples, 0, 1), 2);
 				}
