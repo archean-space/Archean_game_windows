@@ -120,6 +120,20 @@
 		},
 		{
 			"doubleSided":true,
+			"name":"lv-connector",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.5,
+					0,
+					0,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":1
+			}
+		},
+		{
+			"doubleSided":true,
 			"name":"hdd",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
@@ -184,6 +198,14 @@
 					},
 					"indices":17,
 					"material":5
+				},
+				{
+					"attributes":{
+						"POSITION":18,
+						"NORMAL":19
+					},
+					"indices":20,
+					"material":6
 				}
 			]
 		},
@@ -192,11 +214,11 @@
 			"primitives":[
 				{
 					"attributes":{
-						"POSITION":18,
-						"NORMAL":19
+						"POSITION":21,
+						"NORMAL":22
 					},
-					"indices":20,
-					"material":6
+					"indices":23,
+					"material":7
 				}
 			]
 		}
@@ -373,6 +395,34 @@
 		{
 			"bufferView":18,
 			"componentType":5126,
+			"count":312,
+			"max":[
+				0.030625849962234497,
+				0.2703803479671478,
+				0.0931258499622345
+			],
+			"min":[
+				-0.030625849962234497,
+				0.24999992549419403,
+				0.0318741500377655
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":19,
+			"componentType":5126,
+			"count":312,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":20,
+			"componentType":5123,
+			"count":996,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":21,
+			"componentType":5126,
 			"count":160,
 			"max":[
 				0.10907359421253204,
@@ -387,13 +437,13 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":19,
+			"bufferView":22,
 			"componentType":5126,
 			"count":160,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":20,
+			"bufferView":23,
 			"componentType":5123,
 			"count":276,
 			"type":"SCALAR"
@@ -510,26 +560,44 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":1920,
+			"byteLength":3744,
 			"byteOffset":287076,
 			"target":34962
 		},
 		{
 			"buffer":0,
+			"byteLength":3744,
+			"byteOffset":290820,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1992,
+			"byteOffset":294564,
+			"target":34963
+		},
+		{
+			"buffer":0,
 			"byteLength":1920,
-			"byteOffset":288996,
+			"byteOffset":296556,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1920,
+			"byteOffset":298476,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":552,
-			"byteOffset":290916,
+			"byteOffset":300396,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":291468,
+			"byteLength":300948,
 			"uri":"MiniComputer.bin"
 		}
 	]

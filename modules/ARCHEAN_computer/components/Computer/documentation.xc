@@ -138,8 +138,8 @@ update
 		if user == owner
 			print("The owner of this computer clicked the button")
 		else
-			print("The button was clicked by " & user) ; prints a message to the console (when the button was clicked, in this case)
-	; Here we also happen to use the built-ins 'user' and 'owner' which are player usernames
+			print("The button was clicked by " & username) ; prints a message to the console (when the button was clicked, in this case)
+	; Here we also happen to use the built-ins 'user' and 'owner' which are player IDs formatted as text.
 	
 	var $somePixelColor = pixel(10, 10) ; get the current color of the pixel at coordinates 10,10
 	
