@@ -43,7 +43,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 	#ifdef __cplusplus
 		// 4 bytes (32 bits)
 		/*UNUSED*/uint32_t _damage : 8; // 256 states
-		/*UNUSED*/uint32_t material : 8; // 256 alloys
+		uint32_t material : 8; // 256 alloys
 		uint32_t extra : 4; // 16 states
 		uint32_t size_x : 4; // from 0.25 to 4.0 meter
 		uint32_t size_y : 4;
@@ -139,6 +139,16 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			default:
 				return 0.2;
 			}
+		}
+		
+		bool IsMetallic() const {
+			switch (material) {
+			case 2: // Steel
+			case 3: // Aluminum
+			case 5: // Lead
+				return true;
+			}
+			return false;
 		}
 		
 		void SetOccupancy(const glm::ivec3& a, const glm::ivec3& b) {
