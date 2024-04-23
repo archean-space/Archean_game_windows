@@ -4,6 +4,10 @@ layout(local_size_x = CLUTTER_COMPUTE_SIZE) in;
 
 void main() {
 	uint index = gl_GlobalInvocationID.x;
+	
+	AabbData rock = aabbData[nonuniformEXT(index)];
+	if (rock.data != 0) return;
+	
 	uint clutterSeed = InitRandomSeed(uint(clutterData), index);
 
 	double barycentricVertical = double(RandomFloat(clutterSeed));
@@ -43,7 +47,6 @@ void main() {
 	dvec3 posOnPlanet = posNorm * altitude;
 	vec3 rockPos = vec4(chunk.inverseTransform * dvec4(posOnPlanet, 1)).xyz;
 	
-	AabbData rock = aabbData[nonuniformEXT(index)];
 	rock.aabb[0] = rockPos.x - rockSize.x;
 	rock.aabb[1] = rockPos.y - rockSize.y;
 	rock.aabb[2] = rockPos.z - rockSize.z;
