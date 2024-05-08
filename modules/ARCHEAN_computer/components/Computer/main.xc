@@ -85,7 +85,7 @@ tick
 							return
 						draw(11,101+($index*14)+$scroll,color(10,10,10),158,11)
 						draw(15,103+($index*14)+$scroll,color(110,255,255),7,7)
-						if $name.size >= 20
+						if size($name) >= 20
 							write(25,103+($index*14)+$scroll,white, text("{}...", substring($name,0,20)))
 						else
 							write(25,103+($index*14)+$scroll,white, $name)
