@@ -294,9 +294,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				RAY_RECURSION_PUSH
 					RAY_SHADOW_PUSH
 						ray.color = vec4(0);
-						ray.t2 = lightsDistance[i] - EPSILON;
-						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, shadowTraceMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, position, shadowRayStart, rayDir, ray.t2, 0);
-						ray.t2 = 0;
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, shadowTraceMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, position, shadowRayStart, rayDir, lightsDistance[i] - EPSILON, 0);
 					RAY_SHADOW_POP
 				RAY_RECURSION_POP
 				if (ray.hitDistance == -1) {

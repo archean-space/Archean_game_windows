@@ -80,25 +80,16 @@ class fixed_map {
 	size_t nb_elements;
 	element elements[N];
 public:
-	class const_iterator {
+	class iterator {
 		const element* ptr;
 	public:
-		const_iterator(const element* ptr_) : ptr(ptr_) {}
-		const_iterator operator++() {++ptr; return *this;}
-		bool operator!=(const const_iterator& other) const {return ptr != other.ptr;}
-		const element& operator*() const {return *ptr;}
-	};
-	class iterator {
-		element* ptr;
-	public:
-		iterator(element* ptr_) : ptr(ptr_) {}
+		iterator(const element* ptr_) : ptr(ptr_) {}
 		iterator operator++() {++ptr; return *this;}
 		bool operator!=(const iterator& other) const {return ptr != other.ptr;}
-		element& operator*() {return *ptr;}
+		const element& operator*() const {return *ptr;}
 	};
-	fixed_map() : nb_elements(0) {}
 	template<typename TKK>
-	fixed_map(const std::unordered_map<TKK, TV>& in_map) : nb_elements(0) {
+	fixed_map(const std::unordered_map<TKK, TV>& in_map = {}) : nb_elements(0) {
 		for (const auto&[key,value] : in_map) {
 			assert(nb_elements < N);
 			if constexpr (std::is_same_v<TKK, TK>) {
@@ -116,10 +107,8 @@ public:
 			}
 		}
 	}
-	const const_iterator begin() const {return const_iterator{elements};}
-	iterator begin() {return iterator{elements};}
-	const const_iterator end() const {return const_iterator{elements + nb_elements};}
-	iterator end() {return iterator{elements + nb_elements};}
+	iterator begin() const {return iterator{elements};}
+	const iterator end() const {return iterator{elements + nb_elements};}
 	TV operator[] (TK key) const {
 		for (const auto&[k,v] : *this) {
 			if constexpr (std::is_same_v<TK, const char*>) {
@@ -129,17 +118,6 @@ public:
 			}
 		}
 		return {};
-	}
-	TV& operator[] (TK key) {
-		for (auto&[k,v] : *this) {
-			if constexpr (std::is_same_v<TK, const char*>) {
-				if (strcmp(key, k) == 0) return v;
-			} else {
-				if (key == k) return v;
-			}
-		}
-		assert(nb_elements < N);
-		return (elements[nb_elements++] = element{.key = key, .value = {}}).value;
 	}
 };
 
@@ -160,17 +138,10 @@ struct GetTerrainHeightMap_PARAMS {
 	double out_height;
 };
 
-struct GetTerrainComposition_PARAMS {
-	dvec3 in_normalizedPos;
-	uint64_t in_index;
-	uint64_t in_seed;
-	fixed_map<const char*, float, 16> out_composition;
-};
 
 ARCHEAN_PLANETERRAIN_DEFINE(
 	MakeTerrain
 	,GetTerrainHeightMap
-	,GetTerrainComposition
 )
 
 

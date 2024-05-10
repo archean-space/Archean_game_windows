@@ -25,8 +25,5 @@ void main() {
 	} else if ((flags & PIPE_FLAG_GLOSSY) != 0) {
 		surface.metallic = 0;
 		surface.roughness = 0;
-	} else if ((flags & PIPE_FLAG_METAL) != 0) {
-		surface.metallic = 1;
-		surface.roughness = 1;
 	}
 }
