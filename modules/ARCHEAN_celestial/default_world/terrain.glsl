@@ -29,6 +29,61 @@ dvec3 GetMainFeaturePosition() {
 	return normalize(cross(dvec3(0,1,0), dvec3(1.2083421,0.2668722,0.631745)));
 }
 
+float GetHeightMapRatioApprox(dvec3 normalizedPos) {
+	u64vec3 pos = u64vec3(normalizedPos * config.baseRadiusMillimeters + 10000000000.0); // this supports planets with a maximum radius of 10'000 km and ground precision of 1 cm
+	
+	uint64_t variation = uint64_t(config.heightVariationMillimeters);
+	double variationf = double(variation);
+	
+	const uint64_t warpMaximum = 250 KM;
+	const uint64_t warpStride = 500 KM;
+	const uint warpOctaves = 4;
+	const uint64_t continentStride = uint64_t(config.continent_size) KM;
+	const double volcanoRadius = 70 KM;
+	const double volcanoHoleRadius = 2.5 KM;
+	
+	u64vec3 warp = u64vec3(perlint64(pos + config.seed + uint64_t(114546495), warpStride, warpMaximum, warpOctaves), perlint64(pos + uint64_t(15165156), warpStride, warpMaximum, warpOctaves), perlint64(pos - uint64_t(22897178), warpStride, warpMaximum, warpOctaves));
+	u64vec3 volcanoWarp = u64vec3(perlint64(pos, warpStride/100, warpMaximum/200, warpOctaves), perlint64(pos + uint64_t(15165156), warpStride/100, warpMaximum/200, warpOctaves), perlint64(pos - uint64_t(22897178), warpStride/100, warpMaximum/200, warpOctaves));
+	
+	dvec3 arbitraryPointOnEquator = GetMainFeaturePosition();
+	double continentsMax = clamp(dot(normalizedPos, arbitraryPointOnEquator), 0.0, 1.0);
+	continentsMax = continentsMax*continentsMax*continentsMax*continentsMax*continentsMax*continentsMax;
+	double continentsMed = continentsMax * (slerp(perlint64f(pos + config.seed + uint64_t(1191658432) + warp, continentStride/2, variation)));
+	double continentsMin = continentsMed * (slerp(perlint64f(pos + config.seed + uint64_t(1426576949) + warp, continentStride/4, variation)));
+	double continents = smoothCurve(slerp(slerp(slerp((mix(mix(continentsMin, continentsMed, smoothstep(0.25, 0.5, double(config.continent_ratio))), mix(continentsMax, 0.7, smoothstep(0.5, 1.0, double(config.continent_ratio))), smoothstep(0.5, 1.0, double(config.continent_ratio))))))));
+	double volcanoIsland = clamp(max(0.0, dot(normalizedPos, arbitraryPointOnEquator) - 0.999) * 1000.0, 0.0, 1.0);
+	volcanoIsland = volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland*volcanoIsland;
+	continents += volcanoIsland;
+	double coasts = continents * clamp((1.0-continents)*2.0 * (perlint64f(pos + config.seed, continentStride, variation) * 1.5 - 0.1) + 0.025, 0.0, 1.0);
+	double peaks1 = 1.0 - perlint64fRidged(pos + warp/uint64_t(2) + uint64_t(1149783892), 50 KM, variation, 4);
+	double peaks2 = perlint64f(pos+warp/uint64_t(4) + uint64_t(87457641), 8 KM, variation/8, 2);
+	double peaks3 = perlint64f(pos+warp/uint64_t(4) + uint64_t(276537654), 2 KM, variation/32, 2);
+	
+	double distanceToVolcanoCenter = length(normalizedPos * config.baseRadiusMillimeters - arbitraryPointOnEquator * config.baseRadiusMillimeters);
+	double distanceToVolcanoCenterDistorted = length(normalizedPos * config.baseRadiusMillimeters + dvec3(volcanoWarp) - arbitraryPointOnEquator * config.baseRadiusMillimeters);
+	double volcano = max(0.0, volcanoRadius - distanceToVolcanoCenter) / volcanoRadius;
+	
+	double mountains = 0
+		+ continents * variationf * 0.45
+		- variationf * 0.11
+		+ coasts * peaks1 * variation
+		+ coasts * peaks2*peaks2 * variation/4
+		+ coasts * peaks3*peaks3 * variation/8
+		- 150 M
+	;
+	
+	mountains = _moutainStep(variationf * 0.2001, variationf * 0.1995, mountains);
+	mountains = _moutainStep(variationf * 0.2001, variationf * 0.3, mountains);
+	
+	double height =
+		+ max(0.0, mountains)
+		+ volcano*volcano*volcano * variationf*0.686
+		- max(0.0, volcanoHoleRadius - distanceToVolcanoCenterDistorted) / volcanoHoleRadius * variationf*0.5
+	;
+	
+	return float(height / config.heightVariationMillimeters);
+}
+
 dvec2 GetHeightMapAndFeature(dvec3 normalizedPos) {
 	u64vec3 pos = u64vec3(normalizedPos * config.baseRadiusMillimeters + 10000000000.0); // this supports planets with a maximum radius of 10'000 km and ground precision of 1 cm
 	

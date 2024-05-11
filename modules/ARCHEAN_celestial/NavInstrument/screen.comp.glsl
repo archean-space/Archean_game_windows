@@ -136,11 +136,10 @@ void main() {
 			}
 			navballscreen.x += ballOffset;
 			vec2 horizon = screenRotation * navballscreen;
-			float heading_0 = horizon.x - (heading / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_plus90 = horizon.x - ((heading - 90) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_minus90 = horizon.x - ((heading + 90) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_plus180 = horizon.x - ((heading - 180) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_minus180 = horizon.x - ((heading + 180) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_0 = horizon.x - ((heading<=180? heading : (heading - 360)) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_90 = horizon.x - ((heading - 90) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_270 = horizon.x - ((heading - 270) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_180 = horizon.x - ((heading - 180) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
 			horizon.y -= pitch * sqrt(1 - pow(abs(horizon.x), 2));
 			float horizontalLineFade = 1-clamp(abs(horizon.x), 0, 1);
 			float verticalLineFade = 1-clamp(abs(horizon.y), 0, 1);
@@ -157,24 +156,19 @@ void main() {
 			if (heading_0 > -0.005 && heading_0 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
 			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_0 - 0.045, horizon.y - 0.03)));
 			// 180 (south)
-			if (heading_plus180 > -0.005 && heading_plus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			if (heading_minus180 > -0.005 && heading_minus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_plus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_plus180, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus180 + 0.045, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_minus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_minus180, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus180 + 0.045, horizon.y - 0.03)));
-			// +90
-			if (heading_plus90 > -0.005 && heading_plus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			col = mix(col, vec3(0.4), writeNumber(-5, vec2(heading_plus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_plus90, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus90 + 0.045, horizon.y - 0.03)));
-			// -90
-			if (heading_minus90 > -0.005 && heading_minus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			col = mix(col, vec3(0.4), writeNumber(-3, vec2(heading_minus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_minus90, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus90 + 0.045, horizon.y - 0.03)));
+			if (heading_180 > -0.005 && heading_180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_180 - 0.04, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_180, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_180 + 0.045, horizon.y - 0.03)));
+			// 90
+			if (heading_90 > -0.005 && heading_90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_90 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_90, horizon.y - 0.03)));
+			// 270
+			if (heading_270 > -0.005 && heading_270 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(2, vec2(heading_270 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(7, vec2(heading_270, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_270 + 0.045, horizon.y - 0.03)));
 			
 			// Circle Mask
 			float navballCircle = saturate(length(navballscreen));
@@ -266,11 +260,10 @@ void main() {
 			const float globeSize = 0.72;
 			vec2 navballscreen = screen / globeSize;
 			vec2 horizon = screenRotation * navballscreen;
-			float heading_0 = horizon.x - (heading / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_plus90 = horizon.x - ((heading - 90) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_minus90 = horizon.x - ((heading + 90) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_plus180 = horizon.x - ((heading - 180) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
-			float heading_minus180 = horizon.x - ((heading + 180) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_0 = horizon.x - ((heading<=180? heading : (heading - 360)) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_90 = horizon.x - ((heading - 90) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_270 = horizon.x - ((heading - 270) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
+			float heading_180 = horizon.x - ((heading - 180) / 180 * PI) * sqrt(1 - pow(abs(horizon.y), 2));
 			horizon.y -= pitch * sqrt(1 - pow(abs(horizon.x), 2));
 			float horizontalLineFade = 1-clamp(abs(horizon.x), 0, 1);
 			float verticalLineFade = 1-clamp(abs(horizon.y), 0, 1);
@@ -287,24 +280,19 @@ void main() {
 			if (heading_0 > -0.005 && heading_0 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
 			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_0 - 0.045, horizon.y - 0.03)));
 			// 180 (south)
-			if (heading_plus180 > -0.005 && heading_plus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			if (heading_minus180 > -0.005 && heading_minus180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_plus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_plus180, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus180 + 0.045, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_minus180 - 0.04, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_minus180, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus180 + 0.045, horizon.y - 0.03)));
-			// +90
-			if (heading_plus90 > -0.005 && heading_plus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			col = mix(col, vec3(0.4), writeNumber(-5, vec2(heading_plus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_plus90, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_plus90 + 0.045, horizon.y - 0.03)));
-			// -90
-			if (heading_minus90 > -0.005 && heading_minus90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
-			col = mix(col, vec3(0.4), writeNumber(-3, vec2(heading_minus90 - 0.045, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_minus90, horizon.y - 0.03)));
-			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_minus90 + 0.045, horizon.y - 0.03)));
+			if (heading_180 > -0.005 && heading_180 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(1, vec2(heading_180 - 0.04, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(8, vec2(heading_180, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_180 + 0.045, horizon.y - 0.03)));
+			// 90
+			if (heading_90 > -0.005 && heading_90 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(9, vec2(heading_90 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_90, horizon.y - 0.03)));
+			// 270
+			if (heading_270 > -0.005 && heading_270 < +0.005) col = mix(col, vec3(0.3), verticalLineFade);
+			col = mix(col, vec3(0.4), writeNumber(2, vec2(heading_270 - 0.045, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(7, vec2(heading_270, horizon.y - 0.03)));
+			col = mix(col, vec3(0.4), writeNumber(0, vec2(heading_270 + 0.045, horizon.y - 0.03)));
 			
 			// Circle Mask
 			float navballCircle = saturate(length(navballscreen));

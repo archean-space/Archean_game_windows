@@ -30,7 +30,12 @@ hitAttributeEXT hit {
 };
 
 void main() {
-	bool rayIsShadow = RAY_IS_SHADOW;
+	if (RAY_IS_SHADOW) {
+		ray.hitDistance = gl_HitTEXT;
+		ray.color = vec4(0,0,0,1);
+		return;
+	}
+	
 	bool rayIsGi = RAY_IS_GI;
 	bool rayIsUnderwater = RAY_IS_UNDERWATER;
 	uint recursions = RAY_RECURSIONS;
