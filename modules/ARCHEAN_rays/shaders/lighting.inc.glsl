@@ -98,7 +98,7 @@ bool GetDirectLight(in vec3 worldPosition, out vec3 lightDirection, out float li
 		vec3 relativeLightPosition = lightPosition - worldPosition;
 		vec3 lightDir = normalize(relativeLightPosition);
 		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
-		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius;
+		float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius);
 		if (distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
 			float surfaceArea = 4 * PI;
@@ -128,7 +128,7 @@ bool GetDirectLight(in vec3 worldPosition, out vec3 lightDirection, out float li
 			lightsDistance[index] = distanceToLightSurface;
 			lightsColor[index] = lightSource.color;
 			lightsPower[index] = effectiveLightIntensity;
-			lightsRadius[index] = lightSource.innerRadius;
+			lightsRadius[index] = abs(lightSource.innerRadius);
 			if (nbLights < NB_LIGHTS) ++nbLights;
 		}
 	}
@@ -148,7 +148,7 @@ bool GetDirectLight(in vec3 worldPosition, out vec3 lightDirection, out float li
 			RAY_RECURSION_PUSH
 				RAY_SHADOW_PUSH
 					ray.color = vec4(0);
-					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, worldPosition, shadowRayStart, lightsDir[i], lightsDistance[i] - EPSILON, 0);
+					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID | RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, worldPosition, shadowRayStart, lightsDir[i], lightsDistance[i] - EPSILON, 0);
 				RAY_SHADOW_POP
 			RAY_RECURSION_POP
 			if (ray.hitDistance == -1) {
@@ -163,7 +163,7 @@ bool GetDirectLight(in vec3 worldPosition, out vec3 lightDirection, out float li
 				break;
 				
 			} else {
-				if (ray.color.a == 1) {
+				if (ray.color.a >= 1) {
 					opacity = 1;
 					break;
 				}
@@ -206,9 +206,11 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		vec3 lightDir = normalize(relativeLightPosition);
 		float nDotL = dot(normal, lightDir);
 		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
-		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius - referenceDistance * EPSILON;
+		float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - referenceDistance * EPSILON;
 		if (distanceToLightSurface <= 0.001) {
-			ray.emission += lightSource.color * lightSource.power;
+			if (lightSource.innerRadius > 0) {
+				ray.emission += lightSource.color * lightSource.power;
+			}
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
 			float surfaceArea = 4 * PI;
@@ -241,7 +243,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			lightsDistance[index] = distanceToLightSurface;
 			lightsColor[index] = lightSource.color;
 			lightsPower[index] = effectiveLightIntensity;
-			lightsRadius[index] = lightSource.innerRadius;
+			lightsRadius[index] = abs(lightSource.innerRadius);
 			// lightsID[index] = lightID;
 			if (nbLights < NB_LIGHTS) ++nbLights;
 			#ifndef /*NOT*/SORT_LIGHTS
@@ -281,7 +283,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			
 			if (dot(shadowRayDir, normal) > 0) {
 				vec3 rayDir = shadowRayDir;
-				uint shadowTraceMask = RAYTRACE_MASK_SOLID;
+				uint shadowTraceMask = RAYTRACE_MASK_SOLID | RAYTRACE_MASK_ATMOSPHERE;
 				if (rayIsUnderWater) {
 					if (j == 0) {
 						shadowTraceMask |= RAYTRACE_MASK_HYDROSPHERE;
@@ -294,7 +296,8 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				RAY_RECURSION_PUSH
 					RAY_SHADOW_PUSH
 						ray.color = vec4(0);
-						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, shadowTraceMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, position, shadowRayStart, rayDir, lightsDistance[i] - EPSILON, 0);
+						ray.t2 = lightsDistance[i] - EPSILON;
+						traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, shadowTraceMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, position, shadowRayStart, rayDir, ray.t2, 0);
 					RAY_SHADOW_POP
 				RAY_RECURSION_POP
 				if (ray.hitDistance == -1) {

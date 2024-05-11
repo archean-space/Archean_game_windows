@@ -74,7 +74,7 @@ int32_t GetSunLight(in vec3 position, out vec3 lightPosition, out float lightPow
 		int id = rayQueryGetIntersectionInstanceIdEXT(q, false);
 		vec3 relativeLightPosition = lightPos - position;
 		LightSourceInstanceData lightSource = renderer.lightSources[nonuniformEXT(id)].instance;
-		float distanceToLightSurface = length(relativeLightPosition) - lightSource.innerRadius;
+		float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius);
 		if (distanceToLightSurface <= 0.001) {
 			return -1;
 		} else if (lightSource.power > 1000000 && distanceToLightSurface < lightSource.maxDistance) {
@@ -173,7 +173,7 @@ void main() {
 	}
 	LightSourceInstanceData lightSource = renderer.lightSources[nonuniformEXT(lightID)].instance;
 	vec3 relativeLightPosition = lightPosition - startPosition;
-	float lightDistance = length(relativeLightPosition) - lightSource.innerRadius;
+	float lightDistance = length(relativeLightPosition) - abs(lightSource.innerRadius);
 	vec3 lightDir = normalize(relativeLightPosition);
 
 	uint stableSeed = InitRandomSeed(compute_coord.x, compute_coord.y);

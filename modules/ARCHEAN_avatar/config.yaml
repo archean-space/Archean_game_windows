@@ -1,0 +1,1174 @@
+ores:
+  - ARCHEAN_celestial.Aluminium
+  - ARCHEAN_celestial.Chrome
+  - ARCHEAN_celestial.Copper
+  - ARCHEAN_celestial.Gold
+  - ARCHEAN_celestial.Iron
+  - ARCHEAN_celestial.Lead
+  - ARCHEAN_celestial.Nickel
+  - ARCHEAN_celestial.Silicon
+  - ARCHEAN_celestial.Silver
+  - ARCHEAN_celestial.Tin
+  - ARCHEAN_celestial.Titanium
+  - ARCHEAN_celestial.Tungsten
+  - ARCHEAN_celestial.Uranium
+  - ARCHEAN_celestial.Carbon
+
+construction:
+  - ARCHEAN_build.SteelBeam
+  - ARCHEAN_build.ConcreteBlock
+  - ARCHEAN_build.CompositeBlock
+  - ARCHEAN_build.SteelBlock
+  - ARCHEAN_build.AluminiumBlock
+  - ARCHEAN_build.GlassBlock
+  - ARCHEAN_build.LeadBlock
+
+misc:
+  - ARCHEAN_celestial.Rock
+  - ARCHEAN_avatar.Canister
+
+parts:
+  - ARCHEAN_parts.Screw
+  - ARCHEAN_parts.Plastic
+  - ARCHEAN_parts.Wire
+  - ARCHEAN_parts.Connector
+  - ARCHEAN_parts.Magnet
+  - ARCHEAN_parts.Diode
+  - ARCHEAN_parts.Capacitor
+  - ARCHEAN_parts.Panel
+  - ARCHEAN_parts.Disk
+  - ARCHEAN_parts.Casing
+  - ARCHEAN_parts.Circuit
+  - ARCHEAN_parts.Motor
+  - ARCHEAN_parts.LED
+  - ARCHEAN_computer.HDD
+
+tools:
+  - ARCHEAN_build.ConstructorTool
+  - ARCHEAN_build.DestructorTool
+  - ARCHEAN_build.BlueprintTool
+  - ARCHEAN_build.PaintTool
+  - ARCHEAN_build.LabelTool
+  - ARCHEAN_build.DashboardTool
+  - ARCHEAN_celestial.RockRakeTool
+
+spools:
+  - ARCHEAN_build.DataCable
+  - ARCHEAN_build.LowVoltageCable
+  - ARCHEAN_build.HighVoltageCable
+  - ARCHEAN_build.FluidPipe
+  - ARCHEAN_build.ItemConduit
+
+components:
+  - ARCHEAN_ownership.OwnerPad
+  - ARCHEAN_computer.Computer
+  - ARCHEAN_computer.MiniComputer
+  - ARCHEAN_computer.Router
+  - ARCHEAN_celestial.NavInstrument
+  - ARCHEAN_beacon.Beacon
+  - ARCHEAN_hid.PushButton
+  - ARCHEAN_hid.ToggleButton
+  - ARCHEAN_hid.ThrottleLever
+  - ARCHEAN_avatar.PilotSeat
+  - ARCHEAN_battery.LowVoltageBattery
+  - ARCHEAN_battery.HighVoltageBattery
+  - ARCHEAN_celestial.SolarPanel
+  - ARCHEAN_rtg.RTG
+  - ARCHEAN_wheel.Wheel
+  - ARCHEAN_wheel.SmallWheel
+  - ARCHEAN_propeller.Propeller
+  - ARCHEAN_rcs.RCS
+  - ARCHEAN_thruster.SmallThruster
+  - ARCHEAN_thruster.BigThruster
+  - ARCHEAN_thruster.SmallTurboPump
+  - ARCHEAN_thruster.BigTurboPump
+  - ARCHEAN_tank.SmallFluidTank
+  - ARCHEAN_tank.FluidTank
+  - ARCHEAN_tank.BigFluidTank
+  - ARCHEAN_chemical.FluidPort
+  - ARCHEAN_chemical.Electrolyser
+  - ARCHEAN_junction.FluidJunction
+  - ARCHEAN_junction.DataJunction
+  - ARCHEAN_junction.LowVoltageJunction
+  - ARCHEAN_junction.HighVoltageJunction
+  - ARCHEAN_junction.ItemJunction
+  - ARCHEAN_junction.LowVoltageRelay
+  - ARCHEAN_junction.HighVoltageRelay
+  - ARCHEAN_junction.PowerConverter
+  - ARCHEAN_junction.DataBridge
+  - ARCHEAN_junction.LowVoltageBridge
+  - ARCHEAN_junction.HighVoltageBridge
+  - ARCHEAN_junction.FluidBridge
+  - ARCHEAN_sensor.AltitudeSensor
+  - ARCHEAN_sensor.SpeedSensor
+  - ARCHEAN_sensor.TiltSensor
+  - ARCHEAN_build.SmallPivot
+  - ARCHEAN_build.SmallHinge
+  - ARCHEAN_build.DockableDoor
+  - ARCHEAN_build.DockingPort
+  - ARCHEAN_gyroscope.Gyroscope
+  - ARCHEAN_aileron.Aileron
+  - ARCHEAN_anchor.GroundAnchor
+  - ARCHEAN_light.SpotLight
+  - ARCHEAN_storage.TrashCan
+  - ARCHEAN_storage.Container
+  - ARCHEAN_avatar.Canister
+  - ARCHEAN_celestial.MiningDrill
+  - ARCHEAN_celestial.OreScanner
+
+recipes:
+
+  - context: crusher
+    time: 0.002
+    input: ARCHEAN_celestial.Rock
+    output:
+      ARCHEAN_celestial.Aluminium: input.composition.Al
+      ARCHEAN_celestial.Chrome: input.composition.Cr
+      ARCHEAN_celestial.Copper: input.composition.Cu
+      ARCHEAN_celestial.Gold: input.composition.Au
+      ARCHEAN_celestial.Iron: input.composition.Fe
+      ARCHEAN_celestial.Lead: input.composition.Pb
+      ARCHEAN_celestial.Nickel: input.composition.Ni
+      ARCHEAN_celestial.Silicon: input.composition.Si
+      ARCHEAN_celestial.Silver: input.composition.Ag
+      ARCHEAN_celestial.Tin: input.composition.Sn
+      ARCHEAN_celestial.Titanium: input.composition.Ti
+      ARCHEAN_celestial.Tungsten: input.composition.W
+      ARCHEAN_celestial.Uranium: input.composition.U
+      ARCHEAN_celestial.Carbon: input.composition.C
+
+  - label: SteelBeam
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Carbon: 1
+    output:
+      ARCHEAN_build.SteelBeam: 1
+  
+  - label: ConcreteBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Silicon: 1
+      h2o: 0.005
+      o2: 0.001
+    output:
+      ARCHEAN_build.ConcreteBlock: 1
+  
+  - label: CompositeBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_parts.Plastic: 1
+    output:
+      ARCHEAN_build.CompositeBlock: 1
+  
+  - label: SteelBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Carbon: 1
+    output:
+      ARCHEAN_build.SteelBlock: 1
+  
+  - label: AluminiumBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Aluminium: 1
+    output:
+      ARCHEAN_build.AluminiumBlock: 1
+  
+  - label: GlassBlock
+    context: avatar
+    category: construction
+    time: 1
+    input:
+      ARCHEAN_celestial.Silicon: 10
+      o2: 0.01
+    output:
+      ARCHEAN_build.GlassBlock: 1
+  
+  - label: LeadBlock
+    context: avatar
+    category: construction
+    time: 1
+    input:
+      ARCHEAN_celestial.Lead: 1
+    output:
+      ARCHEAN_build.LeadBlock: 1
+
+  - label: Screw
+    context: avatar
+    category: parts
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Iron: 1
+    output:
+      ARCHEAN_parts.Screw: 1
+
+  - label: Plastic
+    context: avatar
+    category: parts
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Carbon: 1
+      ARCHEAN_celestial.Silicon: 1
+      o2: 0.001
+      h2: 0.001
+    output:
+      ARCHEAN_parts.Plastic: 1
+  
+  - label: Wire
+    context: avatar
+    category: parts
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Copper: 1
+      ARCHEAN_parts.Plastic: 1
+    output:
+      ARCHEAN_parts.Wire: 1
+    
+  - label: Connector
+    context: avatar
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Plastic: 1
+      ARCHEAN_celestial.Iron: 1
+    output:
+      ARCHEAN_parts.Connector: 1
+  
+  - label: Magnet
+    context: avatar
+    category: parts
+    time: 5
+    input:
+      ARCHEAN_celestial.Iron: 100
+    output:
+      ARCHEAN_parts.Magnet: 1
+  
+  - label: Diode
+    context: avatar
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_celestial.Silicon: 1
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Plastic: 1
+    output:
+      ARCHEAN_parts.Diode: 1
+  
+  - label: Capacitor
+    context: avatar
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Silicon: 1
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_celestial.Carbon: 1
+    output:
+      ARCHEAN_parts.Capacitor: 1
+  
+  - label: Panel
+    context: avatar
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_celestial.Iron: 10
+    output:
+      ARCHEAN_parts.Panel: 1
+  
+  - label: Disk
+    context: avatar
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_celestial.Iron: 10
+    output:
+      ARCHEAN_parts.Disk: 1
+  
+  - label: Casing
+    context: avatar
+    category: parts
+    time: 5
+    input:
+      ARCHEAN_celestial.Iron: 100
+    output:
+      ARCHEAN_parts.Casing: 1
+  
+  - label: Circuit
+    context: avatar
+    category: parts
+    time: 10
+    input:
+      ARCHEAN_parts.Diode: 10
+      ARCHEAN_parts.Capacitor: 10
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Plastic: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_celestial.Silicon: 100
+    output:
+      ARCHEAN_parts.Circuit: 1
+
+  - label: Motor
+    context: avatar
+    category: parts
+    time: 10
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Wire: 100
+      ARCHEAN_parts.Disk: 1
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_parts.Motor: 1
+
+  - label: LED
+    context: avatar
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Diode: 1
+    output:
+      ARCHEAN_parts.LED: 1
+
+  - label: HDD
+    context: avatar
+    category: parts
+    time: 10
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Disk: 5
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_computer.HDD: 1
+  
+  - label: ConstructorTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_build.ConstructorTool: 1
+    
+  - label: DestructorTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+    output:
+      ARCHEAN_build.DestructorTool: 1
+  
+  - label: BlueprintTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Magnet: 10
+    output:
+      ARCHEAN_build.BlueprintTool: 1
+    
+  - label: PaintTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_build.PaintTool: 1
+    
+  - label: LabelTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_build.LabelTool: 1
+    
+  - label: DashboardTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_parts.Circuit: 10
+    output:
+      ARCHEAN_build.DashboardTool: 1
+  
+  - label: RockRakeTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_celestial.RockRakeTool: 1
+  
+  - label: DataCable
+    context: avatar
+    category: spools
+    time: 10
+    input:
+      ARCHEAN_parts.Wire: 100
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.DataCable: 1
+  
+  - label: LowVoltageCable
+    context: avatar
+    category: spools
+    time: 10
+    input:
+      ARCHEAN_parts.Wire: 100
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.LowVoltageCable: 1
+  
+  - label: HighVoltageCable
+    context: avatar
+    category: spools
+    time: 30
+    input:
+      ARCHEAN_parts.Wire: 200
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.HighVoltageCable: 1
+  
+  - label: FluidPipe
+    context: avatar
+    category: spools
+    time: 30
+    input:
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.FluidPipe: 1
+  
+  - label: ItemConduit
+    context: avatar
+    category: spools
+    time: 30
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Copper: 100
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.ItemConduit: 1
+  
+  - label: OwnerPad
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 10
+    output:
+      ARCHEAN_ownership.OwnerPad: 1
+  
+  - label: Computer
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 100
+      ARCHEAN_parts.Connector: 13
+    output:
+      ARCHEAN_computer.Computer: 1
+  
+  - label: MiniComputer
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_parts.Connector: 13
+    output:
+      ARCHEAN_computer.MiniComputer: 1
+  
+  - label: Router
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Connector: 31
+    output:
+      ARCHEAN_computer.Router: 1
+  
+  - label: NavInstrument
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 100
+      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Capacitor: 10
+      ARCHEAN_celestial.Gold: 10
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_celestial.NavInstrument: 1
+  
+  - label: Beacon
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Capacitor: 10
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_beacon.Beacon: 1
+  
+  - label: PushButton
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 1
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.LED: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_hid.PushButton: 1
+  
+  - label: ToggleButton
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 1
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_hid.ToggleButton: 1
+  
+  - label: ThrottleLever
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_hid.ThrottleLever: 1
+  
+  - label: PilotSeat
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 10
+      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_avatar.PilotSeat: 1
+  
+  - label: LowVoltageBattery
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Capacitor: 40
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_battery.LowVoltageBattery: 1
+
+  - label: HighVoltageBattery
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Capacitor: 400
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_battery.HighVoltageBattery: 1
+  
+  - label: SolarPanel
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Silicon: 1000
+    output:
+      ARCHEAN_celestial.SolarPanel: 1
+  
+  - label: RTG
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Uranium: 1
+    output:
+      ARCHEAN_rtg.RTG: 1
+  
+  - label: Wheel
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Plastic: 100
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_parts.Disk: 1
+    output:
+      ARCHEAN_wheel.Wheel: 1
+  
+  - label: SmallWheel
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Disk: 1
+    output:
+      ARCHEAN_wheel.SmallWheel: 1
+  
+  - label: Propeller
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_parts.Disk: 1
+      ARCHEAN_celestial.Aluminium: 100
+    output:
+      ARCHEAN_propeller.Propeller: 1
+  
+  - label: RCS
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_celestial.Aluminium: 10
+    output:
+      ARCHEAN_rcs.RCS: 1
+  
+  - label: SmallThruster
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_celestial.Titanium: 1
+    output:
+      ARCHEAN_thruster.SmallThruster: 1
+  
+  - label: BigThruster
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Aluminium: 100
+      ARCHEAN_celestial.Titanium: 10
+    output:
+      ARCHEAN_thruster.BigThruster: 1
+  
+  - label: SmallTurboPump
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_celestial.Titanium: 1
+    output:
+      ARCHEAN_thruster.SmallTurboPump: 1
+  
+  - label: BigTurboPump
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 100
+      ARCHEAN_parts.Motor: 10
+      ARCHEAN_celestial.Titanium: 10
+    output:
+      ARCHEAN_thruster.BigTurboPump: 1
+  
+  - label: SmallFluidTank
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Aluminium: 1
+    output:
+      ARCHEAN_tank.SmallFluidTank: 1
+    
+  - label: FluidTank
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Aluminium: 10
+    output:
+      ARCHEAN_tank.FluidTank: 1
+  
+  - label: BigFluidTank
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Aluminium: 100
+    output:
+      ARCHEAN_tank.BigFluidTank: 1
+  
+  - label: FluidPort
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_chemical.FluidPort: 1
+  
+  - label: Electrolyser
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_celestial.Copper: 100
+    output:
+      ARCHEAN_chemical.Electrolyser: 1
+  
+  - label: FluidJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.FluidJunction: 1
+  
+  - label: DataJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.DataJunction: 1
+  
+  - label: LowVoltageJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.LowVoltageJunction: 1
+  
+  - label: HighVoltageJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.HighVoltageJunction: 1
+  
+  - label: ItemJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.ItemJunction: 1
+  
+  - label: LowVoltageRelay
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 3
+    output:
+      ARCHEAN_junction.LowVoltageRelay: 1
+  
+  - label: HighVoltageRelay
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 3
+    output:
+      ARCHEAN_junction.HighVoltageRelay: 1
+  
+  - label: PowerConverter
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_junction.PowerConverter: 1
+  
+  - label: DataBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.DataBridge: 1
+  
+  - label: LowVoltageBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.LowVoltageBridge: 1
+  
+  - label: HighVoltageBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.HighVoltageBridge: 1
+  
+  - label: FluidBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.FluidBridge: 1
+  
+  - label: AltitudeSensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.AltitudeSensor: 1
+  
+  - label: SpeedSensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.SpeedSensor: 1
+  
+  - label: TiltSensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.TiltSensor: 1
+  
+  - label: SmallPivot
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Motor: 1
+    output:
+      ARCHEAN_build.SmallPivot: 1
+  
+  - label: SmallHinge
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Motor: 1
+    output:
+      ARCHEAN_build.SmallHinge: 1
+  
+  - label: DockingPort
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 5
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_celestial.Iron: 100
+    output:
+      ARCHEAN_build.DockingPort: 1
+    
+  - label: DockableDoor
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 6
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Panel: 2
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_build.DockingPort: 2
+    output:
+      ARCHEAN_build.DockableDoor: 1
+  
+  - label: Gyroscope
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Magnet: 2
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Lead: 10
+    output:
+      ARCHEAN_gyroscope.Gyroscope: 1
+  
+  - label: Aileron
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_celestial.Aluminium: 10
+    output:
+      ARCHEAN_aileron.Aileron: 1
+  
+  - label: GroundAnchor
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_celestial.Iron: 1000
+    output:
+      ARCHEAN_anchor.GroundAnchor: 1
+  
+  - label: SpotLight
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.LED: 100
+    output:
+      ARCHEAN_light.SpotLight: 1
+  
+  - label: TrashCan
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+    output:
+      ARCHEAN_storage.TrashCan: 1
+  
+  - label: Container
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Iron: 1000
+    output:
+      ARCHEAN_storage.Container: 1
+  
+  - label: Canister
+    context: avatar
+    category: misc
+    time: 1
+    input:
+      ARCHEAN_parts.Plastic: 1
+    output:
+      ARCHEAN_avatar.Canister: 1
+  
+  - label: MiningDrill
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Tungsten: 1
+    output:
+      ARCHEAN_celestial.MiningDrill: 1
+  
+  - label: OreScanner
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Capacitor: 1
+    output:
+      ARCHEAN_celestial.OreScanner: 1
+  
