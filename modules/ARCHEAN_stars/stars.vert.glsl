@@ -43,5 +43,5 @@ void main() {
 		+ color2 * brightStars * 4
 		+ color2 * veryBrightStars * 64
 		+ color2 * ultraBrightStars * 1024
-	, 1) * 0.1;
+	, 1) * 0.01;
 }

@@ -114,7 +114,7 @@ void main() {
 			SunData sun = atmosphere.suns[sunIndex];
 			vec3 relativeSunPosition = sun.position - atmospherePosition;
 			float sunDistance = length(relativeSunPosition);
-			vec3 lightIntensity = sun.color * GetSunRadiationAtDistanceSqr(sun.temperature, sun.radius, dot(relativeSunPosition, relativeSunPosition)) / 4.0;
+			vec3 lightIntensity = sun.color * GetSunRadiationAtDistanceSqr(sun.temperature, sun.radius, dot(relativeSunPosition, relativeSunPosition)) * 0.5;
 			if (length(lightIntensity) > sunLuminosityThreshold) {
 				vec3 lightDir = normalize(relativeSunPosition);
 				

@@ -262,10 +262,9 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	bool rayIsUnderWater = RAY_IS_UNDERWATER;
 	
 	RayPayload originalRay = ray;
-	int usefulLights = 0;
 	for (uint i = 0; i < nbLights; ++i) {
 		vec3 shadowRayDir = lightsDir[i];
-		bool isSunLight = lightsDistance[i] > 1e7;
+		bool isSunLight = lightsDistance[i] > 1e5; // 100 km
 		float shadowRayStart = 0;
 		vec3 colorFilter = vec3(1);
 		float opacity = 0;
@@ -288,10 +287,6 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 					if (j == 0) {
 						shadowTraceMask |= RAYTRACE_MASK_HYDROSPHERE;
 					}
-					// if (isSunLight) { // this causes issues with eclipes
-					// 	float variation = Simplex(worldPosition + vec3(float(renderer.timestamp))) * 0.5 + 1.0;
-					// 	rayDir = normalize(shadowRayDir + vec3(variation) * 0.01);
-					// }
 				}
 				RAY_RECURSION_PUSH
 					RAY_SHADOW_PUSH
@@ -309,11 +304,6 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 					float NdotH = clamp(dot(normal, H), 0, 1);
 					vec3 spec = pow(NdotH, specularHardness) * mix(vec3(1), albedo, metallic); // Fresnel is applied to specular from the caller
 					directLighting += colorFilter * (1 - clamp(opacity,0,1)) * light * (diffuse + spec * step(1, float(renderer.options & RENDERER_OPTION_SPECULAR_SURFACES)) * specular);
-					
-					// if (++usefulLights == 2) {
-					// 	ray = originalRay;
-					// 	return directLighting;
-					// }
 					
 					break;
 					
@@ -423,7 +413,7 @@ void ApplyDefaultLighting() {
 	
 	// Ambient lighting
 	else if (!rayIsUnderWater) {
-		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * renderer.baseAmbientBrightness * 0.1;
+		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * LIGHT_LUMINOSITY_VISIBLE_THRESHOLD * 0.1;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
 			if (recursions <= 2) {
 				float ambientFactor = 1;

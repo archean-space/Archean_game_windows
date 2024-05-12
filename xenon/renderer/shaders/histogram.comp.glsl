@@ -1,24 +1,17 @@
 #include "common.inc.glsl"
 
-// #extension GL_EXT_shader_atomic_float : enable
-
-layout(local_size_x = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_X, local_size_y = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_Y) in;
-ivec2 compute_coord = ivec2(gl_GlobalInvocationID.xy);
-
 void main() {
-	// ivec2 offset = imageSize(img_thumbnail) / 2 - imageSize(img_thumbnail) / 2 / XENON_RENDERER_HISTOGRAM_DIVIDER;
-	// vec4 color = clamp(imageLoad(img_thumbnail, compute_coord + offset), vec4(0.1), vec4(vec3(1000), 1));
-	
-	// ivec2 halfSize = ivec2(gl_WorkGroupSize.xy * gl_NumWorkGroups.xy) / 2;
-	// color.rgb *= pow(1.0 - min(1.0, length(vec2(compute_coord - halfSize) / halfSize)), 0.25);
-	
-	// atomicAdd(xenonRendererData.histogram_total_luminance.r, color.r);
-	// atomicAdd(xenonRendererData.histogram_total_luminance.g, color.g);
-	// atomicAdd(xenonRendererData.histogram_total_luminance.b, color.b);
-	// atomicAdd(xenonRendererData.histogram_total_luminance.a, 1);
-
-	xenonRendererData.histogram_total_luminance.r = 1;
-	xenonRendererData.histogram_total_luminance.g = 1;
-	xenonRendererData.histogram_total_luminance.b = 1;
-	xenonRendererData.histogram_total_luminance.a = 1;
+	uvec2 size = imageSize(img_thumbnail);
+	uvec2 imageOffset = size/4;
+	vec4 luminance = vec4(0);
+	for (uint x = 0; x < size.s/2; x+=2) {
+		for (uint y = 0; y < size.t/2; y+=2) {
+			vec4 color = imageLoad(img_thumbnail, ivec2(imageOffset + uvec2(x,y)));
+			luminance += vec4(clamp(color.rgb, vec3(0.01), vec3(1e3)), 0.25);
+		}
+	}
+	xenonRendererData.histogram_total_luminance.r = luminance.r;
+	xenonRendererData.histogram_total_luminance.g = luminance.g;
+	xenonRendererData.histogram_total_luminance.b = luminance.b;
+	xenonRendererData.histogram_total_luminance.a = luminance.a;
 }
