@@ -9,7 +9,7 @@
 
 #include "game/graphics/common.inc.glsl"
 
-#define RAY_MAX_RECURSION 30
+#define RAY_MAX_RECURSION renderer.rays_max_bounces
 
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
@@ -162,7 +162,7 @@ struct RendererData {
 	
 	aligned_uint32_t ambientAtmosphereSamples;
 	aligned_uint32_t ambientOcclusionSamples;
-	aligned_float32_t baseAmbientBrightness;
+	aligned_float32_t _unused;
 	aligned_float32_t globalLightingFactor;
 	
 	aligned_uint32_t options; // RENDERER_OPTION_*
