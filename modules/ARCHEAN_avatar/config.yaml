@@ -70,6 +70,7 @@ components:
   - ARCHEAN_hid.ToggleButton
   - ARCHEAN_hid.ThrottleLever
   - ARCHEAN_avatar.PilotSeat
+  - ARCHEAN_avatar.Bobblehead
   - ARCHEAN_battery.LowVoltageBattery
   - ARCHEAN_battery.HighVoltageBattery
   - ARCHEAN_celestial.SolarPanel
@@ -106,6 +107,7 @@ components:
   - ARCHEAN_build.SmallHinge
   - ARCHEAN_build.DockableDoor
   - ARCHEAN_build.DockingPort
+  - ARCHEAN_gyroscope.SmallGyroscope
   - ARCHEAN_gyroscope.Gyroscope
   - ARCHEAN_aileron.Aileron
   - ARCHEAN_anchor.GroundAnchor
@@ -189,10 +191,11 @@ recipes:
   - label: GlassBlock
     context: avatar
     category: construction
-    time: 1
+    time: 0.1
     input:
       ARCHEAN_celestial.Silicon: 10
-      o2: 0.01
+      o2: 0.001
+      h2: 0.001
     output:
       ARCHEAN_build.GlassBlock: 1
   
@@ -1063,6 +1066,21 @@ recipes:
     output:
       ARCHEAN_build.DockableDoor: 1
   
+  - label: SmallGyroscope
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 2
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_parts.Disk: 2
+      ARCHEAN_celestial.Lead: 2
+    output:
+      ARCHEAN_gyroscope.SmallGyroscope: 1
+  
   - label: Gyroscope
     context: avatar
     category: components
@@ -1070,7 +1088,7 @@ recipes:
     input:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 100
-      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.Magnet: 2
       ARCHEAN_parts.Motor: 2
       ARCHEAN_parts.Disk: 10
