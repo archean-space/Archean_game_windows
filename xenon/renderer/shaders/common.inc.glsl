@@ -154,12 +154,16 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 		return ReverseGamma(color, xenonRendererData.config.gamma);
 	}
 	
+	float GetCurrentExposure() {
+		float lumRgbTotal = dot(xenonRendererData.histogram_avg_luminance.rgb, vec3(0.2126, 0.7152, 0.0722));
+		float exposure = lumRgbTotal > 0 ? xenonRendererData.histogram_avg_luminance.a / lumRgbTotal : 1;
+		return clamp(exposure, xenonRendererData.config.minExposure, xenonRendererData.config.maxExposure);
+	}
+	
 	void ApplyToneMapping(inout vec3 color) {
 		// HDR ToneMapping with eye adaptation
 		if ((xenonRendererData.config.options & RENDER_OPTION_TONE_MAPPING) != 0) {
-			float lumRgbTotal = dot(xenonRendererData.histogram_avg_luminance.rgb, vec3(0.2126, 0.7152, 0.0722));
-			float exposure = lumRgbTotal > 0 ? xenonRendererData.histogram_avg_luminance.a / lumRgbTotal : 1;
-			color.rgb = vec3(1.0) - exp(-color.rgb * clamp(exposure, xenonRendererData.config.minExposure, xenonRendererData.config.maxExposure));
+			color.rgb = vec3(1.0) - exp(-color.rgb * GetCurrentExposure());
 		}
 		
 		// Contrast / Brightness

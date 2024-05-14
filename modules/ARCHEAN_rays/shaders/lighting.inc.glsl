@@ -330,7 +330,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 					transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
 					opacity = 1.0 - transparency;
 					
-					shadowRayStart = max(ray.hitDistance, ray.t2) * 1.0001;
+					shadowRayStart = max(ray.hitDistance, ray.t2) + referenceDistance * 0.001;
 				}
 				if (opacity > 0.99) break;
 			}
