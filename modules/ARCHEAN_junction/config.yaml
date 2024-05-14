@@ -1,0 +1,138 @@
+components:
+  - ARCHEAN_junction.FluidJunction
+  - ARCHEAN_junction.DataJunction
+  - ARCHEAN_junction.LowVoltageJunction
+  - ARCHEAN_junction.HighVoltageJunction
+  - ARCHEAN_junction.ItemJunction
+  - ARCHEAN_junction.LowVoltageRelay
+  - ARCHEAN_junction.HighVoltageRelay
+  - ARCHEAN_junction.PowerConverter
+  - ARCHEAN_junction.DataBridge
+  - ARCHEAN_junction.LowVoltageBridge
+  - ARCHEAN_junction.HighVoltageBridge
+  - ARCHEAN_junction.FluidBridge
+
+recipes:
+
+  - label: FluidJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.FluidJunction: 1
+  
+  - label: DataJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.DataJunction: 1
+  
+  - label: LowVoltageJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.LowVoltageJunction: 1
+  
+  - label: HighVoltageJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.HighVoltageJunction: 1
+  
+  - label: ItemJunction
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+    output:
+      ARCHEAN_junction.ItemJunction: 1
+  
+  - label: LowVoltageRelay
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 3
+    output:
+      ARCHEAN_junction.LowVoltageRelay: 1
+  
+  - label: HighVoltageRelay
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 3
+    output:
+      ARCHEAN_junction.HighVoltageRelay: 1
+  
+  - label: PowerConverter
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_junction.PowerConverter: 1
+  
+  - label: DataBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.DataBridge: 1
+  
+  - label: LowVoltageBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.LowVoltageBridge: 1
+  
+  - label: HighVoltageBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.HighVoltageBridge: 1
+  
+  - label: FluidBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.FluidBridge: 1

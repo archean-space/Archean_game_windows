@@ -1,0 +1,14 @@
+components:
+  - ARCHEAN_aileron.Aileron
+recipes:
+  - label: Aileron
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_celestial.Aluminium: 10
+    output:
+      ARCHEAN_aileron.Aileron: 1

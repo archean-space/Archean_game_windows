@@ -1,0 +1,26 @@
+components:
+  - ARCHEAN_storage.TrashCan
+  - ARCHEAN_storage.Container
+
+recipes:
+
+  - label: TrashCan
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+    output:
+      ARCHEAN_storage.TrashCan: 1
+  
+  - label: Container
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Iron: 1000
+    output:
+      ARCHEAN_storage.Container: 1

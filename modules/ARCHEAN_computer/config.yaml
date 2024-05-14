@@ -1,0 +1,66 @@
+parts:
+  - ARCHEAN_computer.HDD
+
+components:
+  - ARCHEAN_computer.Computer
+  - ARCHEAN_computer.MiniComputer
+  - ARCHEAN_computer.Router
+
+recipes:
+
+  - label: HDD
+    context: avatar
+    category: parts
+    time: 10
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Disk: 5
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_computer.HDD: 1
+  
+  - label: Computer
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 100
+      ARCHEAN_parts.Connector: 13
+    output:
+      ARCHEAN_computer.Computer: 1
+  
+  - label: MiniComputer
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_parts.Connector: 13
+    output:
+      ARCHEAN_computer.MiniComputer: 1
+  
+  - label: Router
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Connector: 31
+    output:
+      ARCHEAN_computer.Router: 1

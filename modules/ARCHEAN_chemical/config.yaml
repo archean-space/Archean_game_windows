@@ -1,0 +1,28 @@
+components:
+  - ARCHEAN_chemical.FluidPort
+  - ARCHEAN_chemical.Electrolyser
+
+recipes:
+
+  - label: FluidPort
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_chemical.FluidPort: 1
+  
+  - label: Electrolyser
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_celestial.Copper: 100
+    output:
+      ARCHEAN_chemical.Electrolyser: 1
