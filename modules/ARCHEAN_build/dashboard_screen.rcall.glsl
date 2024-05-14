@@ -35,6 +35,7 @@ void main() {
 			vec3 color = ReverseGamma(tex.rgb);
 			surface.color = vec4((1-color)*(1-tex.a), tex.a);
 			surface.emission = data.emission * color;
+			surface.emission /= GetCurrentExposure();
 		} else {
 			surface.color = vec4(0,0,0,1); // mix(surface.color, data.color, data.colorMix);
 			surface.emission = data.emission;
