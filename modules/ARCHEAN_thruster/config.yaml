@@ -1,0 +1,63 @@
+components:
+  - ARCHEAN_thruster.SmallThruster
+  - ARCHEAN_thruster.BigThruster
+  - ARCHEAN_thruster.SmallTurboPump
+  - ARCHEAN_thruster.BigTurboPump
+
+recipes:
+
+  - label: SmallThruster
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_celestial.Titanium: 1
+    output:
+      ARCHEAN_thruster.SmallThruster: 1
+  
+  - label: BigThruster
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Aluminium: 100
+      ARCHEAN_celestial.Titanium: 10
+    output:
+      ARCHEAN_thruster.BigThruster: 1
+  
+  - label: SmallTurboPump
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_celestial.Titanium: 1
+    output:
+      ARCHEAN_thruster.SmallTurboPump: 1
+  
+  - label: BigTurboPump
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Disk: 100
+      ARCHEAN_parts.Motor: 10
+      ARCHEAN_celestial.Titanium: 10
+    output:
+      ARCHEAN_thruster.BigTurboPump: 1

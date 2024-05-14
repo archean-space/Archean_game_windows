@@ -1,0 +1,42 @@
+components:
+  - ARCHEAN_sensor.AltitudeSensor
+  - ARCHEAN_sensor.SpeedSensor
+  - ARCHEAN_sensor.TiltSensor
+
+recipes:
+  
+  - label: AltitudeSensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.AltitudeSensor: 1
+  
+  - label: SpeedSensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.SpeedSensor: 1
+  
+  - label: TiltSensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.TiltSensor: 1

@@ -1,0 +1,273 @@
+construction:
+  - ARCHEAN_build.SteelBeam
+  - ARCHEAN_build.ConcreteBlock
+  - ARCHEAN_build.CompositeBlock
+  - ARCHEAN_build.SteelBlock
+  - ARCHEAN_build.AluminiumBlock
+  - ARCHEAN_build.GlassBlock
+  - ARCHEAN_build.LeadBlock
+
+tools:
+  - ARCHEAN_build.ConstructorTool
+  - ARCHEAN_build.DestructorTool
+  - ARCHEAN_build.BlueprintTool
+  - ARCHEAN_build.PaintTool
+  - ARCHEAN_build.LabelTool
+  - ARCHEAN_build.DashboardTool
+
+spools:
+  - ARCHEAN_build.DataCable
+  - ARCHEAN_build.LowVoltageCable
+  - ARCHEAN_build.HighVoltageCable
+  - ARCHEAN_build.FluidPipe
+  - ARCHEAN_build.ItemConduit
+
+components:
+  - ARCHEAN_build.SmallPivot
+  - ARCHEAN_build.SmallHinge
+  - ARCHEAN_build.DockableDoor
+  - ARCHEAN_build.DockingPort
+
+recipes:
+
+  - label: SteelBeam
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Carbon: 1
+    output:
+      ARCHEAN_build.SteelBeam: 1
+  
+  - label: ConcreteBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Silicon: 1
+      h2o: 0.005
+      o2: 0.001
+    output:
+      ARCHEAN_build.ConcreteBlock: 1
+  
+  - label: CompositeBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_parts.Plastic: 1
+    output:
+      ARCHEAN_build.CompositeBlock: 1
+  
+  - label: SteelBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Carbon: 1
+    output:
+      ARCHEAN_build.SteelBlock: 1
+  
+  - label: AluminiumBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Aluminium: 1
+    output:
+      ARCHEAN_build.AluminiumBlock: 1
+  
+  - label: GlassBlock
+    context: avatar
+    category: construction
+    time: 0.1
+    input:
+      ARCHEAN_celestial.Silicon: 10
+      o2: 0.001
+      h2: 0.001
+    output:
+      ARCHEAN_build.GlassBlock: 1
+  
+  - label: LeadBlock
+    context: avatar
+    category: construction
+    time: 1
+    input:
+      ARCHEAN_celestial.Lead: 1
+    output:
+      ARCHEAN_build.LeadBlock: 1
+
+  - label: ConstructorTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_build.ConstructorTool: 1
+    
+  - label: DestructorTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+    output:
+      ARCHEAN_build.DestructorTool: 1
+  
+  - label: BlueprintTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Magnet: 10
+    output:
+      ARCHEAN_build.BlueprintTool: 1
+    
+  - label: PaintTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_build.PaintTool: 1
+    
+  - label: LabelTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_build.LabelTool: 1
+    
+  - label: DashboardTool
+    context: avatar
+    category: tools
+    time: 10
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_parts.Circuit: 10
+    output:
+      ARCHEAN_build.DashboardTool: 1
+
+  - label: DataCable
+    context: avatar
+    category: spools
+    time: 10
+    input:
+      ARCHEAN_parts.Wire: 100
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.DataCable: 1
+  
+  - label: LowVoltageCable
+    context: avatar
+    category: spools
+    time: 10
+    input:
+      ARCHEAN_parts.Wire: 100
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.LowVoltageCable: 1
+  
+  - label: HighVoltageCable
+    context: avatar
+    category: spools
+    time: 30
+    input:
+      ARCHEAN_parts.Wire: 200
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.HighVoltageCable: 1
+  
+  - label: FluidPipe
+    context: avatar
+    category: spools
+    time: 30
+    input:
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.FluidPipe: 1
+  
+  - label: ItemConduit
+    context: avatar
+    category: spools
+    time: 30
+    input:
+      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Copper: 100
+      ARCHEAN_parts.Connector: 10
+    output:
+      ARCHEAN_build.ItemConduit: 1
+  
+  - label: SmallPivot
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Motor: 1
+    output:
+      ARCHEAN_build.SmallPivot: 1
+  
+  - label: SmallHinge
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Motor: 1
+    output:
+      ARCHEAN_build.SmallHinge: 1
+  
+  - label: DockingPort
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 5
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_celestial.Iron: 100
+    output:
+      ARCHEAN_build.DockingPort: 1
+    
+  - label: DockableDoor
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 6
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Panel: 2
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_build.DockingPort: 2
+    output:
+      ARCHEAN_build.DockableDoor: 1
