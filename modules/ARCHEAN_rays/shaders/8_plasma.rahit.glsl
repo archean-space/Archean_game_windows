@@ -83,7 +83,8 @@ void main() {
 		if (ray.hitDistance > 0 && t1 + t > ray.hitDistance) break;
 	}
 	
-	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity);
+	float exposure = GetCurrentExposure();
+	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity / max(1, exposure)) / exposure;
 	
 	ignoreIntersectionEXT;
 }

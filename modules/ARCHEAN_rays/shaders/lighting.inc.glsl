@@ -283,10 +283,8 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			if (dot(shadowRayDir, normal) > 0) {
 				vec3 rayDir = shadowRayDir;
 				uint shadowTraceMask = RAYTRACE_MASK_SOLID | RAYTRACE_MASK_ATMOSPHERE;
-				if (rayIsUnderWater) {
-					if (j == 0) {
-						shadowTraceMask |= RAYTRACE_MASK_HYDROSPHERE;
-					}
+				if (rayIsUnderWater && j == 0) {
+					shadowTraceMask |= RAYTRACE_MASK_HYDROSPHERE;
 				}
 				RAY_RECURSION_PUSH
 					RAY_SHADOW_PUSH
@@ -330,7 +328,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 					transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
 					opacity = 1.0 - transparency;
 					
-					shadowRayStart = max(ray.hitDistance, ray.t2) + referenceDistance * 0.001;
+					shadowRayStart = max(ray.hitDistance, ray.t2) + 0.0001;
 				}
 				if (opacity > 0.99) break;
 			}
