@@ -9,7 +9,7 @@
 
 #include "game/graphics/common.inc.glsl"
 
-#define RAY_MAX_RECURSION 6 // renderer.rays_max_bounces
+#define RAY_MAX_RECURSION 5 // renderer.rays_max_bounces
 
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
