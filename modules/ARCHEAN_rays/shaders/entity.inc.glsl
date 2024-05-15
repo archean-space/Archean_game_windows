@@ -63,7 +63,7 @@ void main() {
 		if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
 			if (surface.renderableData != 0 && renderer.aim.monitorIndex == 0) {
 				renderer.aim.uv = surface.uv1;
-				renderer.aim.monitorIndex = RenderableData(surface.renderableData)[nonuniformEXT(surface.geometryIndex)].monitorIndex;
+				renderer.aim.monitorIndex = RenderableData(surface.renderableData)[surface.geometryIndex].monitorIndex;
 			}
 		}
 		MakeAimable();

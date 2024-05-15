@@ -32,7 +32,7 @@ void main() {
 		surface.metallic = surface.metallic; // mix(surface.metallic, data.pbrMetallic, data.pbrMix);
 		surface.roughness = surface.roughness; // mix(surface.roughness, data.pbrRoughness, data.pbrMix);
 		if (data.monitorIndex > 0) {
-			vec4 tex = texture(nonuniformEXT(textures[data.monitorIndex]), surface.uv1);
+			vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], surface.uv1);
 			surface.color = vec4(tex.rgb, max(1-length(tex.rgb), tex.a));
 		} else {
 			surface.color = surface.color; // mix(surface.color, data.color, data.colorMix);

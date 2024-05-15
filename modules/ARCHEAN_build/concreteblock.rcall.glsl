@@ -13,7 +13,7 @@ float RoughColorDetail(in vec3 pos) {
 }
 
 void main() {
-	BlockColor color = BlockColor(surface.geometryUv2Data)[nonuniformEXT(surface.primitiveIndex)];
+	BlockColor color = BlockColor(surface.geometryUv2Data)[surface.primitiveIndex];
 	surface.color.rgb = vec3(color.r, color.g, color.b) / 255.0;
 	surface.color.a = (float(color.a & 0xf) + 1) / 16.0;
 	surface.roughness = float((color.a >> 4) & 0x7) / 7.0;

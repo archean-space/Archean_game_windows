@@ -5,7 +5,7 @@ layout(local_size_x = CLUTTER_COMPUTE_SIZE) in;
 void main() {
 	uint index = gl_GlobalInvocationID.x;
 	
-	AabbData rock = aabbData[nonuniformEXT(index)];
+	AabbData rock = aabbData[index];
 	if (rock.data != 0) return;
 	
 	uint clutterSeed = InitRandomSeed(uint(clutterData), index);
