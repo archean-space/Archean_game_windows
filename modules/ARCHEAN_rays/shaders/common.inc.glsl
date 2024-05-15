@@ -10,7 +10,7 @@
 #include "game/graphics/common.inc.glsl"
 #include "game/graphics/voxel.inc.glsl"
 
-#define RAY_MAX_RECURSION 8
+#define RAY_MAX_RECURSION 30
 
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
