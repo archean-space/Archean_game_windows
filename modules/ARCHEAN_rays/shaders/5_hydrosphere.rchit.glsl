@@ -184,7 +184,7 @@ void main() {
 			vec3 wavesPosition = hitPoint1;
 			APPLY_NORMAL_BUMP_NOISE(WaterWaves, wavesPosition, surfaceNormal, waterWavesStrength * 0.05)
 		}
-		float fresnel = Fresnel((renderer.viewMatrix * vec4(worldPosition, 1)).xyz, normalize(WORLD2VIEWNORMAL * surfaceNormal), WATER_IOR);
+		float fresnel = Fresnel(normalize((renderer.viewMatrix * vec4(worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * surfaceNormal), WATER_IOR);
 		
 		// Reflection on top of water surface
 		vec3 reflectDir = normalize(reflect(gl_WorldRayDirectionEXT, surfaceNormal));

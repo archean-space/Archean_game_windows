@@ -9,7 +9,7 @@ float SurfaceDetail(vec3 position) {
 }
 
 void main() {
-	BlockColor color = BlockColor(surface.geometryUv2Data)[surface.primitiveIndex];
+	BlockColor color = BlockColor(surface.geometryUv2Data)[nonuniformEXT(surface.primitiveIndex)];
 	surface.color.rgb = vec3(color.r, color.g, color.b) / 255.0;
 	surface.color.a = (float(color.a & 0xf) + 1) / 16.0;
 	surface.roughness = float((color.a >> 4) & 0x7) / 7.0;
@@ -26,5 +26,11 @@ void main() {
 		vec3 oldNormal = surface.normal;
 		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition * scale, surface.normal, surface.roughness * 0.009)
 		surface.color.rgb *= pow(dot(oldNormal, surface.normal), 500);
+	}
+	
+	// Glass
+	if (surface.color.a < 0.99) {
+		surface.ior = 1.02;
+		surface.specular = 0.5;
 	}
 }

@@ -43,7 +43,7 @@ void main() {
 	dvec3 posOnPlanet = posNorm * altitude;
 	vec3 rockPos = vec4(chunk.inverseTransform * dvec4(posOnPlanet, 1)).xyz;
 	
-	AabbData rock = aabbData[index];
+	AabbData rock = aabbData[nonuniformEXT(index)];
 	rock.aabb[0] = rockPos.x - rockSize.x;
 	rock.aabb[1] = rockPos.y - rockSize.y;
 	rock.aabb[2] = rockPos.z - rockSize.z;

@@ -79,7 +79,7 @@ void main() {
 	voxelSurface.normal = normalize(MODEL2WORLDNORMAL * voxelSurface.normal);
 	
 	VoxelSurface thisSurface = voxelSurface;
-	float fresnel = Fresnel((renderer.viewMatrix * vec4(worldPosition, 1)).xyz, normalize(WORLD2VIEWNORMAL * thisSurface.normal), thisSurface.ior);
+	float fresnel = Fresnel(normalize((renderer.viewMatrix * vec4(worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * thisSurface.normal), thisSurface.ior);
 	
 	// const vec3 rayOrigin = worldPosition + thisSurface.normal * 0.0001;
 	// const vec3 facingWorldPosition = worldPosition + thisSurface.normal * 0.5;

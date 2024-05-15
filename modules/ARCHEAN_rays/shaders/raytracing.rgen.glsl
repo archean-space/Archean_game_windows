@@ -91,7 +91,7 @@ void main() {
 		// Reflections on Glass
 		if ((renderer.options & RENDERER_OPTION_GLASS_REFLECTIONS) != 0 && !glassReflection && ray.color.a != 1.0 && ray.hitDistance > 0.0 && ray.hitDistance < 200.0 && dot(ray.normal, initialRayDirection) < 0.0) {
 			glassReflection = true;
-			glassReflectionStrength = Fresnel((renderer.viewMatrix * vec4(ray.worldPosition, 1)).xyz, normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
+			glassReflectionStrength = Fresnel(normalize((renderer.viewMatrix * vec4(ray.worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * ray.normal), 1.15);
 			glassReflectionOrigin = ray.worldPosition + ray.normal * max(2.0, ray.hitDistance) * EPSILON * 10;
 			glassReflectionDirection = reflect(initialRayDirection, ray.normal);
 		}

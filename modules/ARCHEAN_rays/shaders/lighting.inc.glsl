@@ -78,7 +78,7 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 	return pow(l,7.)*25.;
 }
 
-vec3 GetDirectLighting(in vec3 worldPosition, in vec3 normal, in vec3 albedo, in float fresnel) {
+vec3 GetDirectLighting(in vec3 worldPosition, in vec3 normal, in vec3 albedo) {
 	vec3 position = worldPosition + normal * gl_HitTEXT * 0.001;
 	vec3 directLighting = vec3(0);
 	
@@ -262,9 +262,6 @@ void ApplyDefaultLighting() {
 		return;
 	}
 	
-	// Fresnel
-	float fresnel = Fresnel((renderer.viewMatrix * vec4(ray.worldPosition, 1)).xyz, normalize(WORLD2VIEWNORMAL * ray.normal), surface.ior);
-	
 	vec3 albedo = surface.color.rgb;
 	
 	float realDistance = length(ray.worldPosition - inverse(renderer.viewMatrix)[3].xyz);
@@ -273,7 +270,7 @@ void ApplyDefaultLighting() {
 	vec3 directLighting = vec3(0);
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0) {
 		if (recursions < RAY_MAX_RECURSION && surface.metallic - surface.roughness < 1.0) {
-			directLighting = GetDirectLighting(ray.worldPosition, ray.normal, albedo, fresnel);
+			directLighting = GetDirectLighting(ray.worldPosition, ray.normal, albedo);
 		}
 	}
 	ray.color = vec4(mix(directLighting * renderer.globalLightingFactor, vec3(0), clamp(surface.metallic - surface.roughness, 0, 1)), 1);
