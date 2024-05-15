@@ -185,7 +185,7 @@ STATIC_ASSERT_ALIGNED16_SIZE(ChunkVoxelData, (8+2+1)*VOXELS_PER_SUBCHUNK + 16 + 
 	layout(location = VOXEL_SURFACE_CALLABLE_PAYLOAD) callableDataInEXT VoxelSurface voxelSurface;
 	layout (constant_id = 0) const uint32_t textureID = 0;
 	vec4 SampleTexture(uint index) {
-		return textureLod(textures[NON_UNIFORM_TEX_INDEX(textureID + index)], voxelSurface.uv, 0);
+		return textureLod(textures[nonuniformEXT(textureID + index)], voxelSurface.uv, 0);
 	}
 #endif
 

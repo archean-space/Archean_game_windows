@@ -5,41 +5,41 @@
 // bool GetBlueNoiseBool() {
 // 	uint BLUE_NOISE_TEXTURES_OFFSET = renderer.bluenoise_unitvec1;
 // 	uint noiseTexIndex = uint(xenonRendererData.frameIndex % BLUE_NOISE_NB_TEXTURES);
-// 	vec2 texSize = vec2(textureSize(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
+// 	vec2 texSize = vec2(textureSize(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
 // 	vec2 noiseTexCoord = (vec2(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y) + 0.5) / texSize;
-// 	return texture(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).r == 1;
+// 	return texture(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).r == 1;
 // }
 
 // float GetBlueNoiseFloat() {
 // 	uint BLUE_NOISE_TEXTURES_OFFSET = renderer.bluenoise_scalar;
 // 	uint noiseTexIndex = uint(xenonRendererData.frameIndex % BLUE_NOISE_NB_TEXTURES);
-// 	vec2 texSize = vec2(textureSize(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
+// 	vec2 texSize = vec2(textureSize(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
 // 	vec2 noiseTexCoord = (vec2(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y) + 0.5) / texSize;
-// 	return texture(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).r;
+// 	return texture(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).r;
 // }
 
 // vec2 GetBlueNoiseFloat2() {
 // 	uint BLUE_NOISE_TEXTURES_OFFSET = renderer.bluenoise_vec2;
 // 	uint noiseTexIndex = uint(xenonRendererData.frameIndex % BLUE_NOISE_NB_TEXTURES);
-// 	vec2 texSize = vec2(textureSize(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
+// 	vec2 texSize = vec2(textureSize(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
 // 	vec2 noiseTexCoord = (vec2(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y) + 0.5) / texSize;
-// 	return texture(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).rg;
+// 	return texture(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).rg;
 // }
 
 // vec3 GetBlueNoiseUnitSphere() {
 // 	uint BLUE_NOISE_TEXTURES_OFFSET = renderer.bluenoise_unitvec3;
 // 	uint noiseTexIndex = uint(xenonRendererData.frameIndex % BLUE_NOISE_NB_TEXTURES);
-// 	vec2 texSize = vec2(textureSize(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
+// 	vec2 texSize = vec2(textureSize(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
 // 	vec2 noiseTexCoord = (vec2(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y) + 0.5) / texSize;
-// 	return texture(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).rgb * 2 - 1;
+// 	return texture(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord).rgb * 2 - 1;
 // }
 
 // vec4 GetBlueNoiseUnitCosine() {
 // 	uint BLUE_NOISE_TEXTURES_OFFSET = renderer.bluenoise_unitvec3_cosine;
 // 	uint noiseTexIndex = uint(xenonRendererData.frameIndex % BLUE_NOISE_NB_TEXTURES);
-// 	vec2 texSize = vec2(textureSize(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
+// 	vec2 texSize = vec2(textureSize(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], 0).st);
 // 	vec2 noiseTexCoord = (vec2(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y) + 0.5) / texSize;
-// 	vec4 tex = texture(textures[NON_UNIFORM_TEX_INDEX(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord);
+// 	vec4 tex = texture(textures[nonuniformEXT(noiseTexIndex+BLUE_NOISE_TEXTURES_OFFSET)], noiseTexCoord);
 // 	return vec4(tex.rgb * 2 - 1, tex.a);
 // }
 

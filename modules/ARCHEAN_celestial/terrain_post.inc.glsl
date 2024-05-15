@@ -75,7 +75,7 @@ void main() {
 		dvec2 uvD = (chunk.uvOffset + dvec2(uvs[currentIndex].uv) * chunk.uvMult) * chunk.planetFaceSize;
 		vec2 uv = vec2(fract(uvD / NEAR_TEXTURE_SPAN_METERS));
 		for (uint i = 0; i < 4; ++i) {
-			height += double(texture(textures[NON_UNIFORM_TEX_INDEX(heights[i])], uv).r) * bumpDisplacement[i] - bumpDisplacement[i]/2;
+			height += double(texture(textures[nonuniformEXT(heights[i])], uv).r) * bumpDisplacement[i] - bumpDisplacement[i]/2;
 		}
 	}
 	

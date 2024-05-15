@@ -148,6 +148,4 @@
 	#define BUFFER_REFERENCE_ADDR(type) type
 	#define GLSL_FUNCTION
 	
-	#define NON_UNIFORM_TEX_INDEX(tex) tex
-	
 #endif
