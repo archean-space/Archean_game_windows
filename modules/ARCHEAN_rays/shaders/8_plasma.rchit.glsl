@@ -25,11 +25,11 @@ float t2 = t2_;
 // 	if (mask > 0) {
 // 		vec2 uv = pos.xz / radius * 0.5 + 0.5;
 // 		if (uv.x > 1 || uv.x < 0 || uv.y > 1 || uv.x < 0) return 0;
-// 		vec2 d = texture(textures[nonuniformEXT(mask)], uv).rg;
-// 		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(0,1)).rg);
-// 		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(0,-1)).rg);
-// 		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(1,0)).rg);
-// 		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(-1,0)).rg);
+// 		vec2 d = texture(textures[NON_UNIFORM_TEX_INDEX(mask)], uv).rg;
+// 		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(0,1)).rg);
+// 		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(0,-1)).rg);
+// 		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(1,0)).rg);
+// 		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(-1,0)).rg);
 // 		float start = d.r;
 // 		float end = radius*2-d.g;
 // 		if (pos.y < start || (pos.y > start + radius/32 && pos.y < end)) return 0;

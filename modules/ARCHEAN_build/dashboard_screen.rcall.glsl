@@ -31,7 +31,7 @@ void main() {
 		surface.metallic = 0; // mix(surface.metallic, data.pbrMetallic, data.pbrMix);
 		surface.roughness = 0; // mix(surface.roughness, data.pbrRoughness, data.pbrMix);
 		if (data.monitorIndex > 0) {
-			vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], surface.uv1);
+			vec4 tex = texture(textures[NON_UNIFORM_TEX_INDEX(data.monitorIndex)], surface.uv1);
 			vec3 color = ReverseGamma(tex.rgb);
 			surface.color = vec4((1-color)*(1-tex.a), tex.a);
 			surface.emission = data.emission * color;

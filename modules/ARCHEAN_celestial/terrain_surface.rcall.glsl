@@ -170,7 +170,7 @@ void main() {
 	uint speculars[4];
 	
 	splats[0] = smoothCurve(splat.x);
-	displacement[0] = texture(textures[nonuniformEXT(chunk.tex.x + Height)], uvNear).r;
+	displacement[0] = texture(textures[NON_UNIFORM_TEX_INDEX(chunk.tex.x + Height)], uvNear).r;
 	blending[0] = splats[0] * displacement[0];
 	if (blending[0] > 0) {
 		bumpDisplacement[0] = chunk.texBumpNormalDisplacement.x * blending[0];
@@ -180,7 +180,7 @@ void main() {
 	}
 	
 	splats[1] = smoothCurve(splat.y);
-	displacement[1] = texture(textures[nonuniformEXT(chunk.tex.y + Height)], uvNear).r;
+	displacement[1] = texture(textures[NON_UNIFORM_TEX_INDEX(chunk.tex.y + Height)], uvNear).r;
 	blending[1] = splats[1] * displacement[1];
 	if (blending[1] > 0) {
 		bumpDisplacement[1] = chunk.texBumpNormalDisplacement.y * blending[1];
@@ -190,7 +190,7 @@ void main() {
 	}
 	
 	splats[2] = smoothCurve(splat.z);
-	displacement[2] = texture(textures[nonuniformEXT(chunk.tex.z + Height)], uvNear).r;
+	displacement[2] = texture(textures[NON_UNIFORM_TEX_INDEX(chunk.tex.z + Height)], uvNear).r;
 	blending[2] = splats[2] * displacement[2];
 	if (blending[2] > 0) {
 		bumpDisplacement[2] = chunk.texBumpNormalDisplacement.z * blending[2];
@@ -200,7 +200,7 @@ void main() {
 	}
 	
 	splats[3] = smoothCurve(splat.w);
-	displacement[3] = texture(textures[nonuniformEXT(chunk.tex.w + Height)], uvNear).r;
+	displacement[3] = texture(textures[NON_UNIFORM_TEX_INDEX(chunk.tex.w + Height)], uvNear).r;
 	blending[3] = splats[3] * displacement[3];
 	if (blending[3] > 0) {
 		bumpDisplacement[3] = chunk.texBumpNormalDisplacement.w * blending[3];
@@ -212,26 +212,26 @@ void main() {
 	float maxBlending = 0;
 	for (int i = 0; i < 4; ++i) {
 		if (blending[i] > maxBlending) {
-			vec2 texSize = textureSize(textures[nonuniformEXT(heights[i])], 0);
+			vec2 texSize = textureSize(textures[NON_UNIFORM_TEX_INDEX(heights[i])], 0);
 			maxBlending = blending[i];
 			float blend = smoothCurve(smoothCurve(pow(blending[i], 0.0625) * (1 - textureMaxDistanceRatio)));
 			// Color
-			vec3 colorNear = texture(textures[nonuniformEXT(colors[i])], uvNear).rgb;
-			vec3 colorFar = texture(textures[nonuniformEXT(colors[i] + 1)], uvFar).rgb;
+			vec3 colorNear = texture(textures[NON_UNIFORM_TEX_INDEX(colors[i])], uvNear).rgb;
+			vec3 colorFar = texture(textures[NON_UNIFORM_TEX_INDEX(colors[i] + 1)], uvFar).rgb;
 			surface.color.rgb = mix(color, mix(colorNear, colorFar, textureNearDistanceRatio), blend);
 			// surface.color.rgb = mix(color, colorNear, splats[i] * (1 - textureMaxDistanceRatio));
 			// Specular
-			float specularNear = texture(textures[nonuniformEXT(speculars[i])], uvNear).r;
-			// float specularFar = texture(textures[nonuniformEXT(speculars[i] + 1)], uvFar).r;
+			float specularNear = texture(textures[NON_UNIFORM_TEX_INDEX(speculars[i])], uvNear).r;
+			// float specularFar = texture(textures[NON_UNIFORM_TEX_INDEX(speculars[i] + 1)], uvFar).r;
 			// surface.specular = mix(surface.specular, mix(specularNear, specularFar, textureNearDistanceRatio), splats[i] * (1 - textureMaxDistanceRatio));
 			surface.specular = mix(surface.specular, specularNear, splats[i] * (1 - textureMaxDistanceRatio));
 			// Normal
 			if (bumpDisplacement[i] > 0) {
 				float bumpTextureMeterPerPixel = NEAR_TEXTURE_SPAN_METERS / texSize.x;
-				float altitudeTop = textureOffset(textures[nonuniformEXT(heights[i])], uvNear, ivec2(0,-1)).r;
-				float altitudeBottom = textureOffset(textures[nonuniformEXT(heights[i])], uvNear, ivec2(0,+1)).r;
-				float altitudeLeft = textureOffset(textures[nonuniformEXT(heights[i])], uvNear, ivec2(-1,0)).r;
-				float altitudeRight = textureOffset(textures[nonuniformEXT(heights[i])], uvNear, ivec2(+1,0)).r;
+				float altitudeTop = textureOffset(textures[NON_UNIFORM_TEX_INDEX(heights[i])], uvNear, ivec2(0,-1)).r;
+				float altitudeBottom = textureOffset(textures[NON_UNIFORM_TEX_INDEX(heights[i])], uvNear, ivec2(0,+1)).r;
+				float altitudeLeft = textureOffset(textures[NON_UNIFORM_TEX_INDEX(heights[i])], uvNear, ivec2(-1,0)).r;
+				float altitudeRight = textureOffset(textures[NON_UNIFORM_TEX_INDEX(heights[i])], uvNear, ivec2(+1,0)).r;
 				vec3 bump = normalize(vec3((altitudeLeft-altitudeRight), bumpTextureMeterPerPixel / bumpDisplacement[i], (altitudeBottom-altitudeTop)));
 				vec3 tangentZ = normalize(cross(vec3(1,0,0), normal));
 				vec3 tangentX = normalize(cross(normal, tangentZ));

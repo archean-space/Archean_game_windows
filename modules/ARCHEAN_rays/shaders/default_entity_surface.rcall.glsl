@@ -18,7 +18,7 @@ void main() {
 		surface.metallic = mix(surface.metallic, data.pbrMetallic, data.pbrMix);
 		surface.roughness = mix(surface.roughness, data.pbrRoughness, data.pbrMix);
 		if (data.monitorIndex > 0) {
-			surface.emission *= ReverseGamma(texture(textures[nonuniformEXT(data.monitorIndex)], surface.uv1).rgb);
+			surface.emission *= ReverseGamma(texture(textures[NON_UNIFORM_TEX_INDEX(data.monitorIndex)], surface.uv1).rgb);
 			surface.emission /= GetCurrentExposure();
 		}
 	}
@@ -27,12 +27,12 @@ void main() {
 		uint16_t tex_normal = 				uint16_t((surface.geometryInfoData >> 16) & 0xffff);
 		uint16_t tex_metallic_roughness = 	uint16_t((surface.geometryInfoData >> 32) & 0xffff);
 		uint16_t tex_emission = 			uint16_t((surface.geometryInfoData >> 48) & 0xffff);
-		if (tex_albedo > 0) surface.color.rgb *= ReverseGamma(texture(textures[nonuniformEXT(tex_albedo)], surface.uv1).rgb);
+		if (tex_albedo > 0) surface.color.rgb *= ReverseGamma(texture(textures[NON_UNIFORM_TEX_INDEX(tex_albedo)], surface.uv1).rgb);
 		if (tex_normal > 0) {
 			//TODO: normal maps using tex_normal
 		}
 		if (tex_metallic_roughness > 0) {
-			vec2 pbr = texture(textures[nonuniformEXT(tex_metallic_roughness)], surface.uv1).rg;
+			vec2 pbr = texture(textures[NON_UNIFORM_TEX_INDEX(tex_metallic_roughness)], surface.uv1).rg;
 			surface.metallic = pbr.r;
 			surface.roughness = pbr.g;
 		}
@@ -41,7 +41,7 @@ void main() {
 			if (surface.renderableData != 0) {
 				emissionPower = surface.emission;
 			}
-			surface.emission = emissionPower * ReverseGamma(texture(textures[nonuniformEXT(tex_emission)], surface.uv1).rgb);
+			surface.emission = emissionPower * ReverseGamma(texture(textures[NON_UNIFORM_TEX_INDEX(tex_emission)], surface.uv1).rgb);
 		}
 	}
 	

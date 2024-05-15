@@ -17,11 +17,11 @@ float density(vec3 pos) {
 	if (mask > 0) {
 		vec2 uv = pos.xz / radius * 0.5 + 0.5;
 		if (uv.x > 1 || uv.x < 0 || uv.y > 1 || uv.x < 0) return 0;
-		vec2 d = texture(textures[nonuniformEXT(mask)], uv).rg;
-		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(0,1)).rg);
-		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(0,-1)).rg);
-		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(1,0)).rg);
-		d = min(d, textureOffset(textures[nonuniformEXT(mask)], uv, ivec2(-1,0)).rg);
+		vec2 d = texture(textures[NON_UNIFORM_TEX_INDEX(mask)], uv).rg;
+		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(0,1)).rg);
+		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(0,-1)).rg);
+		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(1,0)).rg);
+		d = min(d, textureOffset(textures[NON_UNIFORM_TEX_INDEX(mask)], uv, ivec2(-1,0)).rg);
 		float start = d.r;
 		float end = radius*2-d.g;
 		if (pos.y < start || (pos.y > start + radius/32 && pos.y < end)) return 0;
@@ -50,7 +50,7 @@ void main() {
 			ray.emission.rgb += GetEmissionColor(exaustTemperature * density(pos));
 		} else {
 			vec2 uv = pos.xz / radius * 0.5 + 0.5;
-			float d = texture(textures[nonuniformEXT(mask)], uv).r;
+			float d = texture(textures[NON_UNIFORM_TEX_INDEX(mask)], uv).r;
 			if (d > 0 && d < radius*2 && pos.y < d + 0.125) {
 				ray.emission.rgb += GetEmissionColor(min(exaustTemperature * 2, 2500));
 			}
@@ -59,7 +59,7 @@ void main() {
 	
 	int nb_steps = 4;
 	if (mask > 0) {
-		nb_steps = int(textureSize(textures[nonuniformEXT(mask)], 0).x);
+		nb_steps = int(textureSize(textures[NON_UNIFORM_TEX_INDEX(mask)], 0).x);
 	}
 	const float stepSize = (t2 - t1) / (nb_steps + 2);
 	float t = stepSize * (0.5 + RandomFloat(seed));
