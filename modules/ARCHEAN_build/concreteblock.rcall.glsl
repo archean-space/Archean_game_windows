@@ -4,9 +4,9 @@
 #include "game/graphics/common.inc.glsl"
 #include "Block.inc.glsl"
 
-float SurfaceDetail(vec3 position) {
-	return SimplexFractal(position, 6) * 0.5 + 0.5;
-}
+// float SurfaceDetail(vec3 position) {
+// 	return SimplexFractal(position, 6) * 0.5 + 0.5;
+// }
 
 float RoughColorDetail(in vec3 pos) {
 	return (SimplexFractal(pos, 3) + SimplexFractal(pos * 2, 3)) * 0.5;
@@ -20,6 +20,6 @@ void main() {
 	surface.metallic = float(color.a >> 7);
 	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
 
-	APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition, surface.normal, surface.roughness * 0.01)
+	// APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition, surface.normal, surface.roughness * 0.01)
 	surface.color.rgb *= pow(clamp(RoughColorDetail(surface.localPosition * 64) + 1, 0.1, 1), 0.25);
 }

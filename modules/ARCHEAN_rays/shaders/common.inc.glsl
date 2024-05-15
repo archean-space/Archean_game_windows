@@ -328,19 +328,19 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 		layout(location = 0) rayPayloadInEXT RayPayload ray;
 	#endif
 	#if defined(SHADER_RCHIT)
-		void MakeAimable() {
+		void MakeAimable(in vec3 normal) {
 			if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
 				if (renderer.aim.aimID == 0) {
 					renderer.aim.uv = surface.uv1;
 					renderer.aim.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
 					renderer.aim.geometryIndex = gl_GeometryIndexEXT;
 					renderer.aim.aimID = gl_InstanceCustomIndexEXT;
-					renderer.aim.worldSpaceHitNormal = ray.normal;
+					renderer.aim.worldSpaceHitNormal = normal;
 					renderer.aim.primitiveIndex = gl_PrimitiveID;
 					renderer.aim.worldSpacePosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 					renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), renderer.aim.worldSpacePosition);
 					renderer.aim.color = surface.color;
-					renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * ray.normal);
+					renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * normal);
 					renderer.aim.tlasInstanceIndex = gl_InstanceID;
 				}
 			}

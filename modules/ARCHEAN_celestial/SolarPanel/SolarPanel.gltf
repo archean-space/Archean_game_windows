@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.0.44",
+		"generator":"Khronos glTF Blender I/O v4.1.63",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -66,6 +66,20 @@
 				"metallicFactor":1,
 				"roughnessFactor":1
 			}
+		},
+		{
+			"doubleSided":true,
+			"name":"data-connector",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0,
+					0.05000007152557373,
+					0.5,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":1
+			}
 		}
 	],
 	"meshes":[
@@ -95,6 +109,14 @@
 					},
 					"indices":8,
 					"material":2
+				},
+				{
+					"attributes":{
+						"POSITION":9,
+						"NORMAL":10
+					},
+					"indices":11,
+					"material":3
 				}
 			]
 		}
@@ -183,6 +205,34 @@
 			"componentType":5123,
 			"count":1992,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":376,
+			"max":[
+				0.02985917031764984,
+				-1,
+				0.02985917218029499
+			],
+			"min":[
+				-0.02985917031764984,
+				-1.0206489562988281,
+				-0.02985917031764984
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":10,
+			"componentType":5126,
+			"count":376,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":11,
+			"componentType":5123,
+			"count":1020,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -239,11 +289,29 @@
 			"byteLength":3984,
 			"byteOffset":18216,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":4512,
+			"byteOffset":22200,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4512,
+			"byteOffset":26712,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2040,
+			"byteOffset":31224,
+			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":22200,
+			"byteLength":33264,
 			"uri":"SolarPanel.bin"
 		}
 	]

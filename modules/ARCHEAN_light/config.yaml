@@ -14,3 +14,15 @@ recipes:
       ARCHEAN_parts.LED: 100
     output:
       ARCHEAN_light.SpotLight: 1
+
+  - label: Lamp
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.LED: 100
+    output:
+      ARCHEAN_light.Lamp: 1

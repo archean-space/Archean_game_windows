@@ -34,6 +34,8 @@ void main() {
 		surface.normal *= -1;
 	}
 	
+	vec3 geometricNormal = normalize(MODEL2WORLDNORMAL * surface.normal);
+	
 	// if (OPTION_TEXTURES) {
 		executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
 	// }
@@ -66,7 +68,7 @@ void main() {
 				renderer.aim.monitorIndex = RenderableData(surface.renderableData)[surface.geometryIndex].monitorIndex;
 			}
 		}
-		MakeAimable();
+		MakeAimable(geometricNormal);
 	}
 
 	// Write Motion Vectors

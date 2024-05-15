@@ -40,7 +40,7 @@ void main() {
 	surface.color.rgb = ReverseGamma(surface.color.rgb);
 	
 	// Aim
-	MakeAimable();
+	MakeAimable(ray.normal);
 
 	// Write Motion Vectors
 	WriteMotionVectorsAndDepth(ray.renderableIndex, gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT, gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT, ray.hitDistance, false);
