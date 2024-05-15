@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.6",
+		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -121,7 +121,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":110,
+			"count":98,
 			"max":[
 				0.125,
 				0.25,
@@ -130,20 +130,20 @@
 			"min":[
 				-0.125,
 				-0.25,
-				-0.1114891767501831
+				-0.125
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":110,
+			"count":98,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5123,
-			"count":240,
+			"count":216,
 			"type":"SCALAR"
 		},
 		{
@@ -180,12 +180,12 @@
 			"count":20,
 			"max":[
 				0.02989783138036728,
-				0.17938698828220367,
+				0.12913551926612854,
 				-0.06152394413948059
 			],
 			"min":[
 				-0.02989783138036728,
-				-0.17938698828220367,
+				-0.12913551926612854,
 				-0.093658447265625
 			],
 			"type":"VEC3"
@@ -234,80 +234,80 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1320,
+			"byteLength":1176,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1320,
-			"byteOffset":1320,
+			"byteLength":1176,
+			"byteOffset":1176,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":480,
-			"byteOffset":2640,
+			"byteLength":432,
+			"byteOffset":2352,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":4512,
-			"byteOffset":3120,
+			"byteOffset":2784,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4512,
-			"byteOffset":7632,
+			"byteOffset":7296,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2040,
-			"byteOffset":12144,
+			"byteOffset":11808,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":240,
-			"byteOffset":14184,
+			"byteOffset":13848,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":240,
-			"byteOffset":14424,
+			"byteOffset":14088,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":60,
-			"byteOffset":14664,
+			"byteOffset":14328,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":8448,
-			"byteOffset":14724,
+			"byteOffset":14388,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":8448,
-			"byteOffset":23172,
+			"byteOffset":22836,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4560,
-			"byteOffset":31620,
+			"byteOffset":31284,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":36180,
+			"byteLength":35844,
 			"uri":"ThrottleLever.bin"
 		}
 	]

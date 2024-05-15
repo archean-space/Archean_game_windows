@@ -10,20 +10,24 @@ hitAttributeEXT PipeAttr attr;
 
 void BoxIntersection() {
 	COMPUTE_BOX_INTERSECTION // retrieves T1 and T2
-	if RAY_STARTS_OUTSIDE_T1_T2 {
+	if (RAY_STARTS_OUTSIDE_T1_T2 || RAY_STARTS_BETWEEN_T1_T2) {
 		vec3 localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * T1;
 		const float THRESHOLD = EPSILON;
 		const vec3 absMin = abs(localPosition - AABB_MIN.xyz);
 		const vec3 absMax = abs(localPosition - AABB_MAX.xyz);
-				if (absMin.x < THRESHOLD) attr.normal = vec3(-1, 0, 0);
-		else if (absMin.y < THRESHOLD) attr.normal = vec3( 0,-1, 0);
-		else if (absMin.z < THRESHOLD) attr.normal = vec3( 0, 0,-1);
-		else if (absMax.x < THRESHOLD) attr.normal = vec3( 1, 0, 0);
-		else if (absMax.y < THRESHOLD) attr.normal = vec3( 0, 1, 0);
-		else if (absMax.z < THRESHOLD) attr.normal = vec3( 0, 0, 1);
-		else attr.normal = normalize(localPosition);
+		float smallestValue = 1e100;
+		if (absMin.x < smallestValue) {smallestValue = absMin.x; attr.normal = vec3(-1, 0, 0);}
+		if (absMin.y < smallestValue) {smallestValue = absMin.y; attr.normal = vec3( 0,-1, 0);}
+		if (absMin.z < smallestValue) {smallestValue = absMin.z; attr.normal = vec3( 0, 0,-1);}
+		if (absMax.x < smallestValue) {smallestValue = absMax.x; attr.normal = vec3( 1, 0, 0);}
+		if (absMax.y < smallestValue) {smallestValue = absMax.y; attr.normal = vec3( 0, 1, 0);}
+		if (absMax.z < smallestValue) {smallestValue = absMax.z; attr.normal = vec3( 0, 0, 1);}
 		attr.axis = vec3(1);
-		reportIntersectionEXT(T1, 0);
+		if (T1 > gl_RayTminEXT) {
+			reportIntersectionEXT(T1, 0);
+		} else {
+			reportIntersectionEXT(T2, 1);
+		}
 	}
 }
 
@@ -114,28 +118,28 @@ void CylinderIntersection() {
 		}
 	}
 	
-	// // Cylinder body Inside surface
-	// if (y2 > 0.0 && y2 < baba) {
-	// 	if (gl_RayTminEXT <= t2) {
-	// 		attr.radius = r;
-	// 		attr.len = length(ba);
-	// 		attr.normal = -normalize((oc + rd*t2 - ba*y2/baba) / r);
-	// 		reportIntersectionEXT(t2, 1);
-	// 		return;
-	// 	}
-	// }
+	// Cylinder body Inside surface
+	if (y2 > 0.0 && y2 < baba) {
+		if (gl_RayTminEXT <= t2) {
+			// attr.radius = r;
+			// attr.len = length(ba);
+			attr.normal = normalize((oc + rd*t2 - ba*y2/baba) / r);
+			reportIntersectionEXT(t2, 1);
+			return;
+		}
+	}
 	
-	// // Flat caps Inside surface
-	// const float capsT2 = (((y2<0.0)? 0.0 : baba) - baoc) / bard;
-	// if (abs(k1+k2*capsT2) < h) {
-	// 	if (gl_RayTminEXT <= capsT2) {
-	// 		attr.radius = r;
-	// 		attr.len = length(ba);
-	// 		attr.normal = -normalize(ba*sign(y2)/baba);
-	// 		reportIntersectionEXT(capsT2, 3);
-	// 		return;
-	// 	}
-	// }
+	// Flat caps Inside surface
+	const float capsT2 = (((y2<0.0)? 0.0 : baba) - baoc) / bard;
+	if (abs(k1+k2*capsT2) < h) {
+		if (gl_RayTminEXT <= capsT2) {
+			// attr.radius = r;
+			// attr.len = length(ba);
+			attr.normal = normalize(ba*sign(y2)/baba);
+			reportIntersectionEXT(capsT2, 3);
+			return;
+		}
+	}
 	
 }
 
@@ -233,32 +237,32 @@ void CapsuleIntersection() {
 			}
 		}
 		
-		// // cylinder body Inside surface
-		// if (y2 > 0.0 && y2 < baba && gl_RayTminEXT <= t2) {
-		// 	attr.radius = r;
-		// 	attr.len = length(ba);
-		// 	const vec3 posa = (gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t2) - pa;
-		// 	attr.normal = -normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
-		// 	reportIntersectionEXT(t2, 1);
-		// 	return;
-		// }
+		// cylinder body Inside surface
+		if (y2 > 0.0 && y2 < baba && gl_RayTminEXT <= t2) {
+			// attr.radius = r;
+			// attr.len = length(ba);
+			const vec3 posa = (gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t2) - pa;
+			attr.normal = normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
+			reportIntersectionEXT(t2, 1);
+			return;
+		}
 		
-		// // rounded caps Inside surface
-		// oc = (y2 <= 0.0)? oa : ro - pb;
-		// b = dot(rd, oc);
-		// c = dot(oc, oc) - r*r;
-		// h = b*b - c;
-		// if (h > 0.0) {
-		// 	const float t = -b + sqrt(h);
-		// 	if (gl_RayTminEXT <= t) {
-		// 		attr.radius = r;
-		// 		attr.len = length(ba);
-		// 		const vec3 posa = (gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t) - pa;
-		// 		attr.normal = -normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
-		// 		reportIntersectionEXT(t, 3);
-		// 		return;
-		// 	}
-		// }
+		// rounded caps Inside surface
+		oc = (y2 <= 0.0)? oa : ro - pb;
+		b = dot(rd, oc);
+		c = dot(oc, oc) - r*r;
+		h = b*b - c;
+		if (h > 0.0) {
+			const float t = -b + sqrt(h);
+			if (gl_RayTminEXT <= t) {
+				// attr.radius = r;
+				// attr.len = length(ba);
+				const vec3 posa = (gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t) - pa;
+				attr.normal = normalize((posa - clamp(dot(posa, ba) / dot(ba, ba), 0.0, 1.0) * ba) / r);
+				reportIntersectionEXT(t, 3);
+				return;
+			}
+		}
 		
 	}
 }

@@ -12,8 +12,8 @@ void main() {
 		float((color >> 24) & 0xFF)
 	) / 255.0;
 	uint32_t tex = uint32_t(surface.aabbData >> 32) & 0xFFFF;
-	surface.roughness = float(uint32_t(surface.aabbData >> 48) & 0x7) / 7.0;
-	surface.metallic = float(uint32_t(surface.aabbData >> 51) & 0x1);
+	surface.roughness = 1;// float(uint32_t(surface.aabbData >> 48) & 0x7) / 7.0;
+	surface.metallic = 0;// float(uint32_t(surface.aabbData >> 51) & 0x1);
 	vec3 normal = vec3(
 		float(uint32_t(surface.aabbData >> 52) & 0x3) - 1.0,
 		float(uint32_t(surface.aabbData >> 54) & 0x3) - 1.0,

@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.6",
+		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -56,6 +56,20 @@
 				"metallicFactor":1,
 				"roughnessFactor":1
 			}
+		},
+		{
+			"doubleSided":true,
+			"name":"color2",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.800000011920929,
+					0.800000011920929,
+					0.800000011920929,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":1
+			}
 		}
 	],
 	"meshes":[
@@ -89,7 +103,7 @@
 						"NORMAL":7
 					},
 					"indices":8,
-					"material":0
+					"material":2
 				}
 			]
 		}
@@ -98,7 +112,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":56,
+			"count":52,
 			"max":[
 				0.5,
 				0.125,
@@ -114,41 +128,41 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":56,
+			"count":52,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5123,
-			"count":126,
+			"count":108,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":372,
+			"count":376,
 			"max":[
 				0.02985917031764984,
-				0.14564894139766693,
-				0.03270387649536133
+				0.02985917031764984,
+				0.14564894139766693
 			],
 			"min":[
 				-0.02985917031764984,
-				0.125,
-				-0.027014462277293205
+				-0.02985917031764984,
+				0.1249999925494194
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":372,
+			"count":376,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":1014,
+			"count":1020,
 			"type":"SCALAR"
 		},
 		{
@@ -183,62 +197,62 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":672,
+			"byteLength":624,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":672,
-			"byteOffset":672,
+			"byteLength":624,
+			"byteOffset":624,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":252,
-			"byteOffset":1344,
+			"byteLength":216,
+			"byteOffset":1248,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":4464,
-			"byteOffset":1596,
+			"byteLength":4512,
+			"byteOffset":1464,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4464,
-			"byteOffset":6060,
+			"byteLength":4512,
+			"byteOffset":5976,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2028,
-			"byteOffset":10524,
+			"byteLength":2040,
+			"byteOffset":10488,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":1008,
-			"byteOffset":12552,
+			"byteOffset":12528,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1008,
-			"byteOffset":13560,
+			"byteOffset":13536,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":456,
-			"byteOffset":14568,
+			"byteOffset":14544,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":15024,
+			"byteLength":15000,
 			"uri":"Aileron.bin"
 		}
 	]

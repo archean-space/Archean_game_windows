@@ -65,7 +65,8 @@ double GetHeightMap(dvec3 posNorm) {
 		color = mix(vec3(0.25,0.305,0.4), color, smoothstep(0.05, 0.2, float(heightRatio)));
 		color *= mix(0.8, 1.1, float(perlint64f(pos, 10 KM, 10 KM, 3)));
 		color *= mix(0.8, 1.1, float(perlint64f(pos, 1 M / 8, 1 M / 8, 6)));
-		return pow(clamp(color * 1.1, vec3(0.0), vec3(0.8)), vec3(0.5));
+		color *= 0.3;
+		return pow(clamp(color, vec3(0.0), vec3(0.999)), vec3(0.5));
 		// return HeatmapClamped(float(heightRatio));
 	}
 	float GetClutterDensity(dvec3 posNorm, double height) {

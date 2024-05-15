@@ -54,33 +54,21 @@ void main() {
 	if (RAY_IS_GI || RAY_IS_SHADOW) {
 		ray.hitDistance = t1;
 		ray.t2 = t2;
-		ray.aimID = gl_InstanceCustomIndexEXT;
 		ray.renderableIndex = gl_InstanceID;
 		ray.geometryIndex = gl_GeometryIndexEXT;
 		ray.primitiveIndex = gl_PrimitiveID;
-		ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * t1;
-		ray.worldPosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * t1;
-		ray.ssao = 0;
 		ray.color = vec4(0,0,0,1);
 		ray.normal = vec3(0);
-		ray.plasma.rgb = GetEmissionColor(exaustTemperature) * 0.5;
-		ray.plasma.a = 0;
+		ray.emission.rgb += GetEmissionColor(exaustTemperature) * 0.5;
+		ray.ior = 1.0;
 		return;
 	}
 	
 	RAY_RECURSION_PUSH
-		traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
-		if (ray.hitDistance > 0) {
-			t2 = min(t2, ray.hitDistance);
-		}
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, max(t1, xenonRendererData.config.zNear), gl_WorldRayDirectionEXT, xenonRendererData.config.zFar, 0);
 		RayPayload originalRay = ray;
 		traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, gl_WorldRayOriginEXT, t1, gl_WorldRayDirectionEXT, ray.hitDistance<=0? xenonRendererData.config.zFar : ray.hitDistance, 0);
-		if (ray.hitDistance > 0) {
-			originalRay.color.rgb = ray.color.rgb;
-			originalRay.color.a = ray.color.a;
-		}
-		originalRay.plasma = ray.plasma;
-		originalRay.ssao = min(ray.ssao, originalRay.ssao);
+		originalRay.emission.rgb = max(originalRay.emission.rgb, ray.emission.rgb);
 		ray = originalRay;
 	RAY_RECURSION_POP
 	

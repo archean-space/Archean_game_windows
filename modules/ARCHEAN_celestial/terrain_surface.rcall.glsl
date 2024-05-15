@@ -28,24 +28,24 @@ const float textureMaxDistance = 500;
 ChunkBuffer chunk = ChunkBuffer(surface.geometryInfoData);
 
 vec4 ComputeSplat(in uint64_t geometries, in uint geometryIndex, in uint primitiveID, in vec3 barycentricCoordsOrLocalPosition) {
-	GeometryData geometry = GeometryData(geometries)[nonuniformEXT(geometryIndex)];
+	GeometryData geometry = GeometryData(geometries)[geometryIndex];
 	if (uint64_t(chunk.splats) != 0) {
 		uint index0 = primitiveID * 3;
 		uint index1 = primitiveID * 3 + 1;
 		uint index2 = primitiveID * 3 + 2;
 		if (geometry.indices16 != 0) {
-			index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
-			index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
-			index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
+			index0 = IndexBuffer16(geometry.indices16).indices[index0];
+			index1 = IndexBuffer16(geometry.indices16).indices[index1];
+			index2 = IndexBuffer16(geometry.indices16).indices[index2];
 		} else if (geometry.indices32 != 0) {
-			index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
-			index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
-			index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
+			index0 = IndexBuffer32(geometry.indices32).indices[index0];
+			index1 = IndexBuffer32(geometry.indices32).indices[index1];
+			index2 = IndexBuffer32(geometry.indices32).indices[index2];
 		}
 		return clamp(
-			+ vec4(chunk.splats[nonuniformEXT(index0)].splat) / 255.0 * barycentricCoordsOrLocalPosition.x
-			+ vec4(chunk.splats[nonuniformEXT(index1)].splat) / 255.0 * barycentricCoordsOrLocalPosition.y
-			+ vec4(chunk.splats[nonuniformEXT(index2)].splat) / 255.0 * barycentricCoordsOrLocalPosition.z
+			+ vec4(chunk.splats[index0].splat) / 255.0 * barycentricCoordsOrLocalPosition.x
+			+ vec4(chunk.splats[index1].splat) / 255.0 * barycentricCoordsOrLocalPosition.y
+			+ vec4(chunk.splats[index2].splat) / 255.0 * barycentricCoordsOrLocalPosition.z
 		, vec4(0), vec4(1));
 	} else {
 		return vec4(0);
@@ -53,24 +53,24 @@ vec4 ComputeSplat(in uint64_t geometries, in uint geometryIndex, in uint primiti
 }
 
 float ComputeTemperature(in uint64_t geometries, in uint geometryIndex, in uint primitiveID, in vec3 barycentricCoordsOrLocalPosition) {
-	GeometryData geometry = GeometryData(geometries)[nonuniformEXT(geometryIndex)];
+	GeometryData geometry = GeometryData(geometries)[geometryIndex];
 	if (uint64_t(chunk.temperature) != 0) {
 		uint index0 = primitiveID * 3;
 		uint index1 = primitiveID * 3 + 1;
 		uint index2 = primitiveID * 3 + 2;
 		if (geometry.indices16 != 0) {
-			index0 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index0)];
-			index1 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index1)];
-			index2 = IndexBuffer16(geometry.indices16).indices[nonuniformEXT(index2)];
+			index0 = IndexBuffer16(geometry.indices16).indices[index0];
+			index1 = IndexBuffer16(geometry.indices16).indices[index1];
+			index2 = IndexBuffer16(geometry.indices16).indices[index2];
 		} else if (geometry.indices32 != 0) {
-			index0 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index0)];
-			index1 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index1)];
-			index2 = IndexBuffer32(geometry.indices32).indices[nonuniformEXT(index2)];
+			index0 = IndexBuffer32(geometry.indices32).indices[index0];
+			index1 = IndexBuffer32(geometry.indices32).indices[index1];
+			index2 = IndexBuffer32(geometry.indices32).indices[index2];
 		}
 		return
-			+ chunk.temperature[nonuniformEXT(index0)].temperature * barycentricCoordsOrLocalPosition.x
-			+ chunk.temperature[nonuniformEXT(index1)].temperature * barycentricCoordsOrLocalPosition.y
-			+ chunk.temperature[nonuniformEXT(index2)].temperature * barycentricCoordsOrLocalPosition.z
+			+ chunk.temperature[index0].temperature * barycentricCoordsOrLocalPosition.x
+			+ chunk.temperature[index1].temperature * barycentricCoordsOrLocalPosition.y
+			+ chunk.temperature[index2].temperature * barycentricCoordsOrLocalPosition.z
 		;
 	} else {
 		return 0;

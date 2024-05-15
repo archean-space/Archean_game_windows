@@ -30,7 +30,12 @@ hitAttributeEXT hit {
 };
 
 void main() {
-	bool rayIsShadow = RAY_IS_SHADOW;
+	if (RAY_IS_SHADOW) {
+		ray.hitDistance = gl_HitTEXT;
+		ray.color = vec4(0,0,0,1);
+		return;
+	}
+	
 	bool rayIsGi = RAY_IS_GI;
 	bool rayIsUnderwater = RAY_IS_UNDERWATER;
 	uint recursions = RAY_RECURSIONS;
@@ -38,7 +43,6 @@ void main() {
 	int raymarchSteps = renderer.atmosphere_raymarch_steps;
 	
 	ray.hitDistance = -1;
-	ray.color = vec4(0);
 	
 	AtmosphereData atmosphere = AtmosphereData(AABB.data);
 	vec4 rayleigh = atmosphere.rayleigh;
@@ -66,16 +70,18 @@ void main() {
 	float nextHitDistance = xenonRendererData.config.zFar;
 	if (recursions < RAY_MAX_RECURSION && !rayIsGi) {
 		RAY_RECURSION_PUSH
+			float alpha = ray.color.a;
 			// Trace Plasma
 			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
 			// Trace Opaque
-			traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
+			traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_HYDROSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t1, viewDir, t2, 0);
 			if (ray.hitDistance == -1 && !hitInnerRadius) {
-				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t2 * 1.0001, viewDir, xenonRendererData.config.zFar, 0);
+				traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID|RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_HYDROSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, origin, t2 * 1.0001, viewDir, xenonRendererData.config.zFar, 0);
 			}
 			if (ray.hitDistance != -1) {
 				nextHitDistance = ray.hitDistance;
 			}
+			ray.color.a = max(ray.color.a, alpha);
 		RAY_RECURSION_POP
 	}
 	
@@ -108,7 +114,7 @@ void main() {
 			SunData sun = atmosphere.suns[sunIndex];
 			vec3 relativeSunPosition = sun.position - atmospherePosition;
 			float sunDistance = length(relativeSunPosition);
-			vec3 lightIntensity = sun.color * GetSunRadiationAtDistanceSqr(sun.temperature, sun.radius, dot(relativeSunPosition, relativeSunPosition)) / 4.0;
+			vec3 lightIntensity = sun.color * GetSunRadiationAtDistanceSqr(sun.temperature, sun.radius, dot(relativeSunPosition, relativeSunPosition)) * 0.5;
 			if (length(lightIntensity) > sunLuminosityThreshold) {
 				vec3 lightDir = normalize(relativeSunPosition);
 				
@@ -199,7 +205,7 @@ void main() {
 	else mieScattering = vec3(0);
 	vec4 fog = vec4(rayleighScattering + mieScattering + emission, pow(clamp(maxDepth/thickness, 0, 1), 2));
 	
-	ray.color.rgb += fog.rgb * renderer.globalLightingFactor;
+	ray.emission.rgb += fog.rgb * renderer.globalLightingFactor;
 	ray.color.a += pow(fog.a, 32);
 	
 	// Debug Time

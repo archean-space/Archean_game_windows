@@ -5,7 +5,7 @@
 #include "game/graphics/common.inc.glsl"
 
 float SurfaceDetail(vec3 position) {
-	return SimplexFractal(position, 3) * 0.5 + 0.5;
+	return SimplexFractal(position, 6) * 0.5 + 0.5;
 }
 
 void main() {
@@ -18,7 +18,8 @@ void main() {
 		surface.metallic = mix(surface.metallic, data.pbrMetallic, data.pbrMix);
 		surface.roughness = mix(surface.roughness, data.pbrRoughness, data.pbrMix);
 		if (data.monitorIndex > 0) {
-			surface.emission *= ReverseGamma(texture(nonuniformEXT(textures[data.monitorIndex]), surface.uv1).rgb);
+			surface.emission *= ReverseGamma(texture(textures[nonuniformEXT(data.monitorIndex)], surface.uv1).rgb);
+			surface.emission /= GetCurrentExposure();
 		}
 	}
 	if (surface.geometryInfoData > 0) {
@@ -26,12 +27,12 @@ void main() {
 		uint16_t tex_normal = 				uint16_t((surface.geometryInfoData >> 16) & 0xffff);
 		uint16_t tex_metallic_roughness = 	uint16_t((surface.geometryInfoData >> 32) & 0xffff);
 		uint16_t tex_emission = 			uint16_t((surface.geometryInfoData >> 48) & 0xffff);
-		if (tex_albedo > 0) surface.color.rgb *= ReverseGamma(texture(nonuniformEXT(textures[tex_albedo]), surface.uv1).rgb);
+		if (tex_albedo > 0) surface.color.rgb *= ReverseGamma(texture(textures[nonuniformEXT(tex_albedo)], surface.uv1).rgb);
 		if (tex_normal > 0) {
 			//TODO: normal maps using tex_normal
 		}
 		if (tex_metallic_roughness > 0) {
-			vec2 pbr = texture(nonuniformEXT(textures[tex_metallic_roughness]), surface.uv1).rg;
+			vec2 pbr = texture(textures[nonuniformEXT(tex_metallic_roughness)], surface.uv1).rg;
 			surface.metallic = pbr.r;
 			surface.roughness = pbr.g;
 		}
@@ -40,16 +41,20 @@ void main() {
 			if (surface.renderableData != 0) {
 				emissionPower = surface.emission;
 			}
-			surface.emission = emissionPower * ReverseGamma(texture(nonuniformEXT(textures[tex_emission]), surface.uv1).rgb);
+			surface.emission = emissionPower * ReverseGamma(texture(textures[nonuniformEXT(tex_emission)], surface.uv1).rgb);
 		}
 	}
 	
+	surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
+	
 	// Rough metal
 	if (surface.metallic > 0 && surface.roughness > 0) {
-		vec3 scale = vec3(20);
-		if (abs(dot(surface.normal, vec3(1,0,0))) < 0.4) scale.x = 400;
-		else if (abs(dot(surface.normal, vec3(0,1,0))) < 0.4) scale.y = 400;
-		else if (abs(dot(surface.normal, vec3(0,0,1))) < 0.4) scale.z = 400;
-		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition * scale, surface.normal, surface.roughness * 0.01)
+		vec3 scale = vec3(8);
+		if (abs(dot(surface.normal, vec3(1,0,0))) < 0.4) scale.x = 100;
+		else if (abs(dot(surface.normal, vec3(0,1,0))) < 0.4) scale.y = 100;
+		else if (abs(dot(surface.normal, vec3(0,0,1))) < 0.4) scale.z = 100;
+		vec3 oldNormal = surface.normal;
+		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, surface.localPosition * scale, surface.normal, surface.roughness * 0.005)
+		surface.color.rgb *= pow(dot(oldNormal, surface.normal), 100);
 	}
 }

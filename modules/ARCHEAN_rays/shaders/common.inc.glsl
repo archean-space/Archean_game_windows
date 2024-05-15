@@ -8,9 +8,8 @@
 #endif
 
 #include "game/graphics/common.inc.glsl"
-#include "game/graphics/voxel.inc.glsl"
 
-#define RAY_MAX_RECURSION 30
+#define RAY_MAX_RECURSION 6 // renderer.rays_max_bounces
 
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
@@ -75,10 +74,13 @@
 #define RAYTRACE_MASK_ENTITY 2u
 #define RAYTRACE_MASK_ATMOSPHERE 4u
 #define RAYTRACE_MASK_HYDROSPHERE 8u
-#define RAYTRACE_MASK_CLUTTER 16u
-#define RAYTRACE_MASK_PLASMA 32u
-#define RAYTRACE_MASK_LIGHT 64u
-// #define RAYTRACE_MASK_____ 128u
+#define RAYTRACE_MASK_PLASMA 16u
+#define RAYTRACE_MASK_SIMPLE_CLUTTER 32u
+#define RAYTRACE_MASK_COMPLEX_CLUTTER 64u
+#define RAYTRACE_MASK_LIGHT 128u // This may be removed
+
+#define RAYTRACE_MASK_CLUTTER (RAYTRACE_MASK_SIMPLE_CLUTTER|RAYTRACE_MASK_COMPLEX_CLUTTER)
+#define RAYTRACE_MASK_SOLID (RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER|RAYTRACE_MASK_COMPLEX_CLUTTER)
 
 #ifdef __cplusplus
 	inline static constexpr uint32_t RAYTRACE_MASKS[] { // must match the order of renderable types
@@ -89,13 +91,14 @@
 		/*  4	RENDERABLE_TYPE_ATMOSPHERE */		RAYTRACE_MASK_ATMOSPHERE,
 		/*  5	RENDERABLE_TYPE_HYDROSPHERE */		RAYTRACE_MASK_HYDROSPHERE,
 		/*  6	RENDERABLE_TYPE_ENTITY_VOXEL */		RAYTRACE_MASK_ENTITY,
-		/*  7	RENDERABLE_TYPE_CLUTTER_TRI */		RAYTRACE_MASK_CLUTTER,
+		/*  7	RENDERABLE_TYPE_CLUTTER_TRI */		RAYTRACE_MASK_SIMPLE_CLUTTER,
 		/*  8	RENDERABLE_TYPE_PLASMA */			RAYTRACE_MASK_PLASMA,
 		/*  9	RENDERABLE_TYPE_LIGHT_BOX */		RAYTRACE_MASK_LIGHT,
-		/* 10	RENDERABLE_TYPE_CLUTTER_PIPE */		RAYTRACE_MASK_CLUTTER,
-		/* 11	RENDERABLE_TYPE_CLUTTER_ROCK */		RAYTRACE_MASK_CLUTTER,
+		/* 10	RENDERABLE_TYPE_CLUTTER_PIPE */		RAYTRACE_MASK_SIMPLE_CLUTTER,
+		/* 11	RENDERABLE_TYPE_CLUTTER_ROCK */		RAYTRACE_MASK_COMPLEX_CLUTTER,
 		/* 12	RENDERABLE_TYPE_PROPELLER */		RAYTRACE_MASK_ENTITY,
-		/* 13	RENDERABLE_TYPE_CLUTTER_BOX */		RAYTRACE_MASK_CLUTTER,
+		/* 13	RENDERABLE_TYPE_CLUTTER_BOX */		RAYTRACE_MASK_SIMPLE_CLUTTER,
+		/* 14	RENDERABLE_TYPE_CLOUD */			RAYTRACE_MASK_PLASMA,
 	};
 #endif
 
@@ -159,7 +162,7 @@ struct RendererData {
 	
 	aligned_uint32_t ambientAtmosphereSamples;
 	aligned_uint32_t ambientOcclusionSamples;
-	aligned_float32_t baseAmbientBrightness;
+	aligned_float32_t _unused;
 	aligned_float32_t globalLightingFactor;
 	
 	aligned_uint32_t options; // RENDERER_OPTION_*
@@ -240,9 +243,9 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#define RAY_UNDERWATER imageLoad(rtPayloadImage, COORDS).a
 	#define RAY_UNDERWATER_PUSH imageStore(rtPayloadImage, COORDS, imageLoad(rtPayloadImage, COORDS) + u8vec4(0,0,0,1));
 	#define RAY_UNDERWATER_POP imageStore(rtPayloadImage, COORDS, imageLoad(rtPayloadImage, COORDS) - u8vec4(0,0,0,1));
-	#define ATMOSPHERE_RAY_MIN_DISTANCE 200
-	#define WATER_MAX_LIGHT_DEPTH 128
-	#define WATER_MAX_LIGHT_DEPTH_VERTICAL 256
+	#define ATMOSPHERE_RAY_MIN_DISTANCE 1000
+	#define WATER_MAX_LIGHT_DEPTH 100
+	#define WATER_MAX_LIGHT_DEPTH_VERTICAL 200
 
 	layout(set = 1, binding = SET1_BINDING_RENDERER_DATA) uniform RendererDataBuffer { RendererData renderer; };
 	layout(set = 1, binding = SET1_BINDING_RT_PAYLOAD_IMAGE, rgba8ui) uniform uimage2D rtPayloadImage; // Recursions, Shadow, Gi, Underwater
@@ -273,22 +276,44 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	struct RayPayload {
 		vec4 color;
 		vec3 normal;
-		float ssao;
-		vec3 localPosition;
-		float t2;
-		vec3 worldPosition;
 		float hitDistance;
-		int aimID;
+		vec3 emission;
+		float ior;
+		float t2;
 		int renderableIndex;
 		int geometryIndex;
 		int primitiveIndex;
-		vec4 plasma;
 	};
-
+	
 	#if defined(SHADER_RGEN) || defined(SHADER_RCHIT) || defined(SHADER_COMP_RAYS)
 		#extension GL_EXT_ray_query : require
 		layout(set = 1, binding = SET1_BINDING_TLAS) uniform accelerationStructureEXT tlas;
 		layout(set = 1, binding = SET1_BINDING_LIGHTS_TLAS) uniform accelerationStructureEXT tlas_lights;
+		
+		float RayQueryHitT(in uint rayMask, in vec3 rayOrigin, in float minDistance, in vec3 rayDirection, in float maxDistance) {
+			rayQueryEXT rq;
+			rayQueryInitializeEXT(rq, tlas, gl_RayFlagsOpaqueEXT, rayMask, rayOrigin, minDistance, rayDirection, maxDistance);
+			while (rayQueryProceedEXT(rq)) {
+				uint type = rayQueryGetIntersectionTypeEXT(rq, false);
+				if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
+					vec3 _rayOrigin = rayQueryGetIntersectionObjectRayOriginEXT(rq,false);
+					vec3 _rayDirection = rayQueryGetIntersectionObjectRayDirectionEXT(rq,false);
+					AabbData aabbData = renderer.renderableInstances[rayQueryGetIntersectionInstanceIdEXT(rq,false)].geometries[rayQueryGetIntersectionGeometryIndexEXT(rq,false)].aabbs[rayQueryGetIntersectionPrimitiveIndexEXT(rq,false)];
+					const vec3 _tbot = (vec3(aabbData.aabb[0], aabbData.aabb[1], aabbData.aabb[2]) - _rayOrigin) / _rayDirection;
+					const vec3 _ttop = (vec3(aabbData.aabb[3], aabbData.aabb[4], aabbData.aabb[5]) - _rayOrigin) / _rayDirection;
+					const vec3 _tmin = min(_ttop, _tbot);
+					const vec3 _tmax = max(_ttop, _tbot);
+					const float T1 = max(max(_tmin.x, max(_tmin.y, _tmin.z)), rayQueryGetRayTMinEXT(rq));
+					const float T2 = min(_tmax.x, min(_tmax.y, _tmax.z));
+					if (T2 > T1 && T1 < rayQueryGetIntersectionTEXT(rq, true)) {
+						rayQueryGenerateIntersectionEXT(rq, T1);
+					}
+				} else {
+					rayQueryConfirmIntersectionEXT(rq);
+				}
+			}
+			return rayQueryGetIntersectionTEXT(rq, true);
+		}
 	#endif
 
 	#if defined(SHADER_RGEN) || defined(SHADER_RCHIT) || defined(SHADER_RAHIT) || defined(SHADER_RINT) || defined(SHADER_RMISS)
@@ -302,32 +327,45 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 	#if defined(SHADER_RCHIT) || defined(SHADER_RAHIT)
 		layout(location = 0) rayPayloadInEXT RayPayload ray;
 	#endif
-
-	#if defined(SHADER_RCHIT) || defined(SHADER_RAHIT) || defined(SHADER_RINT)
-		bool IsValidVoxel(in ivec3 iPos, in vec3 gridOffset) {
-			if (iPos.x < 0 || iPos.y < 0 || iPos.z < 0) return false;
-			if (iPos.x >= VOXELS_X || iPos.y >= VOXELS_Y || iPos.z >= VOXELS_Z) return false;
-			if (iPos.x < AABB_MIN.x - gridOffset.x) return false;
-			if (iPos.y < AABB_MIN.y - gridOffset.y) return false;
-			if (iPos.z < AABB_MIN.z - gridOffset.z) return false;
-			if (iPos.x >= AABB_MAX.x - gridOffset.x) return false;
-			if (iPos.y >= AABB_MAX.y - gridOffset.y) return false;
-			if (iPos.z >= AABB_MAX.z - gridOffset.z) return false;
-			return true;
+	#if defined(SHADER_RCHIT)
+		void MakeAimable() {
+			if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
+				if (renderer.aim.aimID == 0) {
+					renderer.aim.uv = surface.uv1;
+					renderer.aim.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
+					renderer.aim.geometryIndex = gl_GeometryIndexEXT;
+					renderer.aim.aimID = gl_InstanceCustomIndexEXT;
+					renderer.aim.worldSpaceHitNormal = ray.normal;
+					renderer.aim.primitiveIndex = gl_PrimitiveID;
+					renderer.aim.worldSpacePosition = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+					renderer.aim.hitDistance = distance(vec3(inverse(renderer.viewMatrix)[3]), renderer.aim.worldSpacePosition);
+					renderer.aim.color = surface.color;
+					renderer.aim.viewSpaceHitNormal = normalize(WORLD2VIEWNORMAL * ray.normal);
+					renderer.aim.tlasInstanceIndex = gl_InstanceID;
+				}
+			}
 		}
-		bool IsValidVoxelHD(in ivec3 iPos) {
-			if (iPos.x < 0 || iPos.y < 0 || iPos.z < 0) return false;
-			if (iPos.x >= VOXEL_GRID_SIZE_HD || iPos.y >= VOXEL_GRID_SIZE_HD || iPos.z >= VOXEL_GRID_SIZE_HD) return false;
-			return true;
+		void WriteMotionVectorsAndDepth(in uint renderableIndex, in vec3 worldPosition, in vec3 localPosition, in float hitDistance, in bool force) {
+			if (force || imageLoad(img_motion, COORDS).w == 0) {
+				mat4 mvp = xenonRendererData.config.projectionMatrix * renderer.viewMatrix * mat4(transpose(renderer.tlasInstances[renderableIndex].transform));
+				renderer.mvpBuffer[renderableIndex].mvp = mvp;
+				renderer.realtimeBuffer[renderableIndex].mvpFrameIndex = xenonRendererData.frameIndex;
+				vec4 ndc = mvp * vec4(localPosition, 1);
+				ndc /= ndc.w;
+				mat4 mvpHistory;
+				if (renderer.realtimeBufferHistory[renderableIndex].mvpFrameIndex == xenonRendererData.frameIndex - 1) {
+					mvpHistory = renderer.mvpBufferHistory[renderableIndex].mvp;
+				} else {
+					mvpHistory = renderer.reprojectionMatrix * mvp;
+				}
+				vec4 ndc_history = mvpHistory * vec4(localPosition, 1);
+				ndc_history /= ndc_history.w;
+				vec3 motion = ndc_history.xyz - ndc.xyz;
+				imageStore(img_motion, COORDS, vec4(motion, hitDistance));
+				vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(worldPosition, 1);
+				float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
+				imageStore(img_depth, COORDS, vec4(depth));
+			}
 		}
-		const vec3[7] BOX_NORMAL_DIRS = {
-			vec3(-1,0,0),
-			vec3(0,-1,0),
-			vec3(0,0,-1),
-			vec3(+1,0,0),
-			vec3(0,+1,0),
-			vec3(0,0,+1),
-			vec3(0)
-		};
 	#endif
 #endif

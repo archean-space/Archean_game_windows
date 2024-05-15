@@ -48,9 +48,9 @@ struct XenonRendererConfig {
 		, options(0)
 		, brightness(1.0f)
 		, contrast(1.0f)
-		, gamma(1.0f)
+		, gamma(2.4f)
 		, minExposure(0.0001f)
-		, maxExposure(1.0f)
+		, maxExposure(10.0f)
 		{}
 	#endif
 };
@@ -154,18 +154,20 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 		return ReverseGamma(color, xenonRendererData.config.gamma);
 	}
 	
+	float GetCurrentExposure() {
+		float lumRgbTotal = dot(xenonRendererData.histogram_avg_luminance.rgb, vec3(0.2126, 0.7152, 0.0722));
+		float exposure = lumRgbTotal > 0 ? xenonRendererData.histogram_avg_luminance.a / lumRgbTotal : 1;
+		return clamp(exposure, xenonRendererData.config.minExposure, xenonRendererData.config.maxExposure);
+	}
+	
 	void ApplyToneMapping(inout vec3 color) {
-		// HDR ToneMapping (Reinhard)
+		// HDR ToneMapping with eye adaptation
 		if ((xenonRendererData.config.options & RENDER_OPTION_TONE_MAPPING) != 0) {
-			float lumRgbTotal = xenonRendererData.histogram_avg_luminance.r + xenonRendererData.histogram_avg_luminance.g + xenonRendererData.histogram_avg_luminance.b;
-			float exposure = lumRgbTotal > 0 ? xenonRendererData.histogram_avg_luminance.a / lumRgbTotal : 1;
-			color.rgb = vec3(1.0) - exp(-color.rgb * clamp(exposure, xenonRendererData.config.minExposure, xenonRendererData.config.maxExposure));
+			color.rgb = vec3(1.0) - exp(-color.rgb * GetCurrentExposure());
 		}
 		
 		// Contrast / Brightness
-		if (xenonRendererData.config.contrast != 1.0 || xenonRendererData.config.brightness != 1.0) {
-			color.rgb = mix(vec3(0.5), color.rgb, xenonRendererData.config.contrast) * xenonRendererData.config.brightness;
-		}
+		color.rgb = mix(vec3(0.5), color.rgb, xenonRendererData.config.contrast) * xenonRendererData.config.brightness;
 		
 		// Gamma correction
 		color.rgb = ApplyGamma(color.rgb);

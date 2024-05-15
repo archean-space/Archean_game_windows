@@ -1,0 +1,42 @@
+components:
+  - ARCHEAN_tank.SmallFluidTank
+  - ARCHEAN_tank.FluidTank
+  - ARCHEAN_tank.BigFluidTank
+
+recipes:
+
+  - label: SmallFluidTank
+    context: avatar
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Aluminium: 1
+    output:
+      ARCHEAN_tank.SmallFluidTank: 1
+    
+  - label: FluidTank
+    context: avatar
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Aluminium: 10
+    output:
+      ARCHEAN_tank.FluidTank: 1
+  
+  - label: BigFluidTank
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_celestial.Aluminium: 100
+    output:
+      ARCHEAN_tank.BigFluidTank: 1

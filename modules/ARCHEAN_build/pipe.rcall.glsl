@@ -18,4 +18,15 @@ void main() {
 		float f = fract(surface.localPosition.x + surface.localPosition.y + surface.localPosition.z);
 		surface.color = vec4(mix(surface.color.rgb, surface.color.rgb * 0.02, step(0.5,f)), surface.color.a);
 	}
+	
+	if ((flags & PIPE_FLAG_CHROME) != 0) {
+		surface.metallic = 1;
+		surface.roughness = 0;
+	} else if ((flags & PIPE_FLAG_GLOSSY) != 0) {
+		surface.metallic = 0;
+		surface.roughness = 0;
+	} else if ((flags & PIPE_FLAG_METAL) != 0) {
+		surface.metallic = 1;
+		surface.roughness = 1;
+	}
 }

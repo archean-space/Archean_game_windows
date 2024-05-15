@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v3.6.6",
+		"generator":"Khronos glTF Blender I/O v4.0.44",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -234,7 +234,7 @@
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":96,
+			"count":24,
 			"max":[
 				0.25,
 				0.25,
@@ -250,13 +250,13 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":96,
+			"count":24,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":132,
+			"count":36,
 			"type":"SCALAR"
 		},
 		{
@@ -421,116 +421,116 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":1152,
+			"byteLength":288,
 			"byteOffset":95424,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1152,
-			"byteOffset":96576,
+			"byteLength":288,
+			"byteOffset":95712,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":264,
-			"byteOffset":97728,
+			"byteLength":72,
+			"byteOffset":96000,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":4512,
-			"byteOffset":97992,
+			"byteOffset":96072,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4512,
-			"byteOffset":102504,
+			"byteOffset":100584,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2040,
-			"byteOffset":107016,
+			"byteOffset":105096,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":3744,
-			"byteOffset":109056,
+			"byteOffset":107136,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":3744,
-			"byteOffset":112800,
+			"byteOffset":110880,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1992,
-			"byteOffset":116544,
+			"byteOffset":114624,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":9216,
-			"byteOffset":118536,
+			"byteOffset":116616,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":9216,
-			"byteOffset":127752,
+			"byteOffset":125832,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4584,
-			"byteOffset":136968,
+			"byteOffset":135048,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":8352,
-			"byteOffset":141552,
+			"byteOffset":139632,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":8352,
-			"byteOffset":149904,
+			"byteOffset":147984,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4296,
-			"byteOffset":158256,
+			"byteOffset":156336,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":840,
-			"byteOffset":162552,
+			"byteOffset":160632,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":840,
-			"byteOffset":163392,
+			"byteOffset":161472,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":408,
-			"byteOffset":164232,
+			"byteOffset":162312,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":164640,
+			"byteLength":162720,
 			"uri":"Propeller.bin"
 		}
 	]

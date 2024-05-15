@@ -1,0 +1,118 @@
+# tools:
+#   - ARCHEAN_avatar.Canister
+
+inventory_creative_backpack:
+  ARCHEAN_build.BlueprintTool: 1
+  ARCHEAN_build.PaintTool: 1
+  ARCHEAN_build.LabelTool: 1
+  ARCHEAN_build.DashboardTool: 1
+  ARCHEAN_ownership.OwnerPad: 50
+  ARCHEAN_computer.Computer: 50
+  ARCHEAN_computer.MiniComputer: 50
+  ARCHEAN_computer.HDD: 50
+  ARCHEAN_computer.Router: 50
+  ARCHEAN_celestial.NavInstrument: 50
+  ARCHEAN_beacon.Beacon: 50
+  ARCHEAN_hid.PushButton: 50
+  ARCHEAN_hid.ToggleButton: 50
+  ARCHEAN_hid.ThrottleLever: 50
+  ARCHEAN_avatar.PilotSeat: 50
+  ARCHEAN_avatar.Bobblehead: 50
+  ARCHEAN_battery.LowVoltageBattery: 50
+  ARCHEAN_battery.HighVoltageBattery: 50
+  ARCHEAN_celestial.SolarPanel: 50
+  ARCHEAN_rtg.RTG: 50
+  ARCHEAN_wheel.Wheel: 50
+  ARCHEAN_wheel.SmallWheel: 50
+  ARCHEAN_propeller.Propeller: 50
+  ARCHEAN_rcs.RCS: 50
+  ARCHEAN_thruster.SmallThruster: 50
+  ARCHEAN_thruster.BigThruster: 50
+  ARCHEAN_thruster.SmallTurboPump: 50
+  ARCHEAN_thruster.BigTurboPump: 50
+  ARCHEAN_tank.SmallFluidTank: 50
+  ARCHEAN_tank.FluidTank: 50
+  ARCHEAN_tank.BigFluidTank: 50
+  ARCHEAN_chemical.FluidPort: 50
+  ARCHEAN_chemical.Electrolyser: 50
+  ARCHEAN_junction.FluidJunction: 50
+  ARCHEAN_junction.DataJunction: 50
+  ARCHEAN_junction.LowVoltageJunction: 50
+  ARCHEAN_junction.HighVoltageJunction: 50
+  ARCHEAN_junction.ItemJunction: 50
+  ARCHEAN_junction.LowVoltageRelay: 50
+  ARCHEAN_junction.HighVoltageRelay: 50
+  ARCHEAN_junction.PowerConverter: 50
+  ARCHEAN_junction.DataBridge: 50
+  ARCHEAN_junction.LowVoltageBridge: 50
+  ARCHEAN_junction.HighVoltageBridge: 50
+  ARCHEAN_junction.FluidBridge: 50
+  ARCHEAN_sensor.AltitudeSensor: 50
+  ARCHEAN_sensor.SpeedSensor: 50
+  ARCHEAN_sensor.TiltSensor: 50
+  ARCHEAN_build.SmallPivot: 50
+  ARCHEAN_build.SmallHinge: 50
+  ARCHEAN_build.DockableDoor: 50
+  ARCHEAN_build.DockingPort: 50
+  ARCHEAN_gyroscope.SmallGyroscope: 50
+  ARCHEAN_gyroscope.Gyroscope: 50
+  ARCHEAN_aileron.Aileron: 50
+  ARCHEAN_anchor.GroundAnchor: 50
+  ARCHEAN_light.SpotLight: 50
+  ARCHEAN_storage.TrashCan: 50
+  ARCHEAN_storage.Container: 50
+  ARCHEAN_celestial.MiningDrill: 50
+  ARCHEAN_celestial.OreScanner: 50
+  ARCHEAN_build.DataCable: 1
+  ARCHEAN_build.LowVoltageCable: 1
+  ARCHEAN_build.HighVoltageCable: 1
+  ARCHEAN_build.FluidPipe: 1
+  ARCHEAN_build.ItemConduit: 1
+
+inventory_creative_belt:
+  ARCHEAN_build.ConstructorTool: 1
+  ARCHEAN_build.DestructorTool: 1
+  ARCHEAN_build.DataCable: 1
+  ARCHEAN_build.LowVoltageCable: 1
+  ARCHEAN_build.HighVoltageCable: 1
+
+components:
+  - ARCHEAN_avatar.PilotSeat
+  - ARCHEAN_avatar.Bobblehead
+
+recipes:
+
+  - label: PilotSeat
+    context: avatar
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 10
+      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Wire: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_avatar.PilotSeat: 1
+
+  - label: Bobblehead
+    context: avatar
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Screw: 10
+    output:
+      ARCHEAN_avatar.Bobblehead: 1
+
+  - label: Canister
+    context: avatar
+    category: misc
+    time: 1
+    input:
+      ARCHEAN_parts.Plastic: 1
+    output:
+      ARCHEAN_avatar.Canister: 1

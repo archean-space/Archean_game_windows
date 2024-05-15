@@ -3,7 +3,7 @@
 layout(local_size_x = COMPUTE_SIZE_X, local_size_y = COMPUTE_SIZE_Y) in;
 
 vec3 GetVertex(in uint index) {
-	return vec3(vertices[nonuniformEXT(index*3)].vertex, vertices[nonuniformEXT(index*3+1)].vertex, vertices[nonuniformEXT(index*3+2)].vertex);
+	return vec3(vertices[index*3].vertex, vertices[index*3+1].vertex, vertices[index*3+2].vertex);
 }
 
 uint32_t computeSize = chunk.vertexSubdivisions + 1;
@@ -34,23 +34,23 @@ void main() {
 	double height = heightAndFeature.x;
 	double feature = heightAndFeature.y;
 	if (feature == TERRAIN_FEATURE_LAVA) {
-		chunk.temperature[nonuniformEXT(currentIndex)].temperature = 2000;
+		chunk.temperature[currentIndex].temperature = 2000;
 	}
 	
 	// Position
 	dvec3 position = (chunk.inverseTransform * dvec4(posNorm * height, 1)).xyz;
-	vertices[nonuniformEXT(Xindex)].vertex = float(position.x);
-	vertices[nonuniformEXT(Yindex)].vertex = float(position.y);
-	vertices[nonuniformEXT(Zindex)].vertex = float(position.z);
+	vertices[Xindex].vertex = float(position.x);
+	vertices[Yindex].vertex = float(position.y);
+	vertices[Zindex].vertex = float(position.z);
 	
 	// Normal
 	#ifdef TERRAIN_MESH_GENERATE_SMOOTH_NORMALS
 		vec3 normal = ComputeNormal();
 		float slope = pow(max(0, dot(normal, vec3(0,1,0))), 4);
 		if (uint64_t(normals) != 0) {
-			normals[nonuniformEXT(Xindex)].normal = normal.x;
-			normals[nonuniformEXT(Yindex)].normal = normal.y;
-			normals[nonuniformEXT(Zindex)].normal = normal.z;
+			normals[Xindex].normal = normal.x;
+			normals[Yindex].normal = normal.y;
+			normals[Zindex].normal = normal.z;
 		}
 	#else
 		float slope = 1;
@@ -58,7 +58,7 @@ void main() {
 	
 	// Color/Splat
 	vec4 splat = GetSplat(posNorm, height, slope, feature);
-	colors[nonuniformEXT(currentIndex)].color = u8vec4(vec4(GetColor(posNorm, height, slope, feature, splat), 1) * 255.0f);
+	colors[currentIndex].color = u8vec4(vec4(GetColor(posNorm, height, slope, feature, splat), 1) * 255.0f);
 	
 	// Height from Texture
 	if (chunk.triangleSize < SMOOTH_SHADING_TRIANGLE_SIZE_THRESHOLD) {
@@ -72,7 +72,7 @@ void main() {
 		heights[2] = chunk.tex.z + Height;
 		bumpDisplacement[3] = chunk.texHeightDisplacement.w * splat.w;
 		heights[3] = chunk.tex.w + Height;
-		dvec2 uvD = (chunk.uvOffset + dvec2(uvs[nonuniformEXT(currentIndex)].uv) * chunk.uvMult) * chunk.planetFaceSize;
+		dvec2 uvD = (chunk.uvOffset + dvec2(uvs[currentIndex].uv) * chunk.uvMult) * chunk.planetFaceSize;
 		vec2 uv = vec2(fract(uvD / NEAR_TEXTURE_SPAN_METERS));
 		for (uint i = 0; i < 4; ++i) {
 			height += double(texture(textures[nonuniformEXT(heights[i])], uv).r) * bumpDisplacement[i] - bumpDisplacement[i]/2;
@@ -92,12 +92,12 @@ void main() {
 	
 	// Final Position
 	position = (chunk.inverseTransform * dvec4(posNorm * height, 1)).xyz;
-	vertices[nonuniformEXT(Xindex)].vertex = float(position.x);
-	vertices[nonuniformEXT(Yindex)].vertex = float(position.y);
-	vertices[nonuniformEXT(Zindex)].vertex = float(position.z);
+	vertices[Xindex].vertex = float(position.x);
+	vertices[Yindex].vertex = float(position.y);
+	vertices[Zindex].vertex = float(position.z);
 	
 	// Final Splat
-	chunk.splats[nonuniformEXT(currentIndex)].splat = u8vec4(splat * 255.0);
+	chunk.splats[currentIndex].splat = u8vec4(splat * 255.0);
 	
 	// Skirt
 	int32_t skirtIndex = -1;
@@ -112,21 +112,19 @@ void main() {
 	}
 	if (skirtIndex != -1) {
 		skirtIndex = int(computeSize*computeSize + skirtIndex);
-		
-		posNorm = normalize((chunk.transform * dvec4(GetVertex(skirtIndex), 1)).xyz);
 		height = min(height, GetHeightMap(posNorm));
 		position = (chunk.inverseTransform * dvec4(posNorm * height, 1)).xyz;
-		vertices[nonuniformEXT(skirtIndex * 3 + 0)].vertex = float(position.x);
-		vertices[nonuniformEXT(skirtIndex * 3 + 1)].vertex = float(position.y) - chunk.skirtOffset;
-		vertices[nonuniformEXT(skirtIndex * 3 + 2)].vertex = float(position.z);
+		vertices[skirtIndex * 3 + 0].vertex = float(position.x);
+		vertices[skirtIndex * 3 + 1].vertex = float(position.y) - chunk.skirtOffset;
+		vertices[skirtIndex * 3 + 2].vertex = float(position.z);
 		#ifdef TERRAIN_MESH_GENERATE_SMOOTH_NORMALS
 			if (uint64_t(normals) != 0) {
-				normals[nonuniformEXT(skirtIndex * 3 + 0)].normal = normals[nonuniformEXT(Xindex)].normal;
-				normals[nonuniformEXT(skirtIndex * 3 + 1)].normal = normals[nonuniformEXT(Yindex)].normal;
-				normals[nonuniformEXT(skirtIndex * 3 + 2)].normal = normals[nonuniformEXT(Zindex)].normal;
+				normals[skirtIndex * 3 + 0].normal = normals[Xindex].normal;
+				normals[skirtIndex * 3 + 1].normal = normals[Yindex].normal;
+				normals[skirtIndex * 3 + 2].normal = normals[Zindex].normal;
 			}
 		#endif
-		colors[nonuniformEXT(skirtIndex)].color = colors[nonuniformEXT(currentIndex)].color;
-		chunk.splats[nonuniformEXT(skirtIndex)].splat = chunk.splats[nonuniformEXT(currentIndex)].splat;
+		colors[skirtIndex].color = colors[currentIndex].color;
+		chunk.splats[skirtIndex].splat = chunk.splats[currentIndex].splat;
 	}
 }

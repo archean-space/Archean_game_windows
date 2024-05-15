@@ -18,6 +18,12 @@ BUFFER_REFERENCE_STRUCT_READONLY(4) BlockColor {
 		uint8_t roughness : 3;
 		uint8_t metallic : 1;
 		bool IsTransparent() const { return opacity < 15; }
+		uint8_t GetAlpha() const { return uint8_t((int(opacity) + 1) * 16 - 1); }
+		uint8_t GetRoughness() const { return uint8_t(int(roughness) * 255 / 7); }
+		uint8_t GetMetallic() const { return uint8_t(int(metallic) * 255); }
+		float GetGammaCorrectedRed(float gamma) const { return pow(float(r) / 255.0f, 1.0f/gamma); }
+		float GetGammaCorrectedGreen(float gamma) const { return pow(float(g) / 255.0f, 1.0f/gamma); }
+		float GetGammaCorrectedBlue(float gamma) const { return pow(float(b) / 255.0f, 1.0f/gamma); }
 	#else
 		aligned_uint8_t a;
 		// opacity = (float(a & 0xf) + 1) / 16.0
@@ -37,7 +43,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 	#ifdef __cplusplus
 		// 4 bytes (32 bits)
 		/*UNUSED*/uint32_t _damage : 8; // 256 states
-		/*UNUSED*/uint32_t material : 8; // 256 alloys
+		uint32_t material : 8; // 256 alloys
 		uint32_t extra : 4; // 16 states
 		uint32_t size_x : 4; // from 0.25 to 4.0 meter
 		uint32_t size_y : 4;
@@ -89,24 +95,30 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			}
 		}
 		
+		// Amount of space in the box occupied by the block
+		double GetOccupancyRatio() const {
+			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
+			return type==0? 1.0:0.5;
+		}
+		
 		// for better handling of drag, lift and bouyancy
 		double GetVolumeDisplacementRatio() const {
 			if (type == 255/*ENTITY_OCCUPANCY_INDEX*/) return 0;
 			switch (material) {
 			case 0: // Composite
-				return 0.2 * (type==0? 1.0:0.5);
+				return 0.2 * GetOccupancyRatio();
 			case 1: // Concrete
-				return 0.25 * (type==0? 1.0:0.5);
+				return 0.25 * GetOccupancyRatio();
 			case 2: // Steel
-				return 0.01 * (type==0? 1.0:0.5);
+				return 0.01 * GetOccupancyRatio();
 			case 3: // Aluminum
-				return 0.01 * (type==0? 1.0:0.5);
+				return 0.01 * GetOccupancyRatio();
 			case 4: // Glass
-				return 0.02 * (type==0? 1.0:0.5);
+				return 0.02 * GetOccupancyRatio();
 			case 5: // Lead
-				return 1.0 * (type==0? 1.0:0.5);
+				return 1.0 * GetOccupancyRatio();
 			default:
-				return 1.00 * (type==0? 1.0:0.5);
+				return 1.00 * GetOccupancyRatio();
 			}
 		}
 		
@@ -127,6 +139,16 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 			default:
 				return 0.2;
 			}
+		}
+		
+		bool IsMetallic() const {
+			switch (material) {
+			case 2: // Steel
+			case 3: // Aluminum
+			case 5: // Lead
+				return true;
+			}
+			return false;
 		}
 		
 		void SetOccupancy(const glm::ivec3& a, const glm::ivec3& b) {
@@ -204,9 +226,12 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		
 	#else
 		uint32_t data;
-		// damage = float(data&0x3F)/63.0
-		// dirt = float((data>>6)&0x3)/3.0
-		// extra = float((data>>8)&0xf)/15.0
+		// _damage = float(data&0xff)/255.0
+		// material = uint32_t((data>>8)&0xff)
+		// extra = uint32_t((data>>16)&0xf)
+		// size_x = uint32_t((data>>20)&0xf)
+		// size_y = uint32_t((data>>24)&0xf)
+		// size_z = uint32_t((data>>28)&0xf)
 		uint16_t id;
 	#endif
 	
