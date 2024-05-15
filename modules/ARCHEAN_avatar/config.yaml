@@ -59,6 +59,7 @@ inventory_creative_backpack:
   ARCHEAN_aileron.Aileron: 50
   ARCHEAN_anchor.GroundAnchor: 50
   ARCHEAN_light.SpotLight: 50
+  ARCHEAN_light.Lamp: 50
   ARCHEAN_storage.TrashCan: 50
   ARCHEAN_storage.Container: 50
   ARCHEAN_celestial.MiningDrill: 50
