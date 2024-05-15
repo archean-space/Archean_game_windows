@@ -105,7 +105,6 @@ float WaterWaves(vec3 pos) {
 
 void main() {
 	uint recursions = RAY_RECURSIONS;
-	ray.t2 = 0;
 	ray.ior = WATER_IOR;
 	ray.hitDistance = gl_HitTEXT;
 	ray.normal = vec3(0,1,0);
@@ -145,7 +144,7 @@ void main() {
 			if (ray.hitDistance > 0) {
 				originalRay.color.rgb *= ray.color.rgb;
 				if (ray.color.a > 0.5) {
-					originalRay.t2 = min(ray.hitDistance * 0.99, originalRay.t2);
+					originalRay.t2 = min(ray.hitDistance, originalRay.t2);
 				}
 			}
 			ray = originalRay;
@@ -192,7 +191,6 @@ void main() {
 			vec3 wavesPosition = hitPoint1;
 			APPLY_NORMAL_BUMP_NOISE(WaterWaves, wavesPosition, surfaceNormal, waterWavesStrength * 0.05)
 		}
-		// float fresnel = Fresnel(normalize((renderer.viewMatrix * vec4(worldPosition, 1)).xyz), normalize(WORLD2VIEWNORMAL * surfaceNormal), WATER_IOR);
 		float fresnel = Fresnel(gl_WorldRayDirectionEXT, surfaceNormal, WATER_IOR);
 		
 		// Reflection on top of water surface
@@ -223,7 +221,9 @@ void main() {
 		reflection = ray.color.rgb + ray.emission.rgb;
 		ray.emission.rgb = vec3(0);
 		
-		lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, vec3(WATER_OPACITY*WATER_OPACITY), t1, 0, 0, 0, 0) * 0.25;
+		if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) != 0) {
+			lighting = GetDirectLighting(hitPoint1, gl_WorldRayDirectionEXT, surfaceNormal, vec3(WATER_OPACITY*WATER_OPACITY), t1, 0, 0, 0, 0) * 0.25;
+		}
 		
 		// See through water (refraction)
 		vec3 rayDirection = gl_WorldRayDirectionEXT;
