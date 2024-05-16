@@ -84,7 +84,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 				return size * 10.0;
 			case 2: // Steel
 				return size * 1.0;
-			case 3: // Aluminum
+			case 3: // Aluminium
 				return size * 0.500;
 			case 4: // Glass
 				return size * 1.0;
@@ -111,7 +111,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 				return 0.25 * GetOccupancyRatio();
 			case 2: // Steel
 				return 0.01 * GetOccupancyRatio();
-			case 3: // Aluminum
+			case 3: // Aluminium
 				return 0.01 * GetOccupancyRatio();
 			case 4: // Glass
 				return 0.02 * GetOccupancyRatio();
@@ -130,7 +130,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 				return 0.5;
 			case 2: // Steel
 				return 0.2;
-			case 3: // Aluminum
+			case 3: // Aluminium
 				return 0.2;
 			case 4: // Glass
 				return 0.1;
@@ -144,7 +144,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) Block {
 		bool IsMetallic() const {
 			switch (material) {
 			case 2: // Steel
-			case 3: // Aluminum
+			case 3: // Aluminium
 			case 5: // Lead
 				return true;
 			}

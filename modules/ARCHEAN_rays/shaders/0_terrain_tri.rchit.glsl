@@ -43,9 +43,9 @@ void main() {
 	
 	ray.color.a = 1;
 	
-	// if (OPTION_TEXTURES) {
+	if (renderer.terrain_detail > 0.4) {
 		executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
-	// }
+	}
 	
 	// Debug UV1
 	if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_UVS) {

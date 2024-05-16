@@ -136,3 +136,13 @@ recipes:
       ARCHEAN_parts.Connector: 2
     output:
       ARCHEAN_junction.FluidBridge: 1
+
+  - label: ItemBridge
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 2
+    output:
+      ARCHEAN_junction.ItemBridge: 1

@@ -47,6 +47,7 @@ inventory_creative_backpack:
   ARCHEAN_junction.LowVoltageBridge: 50
   ARCHEAN_junction.HighVoltageBridge: 50
   ARCHEAN_junction.FluidBridge: 50
+  ARCHEAN_junction.ItemBridge: 50
   ARCHEAN_sensor.AltitudeSensor: 50
   ARCHEAN_sensor.SpeedSensor: 50
   ARCHEAN_sensor.TiltSensor: 50

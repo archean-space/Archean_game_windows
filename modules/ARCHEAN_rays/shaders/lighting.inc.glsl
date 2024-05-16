@@ -411,8 +411,8 @@ void ApplyDefaultLighting() {
 	
 	// Ambient lighting
 	else if (!rayIsUnderWater) {
-		vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * LIGHT_LUMINOSITY_VISIBLE_THRESHOLD * 0.1;
 		if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) != 0) {
+			vec3 ambient = vec3(pow(smoothstep(200/*max ambient distance*/, 0, realDistance), 4)) * LIGHT_LUMINOSITY_VISIBLE_THRESHOLD * 0.1;
 			if (recursions <= 2) {
 				float ambientFactor = 1;
 				if (renderer.ambientOcclusionSamples > 0) {
@@ -438,7 +438,7 @@ void ApplyDefaultLighting() {
 			}
 			ray.color.rgb += albedo * ambient * max(1, renderer.ambientOcclusionSamples) / 32;
 		} else {
-			ray.color.rgb += albedo * ambient / 4;
+			ray.color.rgb += albedo * 0.01;
 		}
 	}
 }
