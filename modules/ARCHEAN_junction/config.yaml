@@ -146,3 +146,15 @@ recipes:
       ARCHEAN_parts.Connector: 2
     output:
       ARCHEAN_junction.ItemBridge: 1
+
+  - label: FluidValve
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_junction.FluidValve: 1

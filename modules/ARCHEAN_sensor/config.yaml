@@ -40,3 +40,15 @@ recipes:
       ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor.TiltSensor: 1
+
+  - label: AngularVelocitySensor
+    context: avatar
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.AngularVelocitySensor: 1
