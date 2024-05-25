@@ -75,7 +75,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":128,
+			"count":108,
 			"max":[
 				0.125,
 				0.125,
@@ -91,19 +91,19 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":128,
+			"count":108,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5123,
-			"count":294,
+			"count":204,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":1860,
+			"count":1880,
 			"max":[
 				0.14564894139766693,
 				0.14564894139766693,
@@ -112,64 +112,64 @@
 			"min":[
 				-0.14564894139766693,
 				-0.14564894139766693,
-				-0.02985917031764984
+				-0.02985917218029499
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":1860,
+			"count":1880,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":5310,
+			"count":5100,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1536,
+			"byteLength":1296,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1536,
-			"byteOffset":1536,
+			"byteLength":1296,
+			"byteOffset":1296,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":588,
-			"byteOffset":3072,
+			"byteLength":408,
+			"byteOffset":2592,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":22320,
-			"byteOffset":3660,
+			"byteLength":22560,
+			"byteOffset":3000,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":22320,
-			"byteOffset":25980,
+			"byteLength":22560,
+			"byteOffset":25560,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":10620,
-			"byteOffset":48300,
+			"byteLength":10200,
+			"byteOffset":48120,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":58920,
+			"byteLength":58320,
 			"uri":"DataJunction.bin"
 		}
 	]
