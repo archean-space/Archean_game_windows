@@ -67,6 +67,7 @@ inventory_creative_backpack:
   ARCHEAN_storage.Container: 50
   ARCHEAN_celestial.MiningDrill: 50
   ARCHEAN_celestial.OreScanner: 50
+  ARCHEAN_machines.Crusher: 50
   ARCHEAN_build.DataCable: 1
   ARCHEAN_build.LowVoltageCable: 1
   ARCHEAN_build.HighVoltageCable: 1
