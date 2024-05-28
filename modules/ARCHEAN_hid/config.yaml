@@ -6,7 +6,7 @@ components:
 recipes:
 
   - label: PushButton
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:
@@ -19,7 +19,7 @@ recipes:
       ARCHEAN_hid.PushButton: 1
   
   - label: ToggleButton
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:
@@ -31,7 +31,7 @@ recipes:
       ARCHEAN_hid.ToggleButton: 1
   
   - label: ThrottleLever
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:

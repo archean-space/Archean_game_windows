@@ -2,7 +2,7 @@ components:
   - ARCHEAN_aileron.Aileron
 recipes:
   - label: Aileron
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

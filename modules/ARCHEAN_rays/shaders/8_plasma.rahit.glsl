@@ -84,7 +84,7 @@ void main() {
 	}
 	
 	float exposure = GetCurrentExposure();
-	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity / max(1, exposure)) / exposure;
+	ray.emission.rgb += max(accumulatedLight, exaustColor * accumulatedDensity / max(1, exposure));
 	
 	ignoreIntersectionEXT;
 }

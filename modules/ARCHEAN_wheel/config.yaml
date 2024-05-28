@@ -5,7 +5,7 @@ components:
 recipes:
 
   - label: Wheel
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
@@ -19,7 +19,7 @@ recipes:
       ARCHEAN_wheel.Wheel: 1
   
   - label: SmallWheel
-    context: avatar
+    context: crafter
     category: components
     time: 5
     input:

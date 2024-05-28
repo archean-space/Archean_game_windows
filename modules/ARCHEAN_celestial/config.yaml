@@ -26,7 +26,7 @@ components:
 recipes:
 
   - context: crusher
-    time: 0.002
+    time: 0.02
     input: ARCHEAN_celestial.Rock
     output:
       ARCHEAN_celestial.Aluminium: input.composition.Al
@@ -45,7 +45,7 @@ recipes:
       ARCHEAN_celestial.Carbon: input.composition.C
   
   - label: RockRakeTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -55,7 +55,7 @@ recipes:
       ARCHEAN_celestial.RockRakeTool: 1
   
   - label: NavInstrument
-    context: avatar
+    context: crafter
     category: components
     time: 30
     input:
@@ -73,19 +73,19 @@ recipes:
       ARCHEAN_celestial.NavInstrument: 1
   
   - label: SolarPanel
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Connector: 3
       ARCHEAN_celestial.Silicon: 1000
     output:
       ARCHEAN_celestial.SolarPanel: 1
   
   - label: MiningDrill
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
@@ -99,7 +99,7 @@ recipes:
       ARCHEAN_celestial.MiningDrill: 1
   
   - label: OreScanner
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

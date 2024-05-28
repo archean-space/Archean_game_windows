@@ -2,7 +2,7 @@ components:
   - ARCHEAN_propeller.Propeller
 recipes:
   - label: Propeller
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

@@ -5,7 +5,7 @@ components:
 recipes:
   
   - label: LowVoltageBattery
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
@@ -19,7 +19,7 @@ recipes:
       ARCHEAN_battery.LowVoltageBattery: 1
   
   - label: HighVoltageBattery
-    context: avatar
+    context: crafter
     category: components
     time: 20
     input:

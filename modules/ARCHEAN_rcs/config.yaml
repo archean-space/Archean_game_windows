@@ -2,7 +2,7 @@ components:
   - ARCHEAN_rcs.RCS
 recipes:
   - label: RCS
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

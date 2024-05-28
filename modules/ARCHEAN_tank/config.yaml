@@ -6,7 +6,7 @@ components:
 recipes:
 
   - label: SmallFluidTank
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
@@ -18,7 +18,7 @@ recipes:
       ARCHEAN_tank.SmallFluidTank: 1
     
   - label: FluidTank
-    context: avatar
+    context: crafter
     category: components
     time: 20
     input:
@@ -30,7 +30,7 @@ recipes:
       ARCHEAN_tank.FluidTank: 1
   
   - label: BigFluidTank
-    context: avatar
+    context: crafter
     category: components
     time: 30
     input:

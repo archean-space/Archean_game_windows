@@ -2,7 +2,7 @@ components:
   - ARCHEAN_beacon.Beacon
 recipes:
   - label: Beacon
-    context: avatar
+    context: crafter
     category: components
     time: 30
     input:

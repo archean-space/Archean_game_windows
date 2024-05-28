@@ -9,7 +9,7 @@ components:
 recipes:
 
   - label: HDD
-    context: avatar
+    context: crafter
     category: parts
     time: 10
     input:
@@ -22,7 +22,7 @@ recipes:
       ARCHEAN_computer.HDD: 1
   
   - label: Computer
-    context: avatar
+    context: crafter
     category: components
     time: 30
     input:
@@ -37,7 +37,7 @@ recipes:
       ARCHEAN_computer.Computer: 1
   
   - label: MiniComputer
-    context: avatar
+    context: crafter
     category: components
     time: 20
     input:
@@ -52,7 +52,7 @@ recipes:
       ARCHEAN_computer.MiniComputer: 1
   
   - label: Router
-    context: avatar
+    context: crafter
     category: components
     time: 20
     input:
