@@ -52,7 +52,9 @@ inventory_creative_backpack:
   ARCHEAN_sensor.AltitudeSensor: 50
   ARCHEAN_sensor.SpeedSensor: 50
   ARCHEAN_sensor.TiltSensor: 50
+  ARCHEAN_sensor.LinearVelocitySensor: 50
   ARCHEAN_sensor.AngularVelocitySensor: 50
+  ARCHEAN_sensor.VehiclePhysicsSensor: 50
   ARCHEAN_build.SmallPivot: 50
   ARCHEAN_build.SmallHinge: 50
   ARCHEAN_build.DockableDoor: 50
@@ -68,6 +70,8 @@ inventory_creative_backpack:
   ARCHEAN_celestial.MiningDrill: 50
   ARCHEAN_celestial.OreScanner: 50
   ARCHEAN_machines.Crusher: 50
+  ARCHEAN_machines.Crafter: 50
+  ARCHEAN_machines.ItemConveyor: 50
   ARCHEAN_build.DataCable: 1
   ARCHEAN_build.LowVoltageCable: 1
   ARCHEAN_build.HighVoltageCable: 1
@@ -88,7 +92,7 @@ components:
 recipes:
 
   - label: PilotSeat
-    context: avatar
+    context: crafter
     category: components
     time: 30
     input:
@@ -103,7 +107,7 @@ recipes:
       ARCHEAN_avatar.PilotSeat: 1
 
   - label: Bobblehead
-    context: avatar
+    context: crafter
     category: components
     time: 5
     input:
@@ -114,7 +118,7 @@ recipes:
       ARCHEAN_avatar.Bobblehead: 1
 
   - label: Canister
-    context: avatar
+    context: crafter
     category: misc
     time: 1
     input:

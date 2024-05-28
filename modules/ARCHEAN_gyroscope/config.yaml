@@ -5,7 +5,7 @@ components:
 recipes:
   
   - label: SmallGyroscope
-    context: avatar
+    context: crafter
     category: components
     time: 5
     input:
@@ -20,7 +20,7 @@ recipes:
       ARCHEAN_gyroscope.SmallGyroscope: 1
   
   - label: Gyroscope
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

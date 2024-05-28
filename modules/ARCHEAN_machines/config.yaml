@@ -4,7 +4,7 @@ components:
 recipes:
 
   - label: Crusher
-    context: avatar
+    context: crafter
     category: components
     time: 60
     input:
@@ -17,3 +17,33 @@ recipes:
       ARCHEAN_celestial.Lead: 1
     output:
       ARCHEAN_machines.Crusher: 1
+
+  - label: Crafter
+    context: crafter
+    category: components
+    time: 60
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Screw: 1000
+      ARCHEAN_parts.Connector: 6
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 10
+      ARCHEAN_celestial.Gold: 1
+      ARCHEAN_computer.MiniComputer: 1
+    output:
+      ARCHEAN_machines.Crafter: 1
+
+  - label: ItemConveyor
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+    output:
+      ARCHEAN_machines.ItemConveyor: 1

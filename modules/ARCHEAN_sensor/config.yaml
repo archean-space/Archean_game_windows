@@ -6,7 +6,7 @@ components:
 recipes:
   
   - label: AltitudeSensor
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:
@@ -18,7 +18,7 @@ recipes:
       ARCHEAN_sensor.AltitudeSensor: 1
   
   - label: SpeedSensor
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:
@@ -30,7 +30,7 @@ recipes:
       ARCHEAN_sensor.SpeedSensor: 1
   
   - label: TiltSensor
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:
@@ -41,8 +41,20 @@ recipes:
     output:
       ARCHEAN_sensor.TiltSensor: 1
 
+  - label: LinearVelocitySensor
+    context: crafter
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.LinearVelocitySensor: 1
+
   - label: AngularVelocitySensor
-    context: avatar
+    context: crafter
     category: components
     time: 1
     input:
@@ -52,3 +64,15 @@ recipes:
       ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor.AngularVelocitySensor: 1
+
+  - label: VehiclePhysicsSensor
+    context: crafter
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor.VehiclePhysicsSensor: 1

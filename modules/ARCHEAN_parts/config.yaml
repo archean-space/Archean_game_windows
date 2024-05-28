@@ -16,7 +16,7 @@ parts:
 recipes:
 
   - label: Screw
-    context: avatar
+    context: crafter
     category: parts
     time: 0.1
     input:
@@ -25,19 +25,19 @@ recipes:
       ARCHEAN_parts.Screw: 1
 
   - label: Plastic
-    context: avatar
+    context: crafter
     category: parts
     time: 0.1
     input:
       ARCHEAN_celestial.Carbon: 1
       ARCHEAN_celestial.Silicon: 1
-      o2: 0.001
-      h2: 0.001
+      O2: 0.001
+      H2: 0.001
     output:
       ARCHEAN_parts.Plastic: 1
   
   - label: Wire
-    context: avatar
+    context: crafter
     category: parts
     time: 0.1
     input:
@@ -47,7 +47,7 @@ recipes:
       ARCHEAN_parts.Wire: 1
     
   - label: Connector
-    context: avatar
+    context: crafter
     category: parts
     time: 1
     input:
@@ -58,7 +58,7 @@ recipes:
       ARCHEAN_parts.Connector: 1
   
   - label: Magnet
-    context: avatar
+    context: crafter
     category: parts
     time: 5
     input:
@@ -67,7 +67,7 @@ recipes:
       ARCHEAN_parts.Magnet: 1
   
   - label: Diode
-    context: avatar
+    context: crafter
     category: parts
     time: 1
     input:
@@ -79,7 +79,7 @@ recipes:
       ARCHEAN_parts.Diode: 1
   
   - label: Capacitor
-    context: avatar
+    context: crafter
     category: parts
     time: 1
     input:
@@ -91,7 +91,7 @@ recipes:
       ARCHEAN_parts.Capacitor: 1
   
   - label: Panel
-    context: avatar
+    context: crafter
     category: parts
     time: 1
     input:
@@ -100,7 +100,7 @@ recipes:
       ARCHEAN_parts.Panel: 1
   
   - label: Disk
-    context: avatar
+    context: crafter
     category: parts
     time: 1
     input:
@@ -109,7 +109,7 @@ recipes:
       ARCHEAN_parts.Disk: 1
   
   - label: Casing
-    context: avatar
+    context: crafter
     category: parts
     time: 5
     input:
@@ -118,7 +118,7 @@ recipes:
       ARCHEAN_parts.Casing: 1
   
   - label: Circuit
-    context: avatar
+    context: crafter
     category: parts
     time: 10
     input:
@@ -132,7 +132,7 @@ recipes:
       ARCHEAN_parts.Circuit: 1
 
   - label: Motor
-    context: avatar
+    context: crafter
     category: parts
     time: 10
     input:
@@ -146,7 +146,7 @@ recipes:
       ARCHEAN_parts.Motor: 1
 
   - label: LED
-    context: avatar
+    context: crafter
     category: parts
     time: 1
     input:

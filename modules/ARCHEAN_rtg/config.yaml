@@ -2,12 +2,12 @@ components:
   - ARCHEAN_rtg.RTG
 recipes:
   - label: RTG
-    context: avatar
+    context: crafter
     category: components
     time: 20
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Connector: 3
       ARCHEAN_celestial.Uranium: 1
     output:
       ARCHEAN_rtg.RTG: 1

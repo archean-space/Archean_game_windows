@@ -4,7 +4,7 @@ components:
 recipes:
 
   - label: SpotLight
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
@@ -16,7 +16,7 @@ recipes:
       ARCHEAN_light.SpotLight: 1
 
   - label: Lamp
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

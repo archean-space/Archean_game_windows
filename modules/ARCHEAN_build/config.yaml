@@ -31,7 +31,7 @@ components:
 recipes:
 
   - label: SteelBeam
-    context: avatar
+    context: crafter
     category: construction
     time: 0.1
     input:
@@ -41,18 +41,18 @@ recipes:
       ARCHEAN_build.SteelBeam: 1
   
   - label: ConcreteBlock
-    context: avatar
+    context: crafter
     category: construction
     time: 0.1
     input:
       ARCHEAN_celestial.Silicon: 1
-      h2o: 0.005
-      o2: 0.001
+      H2O: 0.005
+      O2: 0.001
     output:
       ARCHEAN_build.ConcreteBlock: 1
   
   - label: CompositeBlock
-    context: avatar
+    context: crafter
     category: construction
     time: 0.1
     input:
@@ -61,7 +61,7 @@ recipes:
       ARCHEAN_build.CompositeBlock: 1
   
   - label: SteelBlock
-    context: avatar
+    context: crafter
     category: construction
     time: 0.1
     input:
@@ -71,7 +71,7 @@ recipes:
       ARCHEAN_build.SteelBlock: 1
   
   - label: AluminiumBlock
-    context: avatar
+    context: crafter
     category: construction
     time: 0.1
     input:
@@ -80,18 +80,18 @@ recipes:
       ARCHEAN_build.AluminiumBlock: 1
   
   - label: GlassBlock
-    context: avatar
+    context: crafter
     category: construction
     time: 0.1
     input:
       ARCHEAN_celestial.Silicon: 10
-      o2: 0.001
-      h2: 0.001
+      O2: 0.001
+      H2: 0.001
     output:
       ARCHEAN_build.GlassBlock: 1
   
   - label: LeadBlock
-    context: avatar
+    context: crafter
     category: construction
     time: 1
     input:
@@ -100,7 +100,7 @@ recipes:
       ARCHEAN_build.LeadBlock: 1
 
   - label: ConstructorTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -110,7 +110,7 @@ recipes:
       ARCHEAN_build.ConstructorTool: 1
     
   - label: DestructorTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -119,7 +119,7 @@ recipes:
       ARCHEAN_build.DestructorTool: 1
   
   - label: BlueprintTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -132,7 +132,7 @@ recipes:
       ARCHEAN_build.BlueprintTool: 1
     
   - label: PaintTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -142,7 +142,7 @@ recipes:
       ARCHEAN_build.PaintTool: 1
     
   - label: LabelTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -152,7 +152,7 @@ recipes:
       ARCHEAN_build.LabelTool: 1
     
   - label: DashboardTool
-    context: avatar
+    context: crafter
     category: tools
     time: 10
     input:
@@ -164,7 +164,7 @@ recipes:
       ARCHEAN_build.DashboardTool: 1
 
   - label: DataCable
-    context: avatar
+    context: crafter
     category: spools
     time: 10
     input:
@@ -174,7 +174,7 @@ recipes:
       ARCHEAN_build.DataCable: 1
   
   - label: LowVoltageCable
-    context: avatar
+    context: crafter
     category: spools
     time: 10
     input:
@@ -184,7 +184,7 @@ recipes:
       ARCHEAN_build.LowVoltageCable: 1
   
   - label: HighVoltageCable
-    context: avatar
+    context: crafter
     category: spools
     time: 30
     input:
@@ -194,7 +194,7 @@ recipes:
       ARCHEAN_build.HighVoltageCable: 1
   
   - label: FluidPipe
-    context: avatar
+    context: crafter
     category: spools
     time: 30
     input:
@@ -204,7 +204,7 @@ recipes:
       ARCHEAN_build.FluidPipe: 1
   
   - label: ItemConduit
-    context: avatar
+    context: crafter
     category: spools
     time: 30
     input:
@@ -215,7 +215,7 @@ recipes:
       ARCHEAN_build.ItemConduit: 1
   
   - label: SmallPivot
-    context: avatar
+    context: crafter
     category: components
     time: 5
     input:
@@ -228,7 +228,7 @@ recipes:
       ARCHEAN_build.SmallPivot: 1
   
   - label: SmallHinge
-    context: avatar
+    context: crafter
     category: components
     time: 5
     input:
@@ -241,7 +241,7 @@ recipes:
       ARCHEAN_build.SmallHinge: 1
   
   - label: DockingPort
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
@@ -254,7 +254,7 @@ recipes:
       ARCHEAN_build.DockingPort: 1
     
   - label: DockableDoor
-    context: avatar
+    context: crafter
     category: components
     time: 30
     input:

@@ -4,7 +4,7 @@ components:
 recipes:
 
   - label: OwnerPad
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:

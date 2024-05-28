@@ -2,7 +2,7 @@ components:
   - ARCHEAN_anchor.GroundAnchor
 recipes:
   - label: GroundAnchor
-    context: avatar
+    context: crafter
     category: components
     time: 10
     input:
