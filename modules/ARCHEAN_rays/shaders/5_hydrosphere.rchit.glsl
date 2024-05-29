@@ -290,7 +290,7 @@ void main() {
 			RAY_RECURSION_PUSH
 				ray.color = vec4(0);
 				for (int RAYLOOP = 0; RAYLOOP < 10; ++RAYLOOP) {
-					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, 0.001, rayDirection, distanceToSurface, 0);
+					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, 0.001, rayDirection, distanceToSurface, 0);
 					if (ray.hitDistance == -1 || ray.color.a > 0.5) {
 						ray.color.a = 1;
 						break;
@@ -312,17 +312,20 @@ void main() {
 						maxRayDistance = maxLightDepth;
 						shouldRestoreAim = true;
 					}
-					RAY_RECURSION_PUSH
-						ray.color = vec4(0);
-						for (int RAYLOOP = 0; RAYLOOP < 10; ++RAYLOOP) {
-							traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, 0.001, rayDirection, maxRayDistance, 0);
-							if (ray.hitDistance == -1 || ray.color.a > 0.5) {
-								ray.color.a = 1;
-								break;
+					if (recursions < 3) {
+						RAY_RECURSION_PUSH
+							ray.color = vec4(0);
+							for (int RAYLOOP = 0; RAYLOOP < 10; ++RAYLOOP) {
+								traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, 0.001, rayDirection, maxRayDistance, 0);
+								if (ray.hitDistance == -1 || ray.color.a > 0.5) {
+									ray.color.a = 1;
+									break;
+								}
+								rayPosition += rayDirection * ray.hitDistance;
 							}
-							rayPosition += rayDirection * ray.hitDistance;
-						}
-					RAY_RECURSION_POP
+						RAY_RECURSION_POP
+					}
+					
 					// Restore Aim
 					if (COORDS == ivec2(gl_LaunchSizeEXT.xy) / 2) {
 						if (shouldRestoreAim) {
@@ -361,7 +364,7 @@ void main() {
 			RAY_RECURSION_PUSH
 				ray.color = vec4(0);
 				for (int RAYLOOP = 0; RAYLOOP < 10; ++RAYLOOP) {
-					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, 0.001, rayDirection, WATER_MAX_LIGHT_DEPTH_VERTICAL, 0);
+					traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, rayMask & ~RAYTRACE_MASK_ATMOSPHERE, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayPosition, 0.001, rayDirection, WATER_MAX_LIGHT_DEPTH_VERTICAL, 0);
 					if (ray.hitDistance == -1 || ray.color.a > 0.5) {
 						ray.color.a = 1;
 						break;
