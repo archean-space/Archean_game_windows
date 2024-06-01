@@ -30,6 +30,7 @@ recipes:
       ARCHEAN_parts.Connector: 6
       ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.LED: 10
+      ARCHEAN_celestial.Gold: 1
       ARCHEAN_computer.MiniComputer: 1
     output:
       ARCHEAN_machines.Crafter: 1
