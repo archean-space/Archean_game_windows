@@ -87,7 +87,10 @@ tick
 	draw_triangle(0+$upX,0+$upY,10+$upX,0+$upY,5+$upX,-9+$upY,white,white)
 	draw_triangle(0+$downX,0+$downY,10+$downX,0+$downY,5+$downX,9+$downY,white,white)
 	
-	output.0 ($p, $currentCraft)
+	if $error
+		output.0 (-1, $currentCraft)
+	else
+		output.0 ($p, $currentCraft)
 
 input.0 ($on:number, $craft:text)
 	if time < $initTime+5
