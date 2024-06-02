@@ -1,0 +1,15 @@
+components:
+  - ARCHEAN_beep.Buzzer
+recipes:
+  - label: Buzzer
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Wire: 10
+    output:
+      ARCHEAN_beep.Buzzer: 1
