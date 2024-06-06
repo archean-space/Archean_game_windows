@@ -84,6 +84,18 @@ recipes:
     output:
       ARCHEAN_celestial.SolarPanel: 1
   
+  - label: SolarSensor
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Diode: 10
+      ARCHEAN_celestial.Silicon: 10
+    output:
+      ARCHEAN_celestial.SolarSensor: 1
+  
   - label: MiningDrill
     context: crafter
     category: components

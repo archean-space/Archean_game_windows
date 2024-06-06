@@ -65,7 +65,6 @@ void main() {
 	vec3 rayDirection = initialRayDirection;
 	
 	imageStore(rtPayloadImage, COORDS, u8vec4(0));
-	imageStore(img_primary_albedo_roughness, COORDS, u8vec4(0));
 	if (xenonRendererData.config.debugViewMode != 0) {
 		imageStore(img_normal_or_debug, COORDS, vec4(0));
 	}

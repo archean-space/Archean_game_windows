@@ -32,9 +32,8 @@ struct XenonRendererConfig {
 	aligned_float32_t minExposure;
 	aligned_float32_t maxExposure;
 	
-	aligned_float32_t _unused1;
-	aligned_float32_t _unused2;
-	aligned_float32_t _unused3;
+	aligned_float32_t _unused;
+	aligned_i32vec2 screenSize;
 	
 	#ifdef __cplusplus
 		XenonRendererConfig()
@@ -51,6 +50,7 @@ struct XenonRendererConfig {
 		, gamma(2.4f)
 		, minExposure(0.0001f)
 		, maxExposure(10.0f)
+		, screenSize(1.0f, 1.0f)
 		{}
 	#endif
 };
@@ -91,7 +91,7 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 #define XENON_RENDERER_TAA_SAMPLES 16
 #define XENON_RENDERER_THUMBNAIL_SCALE 16
 
-#define XENON_RENDERER_SET0_IMG_SWAPCHAIN 0
+#define XENON_RENDERER_SET0_IMG_OUTPUT 0
 #define XENON_RENDERER_SET0_IMG_POST 1
 #define XENON_RENDERER_SET0_IMG_RESOLVED 2
 #define XENON_RENDERER_SET0_IMG_HISTORY 3
@@ -110,7 +110,7 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 
 #ifdef GLSL
 	
-	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_SWAPCHAIN, rgba8) uniform image2D img_swapchain;
+	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_OUTPUT, rgba8) uniform image2D img_output;
 	
 	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_POST, rgba8) uniform image2D img_post;
 	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_RESOLVED, rgba32f) uniform image2D img_resolved;

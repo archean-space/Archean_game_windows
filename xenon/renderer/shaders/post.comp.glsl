@@ -25,6 +25,6 @@ void main() {
 	}
 	
 	// This performs a blend like a rasterization pipeline would, to add the rendered image on top of say a background that could have been added via PostCommands
-	vec4 swapchain = imageLoad(img_swapchain, compute_coord);
-	imageStore(img_swapchain, compute_coord, vec4(swapchain.rgb * (1-color.a) + color.rgb, 1));
+	vec4 outputImage = imageLoad(img_output, compute_coord);
+	imageStore(img_output, compute_coord, vec4(outputImage.rgb * (1-color.a) + color.rgb, 1));
 }

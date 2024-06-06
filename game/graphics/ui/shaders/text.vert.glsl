@@ -4,7 +4,7 @@
 layout(location = 0) out flat uint out_char;
 
 void main() {
-	ivec2 screenSize = imageSize(img_post);
+	ivec2 screenSize = xenonRendererData.config.screenSize;
 	float screenRatio = float(screenSize.x) / float(screenSize.y);
 	float offset = (size * gl_InstanceIndex) - ((length-1) * size * 0.5);
 	gl_Position = vec4((x + offset*0.6/screenRatio), y, 0, 1);

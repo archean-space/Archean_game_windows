@@ -11,7 +11,7 @@ const vec2 vertices[4] = {
 layout(location = 0) out vec2 out_uv;
 
 void main() {
-	ivec2 screenSize = imageSize(img_post);
+	ivec2 screenSize = xenonRendererData.config.screenSize;
 	float screenRatio = float(screenSize.x) / float(screenSize.y);
 	vec2 boxPos = vec2(box.x, box.y);
 	vec2 boxSize = vec2(box.width/screenRatio, box.height);

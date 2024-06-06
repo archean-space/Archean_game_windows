@@ -1,7 +1,7 @@
 #define SHADER_RINT
 #include "clutter_rock.common.inc.glsl"
 
-ivec2 screenSize = ivec2(imageSize(img_post));
+ivec2 screenSize = ivec2(xenonRendererData.config.screenSize);
 
 float GetFixedBoundingSizeInScreenPixels(float distance, float size) {
 	float solidAngle;
