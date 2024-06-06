@@ -15,11 +15,9 @@
 #define SET1_BINDING_LIGHTS_TLAS 1
 #define SET1_BINDING_RENDERER_DATA 2
 #define SET1_BINDING_RT_PAYLOAD_IMAGE 3
-#define SET1_BINDING_PRIMARY_ALBEDO_ROUGHNESS_IMAGE 4
-#define SET1_BINDING_POST_HISTORY_IMAGE 5
-#define SET1_BINDING_BLOOM_IMAGE 6
-#define SET1_BINDING_CLOUD_IMAGE 7
-#define SET1_BINDING_CLOUD_SAMPLER 8
+#define SET1_BINDING_BLOOM_IMAGE 4
+#define SET1_BINDING_CLOUD_IMAGE 5
+#define SET1_BINDING_CLOUD_SAMPLER 6
 
 // xenonRendererData.config.debugViewMode
 #define RENDERER_DEBUG_VIEWMODE_NONE 0
@@ -249,8 +247,6 @@ STATIC_ASSERT_ALIGNED16_SIZE(RendererData, 3*64 + 12*8 + 5*16 + 4*8);
 
 	layout(set = 1, binding = SET1_BINDING_RENDERER_DATA) uniform RendererDataBuffer { RendererData renderer; };
 	layout(set = 1, binding = SET1_BINDING_RT_PAYLOAD_IMAGE, rgba8ui) uniform uimage2D rtPayloadImage; // Recursions, Shadow, Gi, Underwater
-	layout(set = 1, binding = SET1_BINDING_PRIMARY_ALBEDO_ROUGHNESS_IMAGE, rgba8) uniform image2D img_primary_albedo_roughness;
-	layout(set = 1, binding = SET1_BINDING_POST_HISTORY_IMAGE, rgba8) uniform image2D img_post_history;
 	layout(set = 1, binding = SET1_BINDING_BLOOM_IMAGE, rgba8) uniform image2D img_bloom;
 	layout(set = 1, binding = SET1_BINDING_CLOUD_IMAGE, rgba32f) uniform image2D img_cloud[2];
 	layout(set = 1, binding = SET1_BINDING_CLOUD_SAMPLER) uniform sampler2D sampler_cloud;
