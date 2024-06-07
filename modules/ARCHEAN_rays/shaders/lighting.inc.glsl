@@ -105,8 +105,10 @@ bool GetDirectLight(in vec3 worldPosition, out vec3 lightDirection, out float li
 			if (lightSource.angle > 0) {
 				surfaceArea = 2 * lightSource.angle;
 				vec3 spotlightDirection = (lightTransform * vec4(lightSource.direction, 0)).xyz;
+				float dotLightDir = dot(-lightDir, spotlightDirection);
+				if (dotLightDir < 0) continue;
 				float spotlightHalfAngle = lightSource.angle * 0.5;
-				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dot(-lightDir, spotlightDirection))));
+				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dotLightDir)));
 				if (penombra == 0) continue;
 			}
 			float effectiveLightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
@@ -217,8 +219,10 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			if (lightSource.angle > 0) {
 				surfaceArea = 2 * lightSource.angle;
 				vec3 spotlightDirection = (lightTransform * vec4(lightSource.direction, 0)).xyz;
+				float dotLightDir = dot(-lightDir, spotlightDirection);
+				if (dotLightDir < 0) continue;
 				float spotlightHalfAngle = lightSource.angle * 0.5;
-				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dot(-lightDir, spotlightDirection))));
+				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dotLightDir)));
 				if (penombra == 0) continue;
 			}
 			float effectiveLightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
