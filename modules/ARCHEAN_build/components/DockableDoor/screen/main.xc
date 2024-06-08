@@ -1,5 +1,6 @@
 var $buttonOpenRequest = 0
 var $buttonDockRequest = 0
+var $wasDockedFromInput = 0
 
 tick
 	blank(black)
@@ -54,6 +55,7 @@ input.0 ($door:number, $dock:number)
 			close()
 	if $dock
 		dock()
+		$wasDockedFromInput = 1
 	else
-		if !$buttonDockRequest
+		if !$buttonDockRequest and $wasDockedFromInput
 			undock()
