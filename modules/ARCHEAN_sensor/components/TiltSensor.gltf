@@ -15,7 +15,12 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Cube"
+			"name":"body",
+			"translation":[
+				0.01874995231628418,
+				0.06140042468905449,
+				-0.08236587792634964
+			]
 		}
 	],
 	"materials":[
@@ -50,7 +55,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Cube.001",
+			"name":"Mesh",
 			"primitives":[
 				{
 					"attributes":{
@@ -75,101 +80,101 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":124,
+			"count":120,
 			"max":[
-				0.125,
-				0.125,
-				0.0625
+				0.10625004768371582,
+				0.06359957158565521,
+				0.14486587047576904
 			],
 			"min":[
-				-0.125,
-				0,
-				-0.08296124637126923
+				-0.14374995231628418,
+				-0.06140042468905449,
+				-0.0005953684449195862
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":124,
+			"count":120,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5123,
-			"count":198,
+			"count":180,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":372,
+			"count":376,
 			"max":[
-				0.02985917031764984,
-				0.14564894139766693,
-				0.02985917031764984
+				0.011109218001365662,
+				0.08424851298332214,
+				0.11222504824399948
 			],
 			"min":[
-				-0.02985917031764984,
-				0.125,
-				-0.02985917031764984
+				-0.04860912263393402,
+				0.06359957158565521,
+				0.0525067076086998
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":372,
+			"count":376,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":1014,
+			"count":1020,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1488,
+			"byteLength":1440,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1488,
-			"byteOffset":1488,
+			"byteLength":1440,
+			"byteOffset":1440,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":396,
-			"byteOffset":2976,
+			"byteLength":360,
+			"byteOffset":2880,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":4464,
-			"byteOffset":3372,
+			"byteLength":4512,
+			"byteOffset":3240,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4464,
-			"byteOffset":7836,
+			"byteLength":4512,
+			"byteOffset":7752,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2028,
-			"byteOffset":12300,
+			"byteLength":2040,
+			"byteOffset":12264,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":14328,
+			"byteLength":14304,
 			"uri":"TiltSensor.bin"
 		}
 	]
