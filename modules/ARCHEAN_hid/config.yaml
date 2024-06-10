@@ -55,4 +55,4 @@ recipes:
       ARCHEAN_parts.LED: 10
       ARCHEAN_parts.Connector: 1
     output:
-      ARCHEAN_ownership.Numpad: 1
+      ARCHEAN_hid.Numpad: 1

@@ -70,6 +70,7 @@ inventory_creative_backpack:
   ARCHEAN_storage.Container: 50
   ARCHEAN_celestial.MiningDrill: 50
   ARCHEAN_celestial.OreScanner: 50
+  ARCHEAN_celestial.TerrainScanner: 50
   ARCHEAN_celestial.SolarSensor: 50
   ARCHEAN_machines.Crusher: 50
   ARCHEAN_machines.Crafter: 50
