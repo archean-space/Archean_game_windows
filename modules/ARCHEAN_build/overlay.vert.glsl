@@ -15,6 +15,13 @@ void main() {
 			vertexBuffer.vertices[index * 3 + 2],
 			1
 		);
+	} else if (uint64_t(vertexBuffer) != 0) {
+		vertex = vec4(
+			vertexBuffer.vertices[gl_VertexIndex * 3 + 0],
+			vertexBuffer.vertices[gl_VertexIndex * 3 + 1],
+			vertexBuffer.vertices[gl_VertexIndex * 3 + 2],
+			1
+		);
 	} else if (gl_VertexIndex == 0) {
 		vertex = vec4(begin.xyz, 1);
 	} else {
