@@ -16,6 +16,7 @@ inventory_creative_backpack:
   ARCHEAN_hid.PushButton: 50
   ARCHEAN_hid.ToggleButton: 50
   ARCHEAN_hid.ThrottleLever: 50
+  ARCHEAN_hid.Numpad: 50
   ARCHEAN_avatar.PilotSeat: 50
   ARCHEAN_avatar.Bobblehead: 50
   ARCHEAN_battery.LowVoltageBattery: 50
@@ -69,6 +70,7 @@ inventory_creative_backpack:
   ARCHEAN_storage.Container: 50
   ARCHEAN_celestial.MiningDrill: 50
   ARCHEAN_celestial.OreScanner: 50
+  ARCHEAN_celestial.TerrainScanner: 50
   ARCHEAN_celestial.SolarSensor: 50
   ARCHEAN_machines.Crusher: 50
   ARCHEAN_machines.Crafter: 50

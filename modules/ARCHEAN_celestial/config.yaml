@@ -124,3 +124,17 @@ recipes:
     output:
       ARCHEAN_celestial.OreScanner: 1
   
+  - label: TerrainScanner
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Capacitor: 1
+    output:
+      ARCHEAN_celestial.TerrainScanner: 1
+  
