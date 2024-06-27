@@ -43,8 +43,7 @@ tick
 			$buttonDockRequest = 1
 		write(15,32+16, black, "ARM")
 	
-	output.0 (isOpen)
-	output.1 (isDocked)
+	output.0 (isOpen, isDocked)
 
 input.0 ($door:number, $dock:number)
 	if $door
