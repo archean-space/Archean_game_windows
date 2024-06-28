@@ -1,8 +1,10 @@
 var $saveTimer = 0
 var $resetTimer = 0
 var $rolesTimer = 0
+var $debounce = ""
 
 tick
+	output.0("")
 	blank(color(16,16,16))
 
 	
@@ -10,6 +12,7 @@ tick
 	if button(3,3,color(0,128,128),34,9)
 		if $saveTimer == 0
 			save()
+			output.0("save")
 			$saveTimer = 5
 	write(8,4,black,"SAVE")
 
@@ -24,6 +27,7 @@ tick
 	if button(3,27,color(0,128,128),34,9)
 		if $resetTimer == 0
 			reset()
+			output.0("reset")
 			$resetTimer = 5
 	write(5,28,black,"RESET")
 
@@ -46,3 +50,14 @@ tick
 		draw(3,14,color(0,255,0),34,9)
 		$rolesTimer--
 
+
+
+input.0 ($func:text)
+	if $debounce != $func
+		if $func == "save"
+			save()
+			output.0("save")
+		if $func == "reset"
+			reset()
+			output.0("reset")
+	$debounce = $func

@@ -1,7 +1,7 @@
 ; Archean XenonCode Documentation
 
 ; This is the extended documentation related to the Archean specific implementation of XenonCode.
-; For the basic syntax of XenonCode, please refer to https://xenoncode.com/documentation.php
+; For the basic syntax of XenonCode, please refer to https://wiki.archean.space/xenoncode/documentation.html
 
 ; Includes are useful to either share functionality between programs, merge multiple programs into one, or just to keep your programs clean and organized.
 include "some_helper_functions.xc"

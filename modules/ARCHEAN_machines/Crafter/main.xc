@@ -20,6 +20,7 @@ init
 	$recipesCategories.from(get_recipes_categories("crafter"), ",")
 	foreach $recipesCategories ($i, $category)
 		$categories.$category = 0
+	$categories.coffee = 0
 
 tick
 	blank()
@@ -41,6 +42,8 @@ tick
 		if $open
 			array $craftArray:text
 			$craftArray.from(get_recipes("crafter", $category), ",")
+			if $category == "coffee"
+				$craftArray.append("Americano","Espresso","Mocha")
 			foreach $craftArray ($index, $craft)
 				if button(0,(12*$dpIndex)-$cursor,color(10,10,10),screen_w-17,11)
 					if $currentCraft == $craft
@@ -71,6 +74,10 @@ tick
 					$dpIndex++
 					foreach $recipeInputs ($item, $qty)
 						write(20,(12*$dpIndex+2)-$cursor,color(40,40,40), $item & ": " & $qty)
+						$dpIndex++
+					if $category == "coffee"
+						write(20,(12*$dpIndex+2)-$cursor,color(40,0,0), "Sorry, out of beans!")
+						$error = 1
 						$dpIndex++
 				else
 					write(10,(12*$dpIndex+2)-$cursor,color(40,40,40),$craft)

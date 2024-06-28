@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.0.44",
+		"generator":"Khronos glTF Blender I/O v4.1.63",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -43,6 +43,20 @@
 				"metallicFactor":0,
 				"roughnessFactor":0
 			}
+		},
+		{
+			"doubleSided":true,
+			"name":"data-connector",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0,
+					0.05000007152557373,
+					0.5,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":1
+			}
 		}
 	],
 	"meshes":[
@@ -64,6 +78,14 @@
 					},
 					"indices":5,
 					"material":1
+				},
+				{
+					"attributes":{
+						"POSITION":6,
+						"TEXCOORD_0":7
+					},
+					"indices":8,
+					"material":2
 				}
 			]
 		}
@@ -85,7 +107,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":49,
+			"count":83,
 			"max":[
 				0.25,
 				0.25,
@@ -101,7 +123,7 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":49,
+			"count":83,
 			"type":"VEC2"
 		},
 		{
@@ -137,43 +159,89 @@
 			"componentType":5123,
 			"count":6,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":6,
+			"componentType":5126,
+			"count":376,
+			"max":[
+				0.02985917031764984,
+				0.02985917031764984,
+				0.04564894735813141
+			],
+			"min":[
+				-0.02985917031764984,
+				-0.02985917031764984,
+				0.024999994784593582
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":7,
+			"componentType":5126,
+			"count":376,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":8,
+			"componentType":5123,
+			"count":1020,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":588,
+			"byteLength":996,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":392,
-			"byteOffset":588,
+			"byteLength":664,
+			"byteOffset":996,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":300,
-			"byteOffset":980,
+			"byteOffset":1660,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":48,
-			"byteOffset":1280,
+			"byteOffset":1960,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":32,
-			"byteOffset":1328,
+			"byteOffset":2008,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":12,
-			"byteOffset":1360,
+			"byteOffset":2040,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":4512,
+			"byteOffset":2052,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3008,
+			"byteOffset":6564,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2040,
+			"byteOffset":9572,
 			"target":34963
 		}
 	],
@@ -185,7 +253,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1372,
+			"byteLength":11612,
 			"uri":"OwnerPad.bin"
 		}
 	]
