@@ -108,12 +108,12 @@ void main() {
 		if (ray.hitDistance == -1) {
 			break;
 		}
-		ssao *= ray.color.a;
+		if (ray.ior != 1) ssao *= ray.color.a;
 		if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_NORMALS) {
 			break;
 		}
 		vec3 tint = ray.color.rgb;
-		transparency *= min(0.99, 1.0 - clamp(ray.color.a, 0, 1));
+		transparency *= min(ray.ior != 1? 0.99 : 1, 1.0 - clamp(ray.color.a, 0, 1));
 		glassTint *= tint;
 		rayOrigin += rayDirection * ray.hitDistance;
 		// Reflections on Glass

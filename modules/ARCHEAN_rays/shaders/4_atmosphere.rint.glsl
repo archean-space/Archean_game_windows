@@ -1,5 +1,4 @@
 #define SHADER_RINT
-#define SHADER_ATMOSPHERE
 #include "common.inc.glsl"
 
 hitAttributeEXT hit {

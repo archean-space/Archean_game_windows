@@ -1,5 +1,4 @@
 #define SHADER_RINT
-#define SHADER_ATMOSPHERE
 #include "common.inc.glsl"
 
 hitAttributeEXT hit {
@@ -29,14 +28,14 @@ void main() {
 		if (gl_RayTminEXT < T1 && T1 < gl_RayTmaxEXT) {
 			t1 = float(T1);
 			t2 = float(T2);
-			reportIntersectionEXT(float(T1), 0);
+			reportIntersectionEXT(float(T1) + 0.01, 0);
 		}
 		
 		// Inside of sphere
 		if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
 			t1 = float(T1);
 			t2 = float(T2);
-			reportIntersectionEXT(gl_RayTminEXT, 1);
+			reportIntersectionEXT(gl_RayTminEXT + 0.01, 1);
 		}
 	}
 	DEBUG_RAY_INT_TIME

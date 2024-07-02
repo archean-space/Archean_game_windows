@@ -1,5 +1,4 @@
 #define SHADER_RCHIT
-#define SHADER_ATMOSPHERE
 #include "common.inc.glsl"
 #include "lighting.inc.glsl"
 
