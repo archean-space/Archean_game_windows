@@ -266,20 +266,20 @@ layout(set = 1, binding = SET1_BINDING_TLAS) uniform accelerationStructureEXT tl
 layout(set = 1, binding = SET1_BINDING_LIGHTS_TLAS) uniform accelerationStructureEXT tlas_lights;
 layout(set = 1, binding = SET1_BINDING_RENDERER_DATA) uniform RendererDataBuffer { RendererData renderer; };
 
-layout(set = 1, binding = 9, rgba32f) uniform image2D images[];
+// layout(set = 1, binding = 9, rgba32f) uniform image2D images[];
 
-layout(push_constant) uniform RayTracingPushConstant {
-	mat4 viewMatrix;
-	float aspectRatio;
-	float fov;
-	float zNear;
-	float zFar;
-	vec2 jitter;
-	uint32_t albedoOpacityImageIndex;
-	uint32_t normalDistanceImageIndex;
-	uint32_t emissionIorImageIndex;
-	uint32_t extraImageIndex; // roughness, metallic, specular, 8 flags
-};
+// layout(push_constant) uniform RayTracingPushConstant {
+// 	mat4 viewMatrix;
+// 	float aspectRatio;
+// 	float fov;
+// 	float zNear;
+// 	float zFar;
+// 	vec2 jitter;
+// 	uint32_t albedoOpacityImageIndex;
+// 	uint32_t normalDistanceImageIndex;
+// 	uint32_t emissionIorImageIndex;
+// 	uint32_t extraImageIndex; // roughness, metallic, specular, 8 flags
+// };
 
 struct RayPayload {
 	vec3 color;
