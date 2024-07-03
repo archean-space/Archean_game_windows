@@ -131,6 +131,7 @@ void TraceFogRay(in vec3 rayOrigin, in vec3 rayDirection, in float maxDistance, 
 }
 
 bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
+	ray.renderableIndex = -1;
 	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, xenonRendererData.config.zNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 	int hitRenderableIndex = ray.renderableIndex;
 	
@@ -147,7 +148,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		float roughness = float(ray.roughness) / 255;
 		vec3 hitWorldPosition = rayOrigin + rayDirection * ray.hitDistance;
 		vec3 hitLocalPosition = ray.localPosition;
-		vec3 reflectionDir = reflect(rayDirection, ray.normal);
+		vec3 reflectionDir = normalize(reflect(rayDirection, ray.normal));
 		vec3 rayColor = ray.color;
 		vec3 rayNormal = ray.normal;
 		float rayHitDistance = ray.hitDistance;
@@ -177,7 +178,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		vec3 color = rayColor * float(ray.surfaceFlags & RAY_SURFACE_EMISSIVE);
 		float fresnel = Fresnel(rayDirection, rayNormal, 1.0/ior);
 		
-		// Direct Lighting
+		// Direct Lighting (shadows with diffuse and specular lighting)
 		if (ray.surfaceFlags == RAY_SURFACE_DIFFUSE || ray.surfaceFlags == RAY_SURFACE_TRANSPARENT) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, rayHitDistance, float(ray.surfaceFlags & RAY_SURFACE_METALLIC), roughness, fresnel * (1-roughness), 8);
 		}
@@ -188,21 +189,25 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			// TraceFogRay(rayOrigin, rayDirection, rayHitDistance, colorFilter);
 		}
 		
-		// Write final color
+		// Write color
 		TraceFogRay(rayOrigin, rayDirection, rayHitDistance, colorFilter);
 		color *= colorFilter;
 		imageStore(img_composite, COORDS, vec4(color, 1) + imageLoad(img_composite, COORDS));
 		
 		if (float(ray.surfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
+			// Refractions
 			rayDirection = refract(rayDirection, rayNormal, ior);
 			if (dot(rayDirection, rayDirection) == 0) {
 				rayDirection = reflectionDir;
 			}
-			colorFilter *= rayColor;
-			rayOrigin = hitWorldPosition + rayDirection * EPSILON;
+		} else if ((ray.surfaceFlags & RAY_SURFACE_METALLIC) != 0) {
+			// Metallic reflections
+			rayDirection = reflectionDir;
 		} else {
 			return false;
 		}
+		colorFilter *= rayColor;
+		rayOrigin = hitWorldPosition + rayDirection * EPSILON;
 	}
 	
 	return hitRenderableIndex != -1;
