@@ -1,4 +1,4 @@
-#include "common.inc.glsl"
+#include "../common.inc.glsl"
 
 vec3 GetViewSpacePositionFromDepthAndUV(float depth, vec2 uv) {
 	vec4 viewSpacePos = inverse(xenonRendererData.config.projectionMatrixWithTAA) * vec4((uv * 2 - 1), depth, 1);

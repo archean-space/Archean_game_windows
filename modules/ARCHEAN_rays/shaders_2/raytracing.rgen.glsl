@@ -1,4 +1,5 @@
-#include "common.inc.glsl"
+#define SHADER_RGEN
+#include "../common.inc.glsl"
 
 layout(location = 0) rayPayloadEXT RayPayload ray;
 layout(location = 1) rayPayloadEXT RayShadowPayload shadowRay;
@@ -13,6 +14,8 @@ uint stableSeed = InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y);
 uint coherentSeed = InitRandomSeed(uint(xenonRendererData.frameIndex),0);
 uint temporalSeed = uint(int64_t(renderer.timestamp * 1000) % 1000000);
 uint seed = InitRandomSeed(stableSeed, coherentSeed);
+uint traceRayCount = 0;
+uint nbDirectLights = 0;
 
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float referenceDistance, in float metallic, in float roughness, in float specular, in float specularHardness) {
 	vec3 position = worldPosition + normal * referenceDistance * 0.001;
@@ -86,9 +89,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		}
 	}
 	
-	// if (xenonRendererData.config.debugViewMode == RENDERER_DEBUG_VIEWMODE_DIRECT_LIGHTS) {
-	// 	imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(float(nbLights) / float(NB_LIGHTS)), 1));
-	// }
+	nbDirectLights += nbLights;
 	
 	for (uint i = 0; i < nbLights; ++i) {
 		vec3 shadowRayDir = lightsDir[i];
@@ -105,6 +106,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		
 		if (dot(shadowRayDir, normal) > 0) {
 			shadowRay.colorAttenuation = vec3(1);
+			++traceRayCount;
 			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, lightsDistance[i] - EPSILON, 1);
 			vec3 light = lightsColor[i] * lightsPower[i];
 			float NdotL = clamp(dot(normal, shadowRayDir), 0, 1);
@@ -123,7 +125,8 @@ void TraceFogRay(in vec3 rayOrigin, in vec3 rayDirection, in float maxDistance, 
 	shadowRay.colorAttenuation = vec3(1);
 	shadowRay.emission = vec3(0);
 	shadowRay.hitDistance = maxDistance;
-	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_ATMOSPHERE|RAYTRACE_MASK_PLASMA, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, rayOrigin, 0, rayDirection, maxDistance, 1/*payloadIndex*/);
+	++traceRayCount;
+	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_FOG, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, rayOrigin, 0, rayDirection, maxDistance, 1/*payloadIndex*/);
 	if (dot(shadowRay.emission, shadowRay.emission) > 0) {
 		imageStore(img_composite, COORDS, vec4(shadowRay.emission * colorFilter, 0) + imageLoad(img_composite, COORDS));
 	}
@@ -132,6 +135,7 @@ void TraceFogRay(in vec3 rayOrigin, in vec3 rayDirection, in float maxDistance, 
 
 bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
 	ray.renderableIndex = -1;
+	++traceRayCount;
 	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 	if (ray.renderableIndex == -1) {
 		TraceFogRay(rayOrigin, rayDirection, xenonRendererData.config.zFar, colorFilter);
@@ -149,10 +153,10 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 	float rayHitDistance = ray.hitDistance;
 	
 	vec3 color = rayColor * float(ray.surfaceFlags & RAY_SURFACE_EMISSIVE);
-	float fresnel = Fresnel(rayDirection, rayNormal, 1.0/ior);
+	float fresnel = Fresnel(rayDirection, rayNormal, ior);
 	
 	// Direct Lighting (shadows with diffuse and specular lighting)
-	if (ray.surfaceFlags == RAY_SURFACE_DIFFUSE || ray.surfaceFlags == RAY_SURFACE_TRANSPARENT) {
+	if (ray.surfaceFlags == RAY_SURFACE_DIFFUSE) {
 		color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, rayHitDistance, float(ray.surfaceFlags & RAY_SURFACE_METALLIC), roughness, fresnel * (1-roughness), 8);
 	}
 	
@@ -163,7 +167,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 	
 	if (float(ray.surfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 		// Refractions
-		rayDirection = refract(rayDirection, rayNormal, ior);
+		rayDirection = refract(rayDirection, rayNormal, 1.0/ior);
 		if (dot(rayDirection, rayDirection) == 0) {
 			rayDirection = reflectionDir;
 		}
@@ -173,13 +177,14 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 	} else {
 		return false;
 	}
-	colorFilter *= rayColor;
+	colorFilter *= rayColor * 0.8/*bounce attenuation*/;
 	rayOrigin = hitWorldPosition + rayDirection * EPSILON;
 	return true;
 }
 
 bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
 	ray.renderableIndex = -1;
+	++traceRayCount;
 	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, xenonRendererData.config.zNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 	int hitRenderableIndex = ray.renderableIndex;
 	
@@ -199,6 +204,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		vec3 reflectionDir = normalize(reflect(rayDirection, ray.normal));
 		vec3 rayColor = ray.color;
 		vec3 rayNormal = ray.normal;
+		float ssao = 1;
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
 		
@@ -222,13 +228,14 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(hitWorldPosition, 1);
 			float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
 			imageStore(img_depth, COORDS, vec4(depth));
+			imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
 		}
 		
 		vec3 color = rayColor * float(raySurfaceFlags & RAY_SURFACE_EMISSIVE);
-		float fresnel = Fresnel(rayDirection, rayNormal, 1.0/ior);
+		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
-		if (raySurfaceFlags == RAY_SURFACE_DIFFUSE || raySurfaceFlags == RAY_SURFACE_TRANSPARENT) {
+		if (raySurfaceFlags == RAY_SURFACE_DIFFUSE/* || ray.surfaceFlags == RAY_SURFACE_TRANSPARENT*/) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, rayHitDistance, float(raySurfaceFlags & RAY_SURFACE_METALLIC), roughness, fresnel * (1-roughness), 8);
 		}
 		
@@ -251,7 +258,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		
 		if (float(raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 			// Refractions
-			rayDirection = refract(rayDirection, rayNormal, ior);
+			rayDirection = refract(rayDirection, rayNormal, 1.0/ior);
 			if (dot(rayDirection, rayDirection) == 0) {
 				rayDirection = reflectionDir;
 			}
@@ -261,7 +268,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		} else {
 			return false;
 		}
-		colorFilter *= rayColor;
+		colorFilter *= rayColor * 0.8/*bounce attenuation*/;
 		rayOrigin = hitWorldPosition + rayDirection * EPSILON;
 	}
 	
@@ -281,16 +288,69 @@ void main() {
 	const vec3 initialRayDirection = normalize(VIEW2WORLDNORMAL * viewDir);
 	vec3 rayDirection = initialRayDirection;
 	vec3 rayOrigin = initialRayPosition;
-	vec3 colorFilter = vec3(1);
+	vec3 colorFilter = vec3(renderer.globalLightingFactor * renderer.globalLightingFactor);
 	
 	ray.renderableIndex = -1;
-	ray.rayFlags = uint8_t(isMiddleOfScreen) * RAY_FLAG_AIM;
+	ray.rayFlags = uint8_t(0);
 	
-	imageStore(img_composite, COORDS, vec4(0));
-	
-	// Trace Rays
-	for (int i = 0; i < 20; i++) {
-		if (!TraceSolidRay(rayOrigin, rayDirection, colorFilter)) break;
+	if (isMiddleOfScreen) {
+		ray.rayFlags |= RAY_FLAG_AIM;
+		renderer.aim.aimID = 0;
+		renderer.aim.monitorIndex = 0;
+		renderer.aim.hitDistance = 1e100;
 	}
 	
+	imageStore(img_composite, COORDS, vec4(0));
+	if (xenonRendererData.config.debugViewMode != 0) {
+		imageStore(img_normal_or_debug, COORDS, vec4(0));
+	}
+	
+	if (xenonRendererData.config.debugViewMode > RENDERER_DEBUG_VIEWMODE_TEST) {
+		ray.renderableIndex = -1;
+		ray.normal = vec3(0);
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, xenonRendererData.config.zNear, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+		imageStore(img_normal_or_debug, COORDS, vec4(ray.normal, 1));
+	} else {
+		// Trace Rays
+		for (int i = 0; i < 20; i++) {
+			if (!TraceSolidRay(rayOrigin, rayDirection, colorFilter)) break;
+		}
+	}
+	
+	switch (xenonRendererData.config.debugViewMode) {
+		default:
+		case RENDERER_DEBUG_VIEWMODE_NONE:
+		case RENDERER_DEBUG_VIEWMODE_SSAO:
+		case RENDERER_DEBUG_VIEWMODE_NORMALS_WORLDSPACE:
+			// Handled from inside the ray loop
+			break;
+		case RENDERER_DEBUG_VIEWMODE_RAYGEN_TIME:
+			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(float(float(clockARB() - startTime) / (10000000 * xenonRendererData.config.debugViewScale))), 1));
+			break;
+		case RENDERER_DEBUG_VIEWMODE_TRACE_RAY_COUNT:
+			imageStore(img_normal_or_debug, COORDS, vec4(traceRayCount > 0? HeatmapClamped(xenonRendererData.config.debugViewScale * traceRayCount / 8) : vec3(0), 1));
+			break;
+		case RENDERER_DEBUG_VIEWMODE_DIRECT_LIGHTS:
+			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(float(nbDirectLights) / float(NB_LIGHTS)), 1));
+			break;
+		case RENDERER_DEBUG_VIEWMODE_ENVIRONMENT_AUDIO:
+			break;
+		case RENDERER_DEBUG_VIEWMODE_ALPHA:
+			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(imageLoad(img_resolved, COORDS).a, xenonRendererData.config.debugViewScale)), 1));
+			break;
+		case RENDERER_DEBUG_VIEWMODE_TEST:
+			break;
+		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
+			if (ray.renderableIndex == -1) break;
+			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(ray.hitDistance / 1000 * xenonRendererData.config.debugViewScale, 0.4)), 1));
+			break;
+		case RENDERER_DEBUG_VIEWMODE_NORMALS_VIEWSPACE:
+			if (ray.renderableIndex == -1) break;
+			imageStore(img_normal_or_debug, COORDS, vec4(max(vec3(0), normalize(WORLD2VIEWNORMAL * ray.normal)), 1));
+			break;
+		case RENDERER_DEBUG_VIEWMODE_NORMALS_WORLDSPACE_INVERTED:
+			if (ray.renderableIndex == -1) break;
+			imageStore(img_normal_or_debug, COORDS, vec4(max(vec3(0), -ray.normal), 1));
+			break;
+	}
 }

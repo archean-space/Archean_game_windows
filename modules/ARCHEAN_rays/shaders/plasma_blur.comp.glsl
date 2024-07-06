@@ -1,4 +1,4 @@
-#include "common.inc.glsl"
+#include "game/graphics/common.inc.glsl"
 
 layout(local_size_x = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_X, local_size_y = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_Y) in;
 layout(set = 2, binding = 0, rg32f) uniform image2D images[];

@@ -1,4 +1,4 @@
-#include "common.inc.glsl"
+#include "game/graphics/common.inc.glsl"
 
 // Vertical blur pass and apply to swapchain
 

@@ -1,4 +1,4 @@
-#include "common.inc.glsl"
+#include "game/graphics/common.inc.glsl"
 
 layout(local_size_x = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_X + 1, local_size_y = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_Y + 1) in;
 

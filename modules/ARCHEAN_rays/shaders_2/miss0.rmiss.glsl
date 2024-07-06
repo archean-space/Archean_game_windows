@@ -1,5 +1,5 @@
 // #define SHADER_RMISS
-// #include "common.inc.glsl"
+// #include "game/graphics/common.inc.glsl"
 
 void main() {
 	// RayNoHit();
