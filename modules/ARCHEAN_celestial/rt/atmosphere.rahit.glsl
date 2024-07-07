@@ -8,7 +8,6 @@
 const int RAYMARCH_LIGHT_STEPS = 5; // low=2, medium=3, high=5, ultra=8
 const float sunLuminosityThreshold = LIGHT_LUMINOSITY_VISIBLE_THRESHOLD;
 
-uint64_t startTime = clockARB();
 uint stableSeed = InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y);
 uint coherentSeed = InitRandomSeed(uint(xenonRendererData.frameIndex),0);
 uint temporalSeed = uint(int64_t(renderer.timestamp * 1000) % 1000000);
@@ -34,6 +33,8 @@ hitAttributeEXT hit {
 };
 
 void main() {
+	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) == 0) return;
+	
 	int raymarchSteps = renderer.atmosphere_raymarch_steps;
 	
 	AtmosphereData atmosphere = AtmosphereData(AABB.data);
@@ -181,7 +182,6 @@ void main() {
 	else mieScattering = vec3(0);
 	vec4 fog = vec4(rayleighScattering + mieScattering + emission, pow(clamp(maxDepth/thickness, 0, 1), 2));
 	
-	ray.emission += fog.rgb;
-	
+	ray.emission += fog.rgb * ray.colorAttenuation;
 	// RayTransparent(vec3(1-pow(fog.a, 32)));
 }

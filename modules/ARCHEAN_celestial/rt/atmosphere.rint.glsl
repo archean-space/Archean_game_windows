@@ -10,19 +10,17 @@ hitAttributeEXT hit {
 void main() {
 	AtmosphereData atmosphere = AtmosphereData(AABB.data);
 	if (uint64_t(atmosphere) == 0) return;
+	
 	const vec3 spherePosition = gl_ObjectToWorldEXT[3].xyz;
-
 	const float r = atmosphere.outerRadius;
 	const vec3 oc = gl_WorldRayOriginEXT - spherePosition;
-	const float a = dot(gl_WorldRayDirectionEXT, gl_WorldRayDirectionEXT);
 	const float b = dot(oc, gl_WorldRayDirectionEXT);
-	const float c = dot(oc, oc) - r*r;
-	const float discriminantSqr = b * b - a * c;
+	const float discriminantSqr = b * b - dot(oc, oc) + r*r;
 	
-	if (discriminantSqr >= 0) {
+	if (discriminantSqr > 0) {
 		const float det = sqrt(discriminantSqr);
-		const float T1 = (-b - det) / a;
-		const float T2 = (-b + det) / a;
+		const float T1 = -b - det;
+		const float T2 = -b + det;
 		
 		// Outside of sphere
 		if (gl_RayTminEXT <= T1 && T1 < gl_RayTmaxEXT) {

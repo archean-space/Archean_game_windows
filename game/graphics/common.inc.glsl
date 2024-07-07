@@ -344,10 +344,10 @@ struct RayShadowPayload {
 	vec3 colorAttenuation;
 	float hitDistance;
 	vec3 emission;
-	uint32_t _unused;
+	uint32_t rayFlags;
 };
 
-#define RAY_SURFACE_DIFFUSE uint8_t(0x0)
+#define RAY_SURFACE_DIFFUSE uint8_t(0) // no flags
 #define RAY_SURFACE_METALLIC uint8_t(0x1)
 #define RAY_SURFACE_EMISSIVE uint8_t(0x2)
 #define RAY_SURFACE_TRANSPARENT uint8_t(0x4)
@@ -355,7 +355,11 @@ struct RayShadowPayload {
 
 #define RAY_FLAG_RECURSION uint8_t(0x1)
 #define RAY_FLAG_AIM uint8_t(0x2)
-//... 6 more
+#define RAY_FLAG_FLUID uint8_t(0x4) // when inside a fluid volume
+//... 5 more
+
+#define SHADOW_RAY_FLAG_EMISSION uint32_t(0x1)
+//... 31 more
 
 #define MODELVIEW (renderer.viewMatrix * mat4(gl_ObjectToWorldEXT))
 #define MODEL2WORLDNORMAL inverse(transpose(mat3(gl_ObjectToWorldEXT)))
@@ -601,6 +605,17 @@ struct RayShadowPayload {
 		ray.surfaceFlags = surfaceFlags;
 	}
 	
+	void RayHitWorld(in vec3 color, in vec3 worldNormal, in float hitDistance, in float roughness, in float ior, uint8_t surfaceFlags) {
+		ray.color = color;
+		ray.hitDistance = hitDistance;
+		ray.normal = worldNormal;
+		ray.renderableIndex = gl_InstanceID;
+		ray.localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * hitDistance;
+		ray.roughness = uint8_t(roughness * 255);
+		ray.ior = uint8_t(clamp(ior, 0, 5) * 51);
+		ray.surfaceFlags = surfaceFlags;
+	}
+	
 	void MakeAimable(in vec3 localNormal, in vec2 uv, uint monitorIndex) {
 		if ((ray.rayFlags & RAY_FLAG_AIM) != 0) {
 			ray.rayFlags &= ~RAY_FLAG_AIM;
@@ -626,7 +641,7 @@ struct RayShadowPayload {
 	// Back Face: flip normal and inverse index of refraction
 	void AutoFlipNormal(inout vec3 localNormal, inout float ior) {
 		if (dot(localNormal, gl_ObjectRayDirectionEXT) > 0) {
-			ior = 1.0 / ior;
+			ior = 1.0;// / ior;
 			localNormal *= -1;
 		}
 	}

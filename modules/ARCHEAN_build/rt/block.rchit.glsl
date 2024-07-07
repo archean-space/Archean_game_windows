@@ -20,7 +20,7 @@ void main() {
 	// surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
 	
 	vec3 normal = ComputeSurfaceNormal(barycentricCoords);
-	float ior = 1.5;
+	float ior = 1.2;
 	// vec2 uv1 = ComputeSurfaceUV1(barycentricCoords);
 	// vec2 uv2 = ComputeSurfaceUV2(barycentricCoords);
 	// float specular = step(0.1, roughness) * (0.5 + metallic * 0.5);

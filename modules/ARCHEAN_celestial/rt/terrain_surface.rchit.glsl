@@ -287,6 +287,9 @@ void main() {
 		}
 	}
 	
+	// Reverse gamma
+	albedo = ReverseGamma(albedo);
+	
 	// Fix black specs caused by skirts
 	if (dot(normal, vec3(0,1,0)) < 0.15) normal = vec3(0,1,0);
 
