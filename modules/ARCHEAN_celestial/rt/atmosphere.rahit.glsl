@@ -76,7 +76,7 @@ void main() {
 		g = 0.0;
 	}
 	
-	bool shadows = true;
+	bool shadows = (renderer.options & RENDERER_OPTION_ATMOSPHERIC_SHADOWS) != 0;
 	float shadowsMinDistance = 0;
 	if (!hasHitSomethingWithinAtmosphere) {
 		shadowsMinDistance = outerRadius;

@@ -108,7 +108,7 @@ void main() {
 		// Underwater looking at surface
 		vec3 surfaceNormal = normalize(spherePosition - hitPoint2);
 		
-		if (/*(renderer.options & RENDERER_OPTION_WATER_WAVES) != 0 && */waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance) {
+		if (waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance) {
 			APPLY_NORMAL_BUMP_NOISE(WaterWaves, hitPoint2, surfaceNormal, waterWavesStrength * 0.05)
 			for (int FIX = 0; FIX < 10; ++FIX) {
 				if (dot(reflect(gl_WorldRayDirectionEXT, surfaceNormal), downDir) > 0.001) break;
@@ -129,7 +129,7 @@ void main() {
 		// Above water looking down
 		vec3 surfaceNormal = normalize(hitPoint1 - spherePosition);
 		
-		if (/*(renderer.options & RENDERER_OPTION_WATER_WAVES) != 0 && */waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance) {
+		if (waterWavesStrength > 0 && gl_HitTEXT < giantWavesMaxDistance) {
 			APPLY_NORMAL_BUMP_NOISE(WaterWaves, hitPoint1, surfaceNormal, waterWavesStrength * 0.05)
 			for (int FIX = 0; FIX < 10; ++FIX) {
 				if (dot(reflect(gl_WorldRayDirectionEXT, surfaceNormal), -downDir) > 0.001) break;

@@ -33,6 +33,8 @@ vec3 MapUVToSphere(vec2 uv) {
 }
 
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float metallic, in float roughness, in float specular, in float specularHardness) {
+	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) == 0) return vec3(0);
+	
 	vec3 position = worldPosition + normal * EPSILON * length(worldPosition);
 	vec3 directLighting = vec3(0);
 	
@@ -281,6 +283,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		float ssao = 1;
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
+		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
 		
 		// Write Motion Vectors
 		if (imageLoad(img_motion, COORDS).w == 0) {
@@ -316,7 +319,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, metallic, roughness, mix(fresnel, 1.0, metallic), mix(mix(256, 32, roughness), 8, metallic));
 			color += TraceAmbientLighting(hitWorldPosition, rayNormal, rayColor);
 		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1) {
-			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, vec3(0), 0, 1, fresnel*fresnel, 16);
+			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, vec3(0), 0, 1, fresnel*fresnel, 64);
 		}
 		
 		// Fog
@@ -324,12 +327,15 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		ssao *= max(colorFilter.x, max(colorFilter.y, colorFilter.z));
 		
 		// Glossy reflections
-		if (roughness == 0 && ior > 1 && ++glossyRayCount < 4) {
-			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
-			vec3 reflectionDirection = reflectionDir;
-			vec3 reflectionColorFilter = fresnel * colorFilter;
-			for (int i = 0; i < 2; i++) {
-				if (!TraceGlossyRay(reflectionOrigin, reflectionDirection, reflectionColorFilter)) break;
+		if (roughness == 0 && ior > 1) {
+			bool reflections = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFLECTIONS : RENDERER_OPTION_GLASS_REFLECTIONS)) != 0;
+			if (++glossyRayCount < 4 && (reflections || (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0)) {
+				vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
+				vec3 reflectionDirection = reflectionDir;
+				vec3 reflectionColorFilter = fresnel * colorFilter;
+				for (int i = 0; i < 2; i++) {
+					if (!TraceGlossyRay(reflectionOrigin, reflectionDirection, reflectionColorFilter)) break;
+				}
 			}
 			ray.rayFlags &= ~RAY_FLAG_FLUID;
 		}
@@ -340,12 +346,15 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
 		
 		if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
-			// Refractions
-			rayDirection = refractionDir;
-			if (dot(rayDirection, rayDirection) == 0) {
-				rayDirection = reflectionDir;
-			} else {
-				currentIOR = ior;
+			// Refraction
+			bool refraction = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFRACTION : RENDERER_OPTION_GLASS_REFRACTION)) != 0;
+			if (refraction) {
+				rayDirection = refractionDir;
+				if (dot(rayDirection, rayDirection) == 0) {
+					rayDirection = reflectionDir;
+				} else {
+					currentIOR = ior;
+				}
 			}
 		} else if (metallic != 0 && roughness == 0) {
 			// Metallic reflections

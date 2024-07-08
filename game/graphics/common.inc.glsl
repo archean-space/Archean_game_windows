@@ -36,6 +36,15 @@
 #define PLASMA_FLAG_AEROSPIKE	(1u << 0)
 #define PLASMA_FLAG_SHAKE 		(1u << 1)
 
+// Up to 32 options
+#define RENDERER_OPTION_DIRECT_LIGHTING			(1u<< 0 )
+#define RENDERER_OPTION_GLASS_REFLECTIONS		(1u<< 1 )
+#define RENDERER_OPTION_GLASS_REFRACTION		(1u<< 2 )
+#define RENDERER_OPTION_WATER_REFLECTIONS		(1u<< 3 )
+#define RENDERER_OPTION_WATER_REFRACTION		(1u<< 4 )
+#define RENDERER_OPTION_RT_AMBIENT_LIGHTING		(1u<< 5 )
+#define RENDERER_OPTION_ATMOSPHERIC_SHADOWS		(1u<< 6 )
+
 BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 	aligned_float32_t aabb[6];
 	aligned_uint64_t data; // Arbitrary data defined per-shader

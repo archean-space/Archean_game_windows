@@ -7,7 +7,7 @@ hitAttributeEXT hit {
 	float T2;
 };
 
-#define WATER_TINT vec3(0.5,0.8,0.85)
+#define WATER_TINT vec3(0.1,0.25,0.35)
 #define EPSILON 0.0001
 
 uint stableSeed = InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y);
@@ -81,7 +81,7 @@ void main() {
 						if (distanceToLightSurface > 100000) { // only sun lights
 							float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
 							float underwaterDepth = float(water.radius) - distance(position, vec3(water.center));
-							vec3 lightColor = lightSource.color * effectiveLightIntensity * 0.01 * WATER_TINT * WATER_TINT * exp(underwaterDepth / nDotL / -100);
+							vec3 lightColor = lightSource.color * effectiveLightIntensity * 0.01 * WATER_TINT * exp(underwaterDepth / nDotL / -100);
 							
 							// rayQueryEXT shadowQuery;
 							// rayQueryInitializeEXT(shadowQuery, tlas, 0, RAYTRACE_MASK_TERRAIN, position, 0, lightDir, distanceToLightSurface);
@@ -105,6 +105,6 @@ void main() {
 	RayTransparent(transmittance * mix(
 		WATER_TINT * exp(depth / -50),
 		vec3(0.9),
-		exp(depth / -10)
+		exp(depth / -25)
 	));
 }
