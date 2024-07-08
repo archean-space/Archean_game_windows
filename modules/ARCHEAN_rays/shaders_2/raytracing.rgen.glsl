@@ -10,6 +10,7 @@ uint coherentSeed = InitRandomSeed(uint(xenonRendererData.frameIndex),0);
 uint temporalSeed = uint(int64_t(renderer.timestamp * 1000) % 1000000);
 uint seed = InitRandomSeed(stableSeed, coherentSeed);
 uint traceRayCount = 0;
+uint glossyRayCount = 0;
 uint nbDirectLights = 0;
 float currentIOR = 1.0;
 
@@ -323,11 +324,11 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		ssao *= max(colorFilter.x, max(colorFilter.y, colorFilter.z));
 		
 		// Glossy reflections
-		if (roughness == 0 && ior > 1) {
+		if (roughness == 0 && ior > 1 && ++glossyRayCount < 4) {
 			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
 			vec3 reflectionDirection = reflectionDir;
 			vec3 reflectionColorFilter = fresnel * colorFilter;
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 2; i++) {
 				if (!TraceGlossyRay(reflectionOrigin, reflectionDirection, reflectionColorFilter)) break;
 			}
 			ray.rayFlags &= ~RAY_FLAG_FLUID;

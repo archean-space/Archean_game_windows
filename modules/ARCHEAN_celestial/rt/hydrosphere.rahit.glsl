@@ -95,7 +95,7 @@ void main() {
 			}
 		}
 		
-	} else {
+	} else if (T2 < ray.hitDistance && ray.hitDistance > 1000) {
 		// Shadow ray: Draw caustics
 		vec3 lightIncomingDir = normalize(normalize(vec3(renderer.worldOrigin)) + gl_WorldRayDirectionEXT); // approximation of the refracted ray, good enough here
 		transmittance *= clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1);
