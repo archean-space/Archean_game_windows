@@ -697,11 +697,7 @@ struct RayShadowPayload {
 	
 	void RayTransparent(in vec3 transparency) {
 		ray.colorAttenuation *= transparency;
-		if (ray.colorAttenuation.r < 0.01 && ray.colorAttenuation.g < 0.01 && ray.colorAttenuation.b < 0.01) {
-			terminateRayEXT;
-		} else {
-			ignoreIntersectionEXT;
-		}
+		ignoreIntersectionEXT;
 	}
 	
 	void RayOpaque() {

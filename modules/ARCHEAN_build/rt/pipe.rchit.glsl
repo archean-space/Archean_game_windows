@@ -14,12 +14,13 @@ void main() {
 	float metallic = GEOMETRY.material.metallic;
 	float roughness = GEOMETRY.material.roughness;
 	vec3 emission = GEOMETRY.material.emission;
-	float ior = 1.5;
+	float ior = 1.2;
 	
 	uint32_t ucolor = uint32_t(AABB.data & 0xFFFFFFFF);
 	uint32_t flags = uint32_t(AABB.data >> 32);
 	
 	AutoFlipNormal(normal, ior);
+	ior = 1.2;
 	
 	MakeAimable(normal, vec2(0), 0);
 	

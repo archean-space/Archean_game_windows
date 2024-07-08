@@ -7,7 +7,7 @@ hitAttributeEXT hit {
 	float T2;
 };
 
-#define WATER_TINT vec3(0.5,0.8,0.8)
+#define WATER_TINT vec3(0.5,0.8,0.85)
 #define EPSILON 0.0001
 
 uint stableSeed = InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y);
@@ -15,8 +15,46 @@ uint coherentSeed = InitRandomSeed(uint(xenonRendererData.frameIndex),0);
 uint temporalSeed = uint(int64_t(renderer.timestamp * 1000) % 1000000);
 uint seed = InitRandomSeed(stableSeed, coherentSeed);
 
+// Caustics
+float h12(vec2 p) {
+	return fract(sin(dot(p,vec2(32.52554,45.5634)))*12432.2355);
+}
+float n12(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	f *= f * (3.-2.*f);
+	return mix(
+		mix(h12(i+vec2(0.,0.)),h12(i+vec2(1.,0.)),f.x),
+		mix(h12(i+vec2(0.,1.)),h12(i+vec2(1.,1.)),f.x),
+		f.y
+	);
+}
+vec2 getUVfromWorldPos(vec3 position, vec3 normal) {
+	vec3 up = abs(normal.z) < 0.99 ? vec3(0,0,1) : vec3(0,1,0);
+	vec3 right = normalize(cross(up, normal));
+	up = cross(normal, right);
+	return vec2(dot(position, right), dot(position, up));
+}
+float caustics(vec3 worldPosition, vec3 normal, float t) {
+	vec2 p = getUVfromWorldPos(worldPosition, normal);
+	vec3 k = vec3(p,t);
+	float l;
+	mat3 m = mat3(-2,-1,2,3,-2,1,1,2,2);
+	float n = n12(p);
+	k = k*m*.5;
+	l = length(.5 - fract(k+n));
+	k = k*m*.4;
+	l = min(l, length(.5-fract(k+n)));
+	k = k*m*.3;
+	l = min(l, length(.5-fract(k+n)));
+	return pow(l,7.)*25.;
+}
+
 void main() {
+	float transmittance = 1;
+	
 	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) != 0) {
+		// Fog Ray: ray-march underwater fog
 		
 		WaterData water = WaterData(AABB.data);
 		
@@ -57,11 +95,16 @@ void main() {
 			}
 		}
 		
+	} else {
+		// Shadow ray: Draw caustics
+		vec3 lightIncomingDir = normalize(normalize(vec3(renderer.worldOrigin)) + gl_WorldRayDirectionEXT); // approximation of the refracted ray, good enough here
+		transmittance *= clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1);
 	}
 	
-	RayTransparent(mix(
-		WATER_TINT * exp(min(T2, ray.hitDistance) / -50),
+	float depth = max(0, min(T2, ray.hitDistance));
+	RayTransparent(transmittance * mix(
+		WATER_TINT * exp(depth / -50),
 		vec3(0.9),
-		exp(min(T2, ray.hitDistance) / -10)
+		exp(depth / -10)
 	));
 }
