@@ -99,7 +99,7 @@ void main() {
 	const float waterWavesStrength = pow(0.5/*water.wavesStrength*/, 2);
 
 	// Compute normal
-	const vec3 spherePosition = vec3(water.center);// (AABB_MAX + AABB_MIN) / 2;
+	const vec3 spherePosition = vec3(water.center);
 	vec3 downDir = normalize(spherePosition);
 	const vec3 hitPoint1 = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * T1;
 	const vec3 hitPoint2 = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * T2;
@@ -138,7 +138,7 @@ void main() {
 		}
 		
 		RayHitWorld(
-			/*albedo*/		vec3(1),
+			/*albedo*/		vec3(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT))),
 			/*normal*/		surfaceNormal,
 			/*distance*/	gl_HitTEXT,
 			/*roughness*/	0,

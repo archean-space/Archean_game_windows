@@ -328,14 +328,16 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		
 		// Glossy reflections
 		if (roughness == 0 && ior > 1) {
+			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
+			vec3 reflectionDirection = reflectionDir;
+			vec3 reflectionColorFilter = fresnel * colorFilter;
 			bool reflections = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFLECTIONS : RENDERER_OPTION_GLASS_REFLECTIONS)) != 0;
-			if (++glossyRayCount < 4 && (reflections || (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0)) {
-				vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
-				vec3 reflectionDirection = reflectionDir;
-				vec3 reflectionColorFilter = fresnel * colorFilter;
+			if (++glossyRayCount < 3 && (reflections || (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0)) {
 				for (int i = 0; i < 2; i++) {
 					if (!TraceGlossyRay(reflectionOrigin, reflectionDirection, reflectionColorFilter)) break;
 				}
+			} else if (isLiquid) {
+				TraceFogRay(reflectionOrigin, reflectionDirection, xenonRendererData.config.zFar, reflectionColorFilter);
 			}
 			ray.rayFlags &= ~RAY_FLAG_FLUID;
 		}
@@ -348,7 +350,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 			// Refraction
 			bool refraction = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFRACTION : RENDERER_OPTION_GLASS_REFRACTION)) != 0;
-			if (refraction) {
+			if (refraction || (isLiquid && ior < 1)) {
 				rayDirection = refractionDir;
 				if (dot(rayDirection, rayDirection) == 0) {
 					rayDirection = reflectionDir;
