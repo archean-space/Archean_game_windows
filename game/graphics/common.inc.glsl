@@ -6,6 +6,9 @@
 	#extension GL_EXT_ray_query : require
 #endif
 
+// AMD doesn't seem to like ray queries from inside anyhit shaders, comment the line below if you're using an AMD GPU and it crashes
+#define ENABLE_RAY_QUERIES_FROM_ANYHIT_SHADERS
+
 #include "xenon/renderer/shaders/common.inc.glsl"
 
 #define RAYTRACE_MASK_TERRAIN 1u // highly detailed static solid opaque geometry usually in the background with nothing else behind it

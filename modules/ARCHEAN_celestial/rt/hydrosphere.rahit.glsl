@@ -56,48 +56,52 @@ void main() {
 	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) != 0) {
 		// Fog Ray: ray-march underwater fog
 		
-		WaterData water = WaterData(AABB.data);
+		#ifdef ENABLE_RAY_QUERIES_FROM_ANYHIT_SHADERS
 		
-		rayQueryEXT lightQuery;
-		rayQueryInitializeEXT(lightQuery, tlas_lights, 0, 0xff, gl_WorldRayOriginEXT, 0, vec3(0,1,0), 0);
-		
-		bool isCameraUnderwater = distance(dvec3(inverse(renderer.viewMatrix)[3]), dvec3(water.center)) < water.radius;
-		
-		while (rayQueryProceedEXT(lightQuery)) {
-			mat4 lightTransform = mat4(rayQueryGetIntersectionObjectToWorldEXT(lightQuery, false));
-			vec3 lightPosition = lightTransform[3].xyz;
-			int lightID = rayQueryGetIntersectionInstanceIdEXT(lightQuery, false);
+			WaterData water = WaterData(AABB.data);
 			
-			const int nbSamples = isCameraUnderwater? 10 : 2;
+			rayQueryEXT lightQuery;
+			rayQueryInitializeEXT(lightQuery, tlas_lights, 0, 0xff, gl_WorldRayOriginEXT, 0, vec3(0,1,0), 0);
 			
-			for (int i = 0; i < nbSamples; i++) {
-				vec3 position = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * (float(i) + RandomFloat(seed)) / nbSamples * min(200, ray.hitDistance);
-				vec3 upDir = normalize(position - vec3(water.center));
-				vec3 relativeLightPosition = lightPosition - position;
-				vec3 lightDir = normalize(relativeLightPosition);
-				float nDotL = dot(upDir, lightDir);
-				if (nDotL > 0) {
-					LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
-					float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
-					if (distanceToLightSurface < lightSource.maxDistance) {
-						if (distanceToLightSurface > 100000) { // only sun lights
-							float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
-							float underwaterDepth = float(water.radius) - distance(position, vec3(water.center));
-							vec3 lightColor = lightSource.color * effectiveLightIntensity * WATER_TINT * 0.01 * exp(underwaterDepth / nDotL / -100);
-							if (isCameraUnderwater && (renderer.options & RENDERER_OPTION_UNDERWATER_LIGHT_RAYS) != 0) {
-								rayQueryEXT shadowQuery;
-								rayQueryInitializeEXT(shadowQuery, tlas, 0, RAYTRACE_MASK_OPAQUE, position, 0, lightDir, distanceToLightSurface);
-								if (!rayQueryProceedEXT(shadowQuery)) {
+			bool isCameraUnderwater = distance(dvec3(inverse(renderer.viewMatrix)[3]), dvec3(water.center)) < water.radius;
+			
+			while (rayQueryProceedEXT(lightQuery)) {
+				mat4 lightTransform = mat4(rayQueryGetIntersectionObjectToWorldEXT(lightQuery, false));
+				vec3 lightPosition = lightTransform[3].xyz;
+				int lightID = rayQueryGetIntersectionInstanceIdEXT(lightQuery, false);
+				
+				const int nbSamples = isCameraUnderwater? 10 : 2;
+				
+				for (int i = 0; i < nbSamples; i++) {
+					vec3 position = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * (float(i) + RandomFloat(seed)) / nbSamples * min(200, ray.hitDistance);
+					vec3 upDir = normalize(position - vec3(water.center));
+					vec3 relativeLightPosition = lightPosition - position;
+					vec3 lightDir = normalize(relativeLightPosition);
+					float nDotL = dot(upDir, lightDir);
+					if (nDotL > 0) {
+						LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
+						float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
+						if (distanceToLightSurface < lightSource.maxDistance) {
+							if (distanceToLightSurface > 100000) { // only sun lights
+								float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
+								float underwaterDepth = float(water.radius) - distance(position, vec3(water.center));
+								vec3 lightColor = lightSource.color * effectiveLightIntensity * WATER_TINT * 0.01 * exp(underwaterDepth / nDotL / -100);
+								if (isCameraUnderwater && (renderer.options & RENDERER_OPTION_UNDERWATER_LIGHT_RAYS) != 0) {
+									rayQueryEXT shadowQuery;
+									rayQueryInitializeEXT(shadowQuery, tlas, 0, RAYTRACE_MASK_OPAQUE, position, 0, lightDir, distanceToLightSurface);
+									if (!rayQueryProceedEXT(shadowQuery)) {
+										ray.emission += lightColor * nDotL / nbSamples;
+									}
+								} else {
 									ray.emission += lightColor * nDotL / nbSamples;
 								}
-							} else {
-								ray.emission += lightColor * nDotL / nbSamples;
 							}
 						}
 					}
 				}
 			}
-		}
+			
+		#endif
 		
 	} else if (T2 < ray.hitDistance && ray.hitDistance > 1000) {
 		// Shadow ray: Draw caustics

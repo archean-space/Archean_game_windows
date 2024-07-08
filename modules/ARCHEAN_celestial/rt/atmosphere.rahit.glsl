@@ -128,23 +128,25 @@ void main() {
 					float lightRayDist = 0;
 					float lightRayVisibility = 1.0;
 					
-					if (shadows) {
-						// God rays and eclipes
-						vec3 shadowRayDir = lightDir;
-						vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
-						float pointRadius = sun.radius / sunDistance * rnd.x;
-						float pointAngle = rnd.y * 2.0 * PI;
-						vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
-						vec3 lightTangent = normalize(posOnSphere);// normalize(cross(shadowRayDir, viewDir));
-						vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
-						shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent * mix(1, 12, smoothstep(24, 8, float(raymarchSteps))) + diskPoint.y * lightBitangent);
-						rayQueryEXT rq;
-						rayQueryInitializeEXT(rq, tlas, gl_RayFlagsTerminateOnFirstHitEXT, RAYTRACE_MASK_TERRAIN, rayPos, shadowsMinDistance, shadowRayDir, sunDistance);
-						if (rayQueryProceedEXT(rq)) {
-							// Sunlight occluded by terrain
-							lightRayVisibility = 0;
+					#ifdef ENABLE_RAY_QUERIES_FROM_ANYHIT_SHADERS
+						if (shadows) {
+							// God rays and eclipes
+							vec3 shadowRayDir = lightDir;
+							vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
+							float pointRadius = sun.radius / sunDistance * rnd.x;
+							float pointAngle = rnd.y * 2.0 * PI;
+							vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
+							vec3 lightTangent = normalize(posOnSphere);// normalize(cross(shadowRayDir, viewDir));
+							vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
+							shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent * mix(1, 12, smoothstep(24, 8, float(raymarchSteps))) + diskPoint.y * lightBitangent);
+							rayQueryEXT rq;
+							rayQueryInitializeEXT(rq, tlas, gl_RayFlagsTerminateOnFirstHitEXT, RAYTRACE_MASK_TERRAIN, rayPos, shadowsMinDistance, shadowRayDir, sunDistance);
+							if (rayQueryProceedEXT(rq)) {
+								// Sunlight occluded by terrain
+								lightRayVisibility = 0;
+							}
 						}
-					}
+					#endif
 
 					for (int l = 0; l < RAYMARCH_LIGHT_STEPS; ++l) {
 						vec3 posLightRay = posOnSphere + lightDir * (lightRayDist + lightRayStepSize/2.0);
