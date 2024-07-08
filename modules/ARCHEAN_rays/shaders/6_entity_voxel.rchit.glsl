@@ -60,7 +60,7 @@
 	
 // 	// Execute Surface Callable
 // 	// if (OPTION_TEXTURES) {
-// 		executeCallableEXT(GEOMETRY.material.surfaceIndex + uint32_t(voxelData.type[voxelIndex]), VOXEL_SURFACE_CALLABLE_PAYLOAD);
+// 		executeCallableEXT(GEOMETRY.material.callableShader + uint32_t(voxelData.type[voxelIndex]), VOXEL_SURFACE_CALLABLE_PAYLOAD);
 // 	// }
 	
 // 	if (rayIsShadow) {

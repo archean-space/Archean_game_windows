@@ -1,10 +1,18 @@
 #define SHADER_RCHIT
 #include "game/graphics/common.inc.glsl"
+#include "../Block.inc.glsl"
 
 hitAttributeEXT vec2 hitAttribs;
 vec3 barycentricCoords = vec3(1.0f - hitAttribs.x - hitAttribs.y, hitAttribs.x, hitAttribs.y);
 
-#include "../Block.inc.glsl"
+struct Surface {
+	vec3 pos;
+	float ior;
+	vec4 color;
+	vec3 normal;
+	float roughness;
+};
+layout(location = 0) callableDataEXT Surface surface;
 
 float SurfaceDetail(vec3 position) {
 	return SimplexFractal(position, 6) * 0.5 + 0.5;
@@ -17,27 +25,23 @@ void main() {
 	color.a = (float(blockMaterial.a & 0xf) + 1) / 16.0;
 	float roughness = float((blockMaterial.a >> 4) & 0x7) / 7.0;
 	float metallic = float(blockMaterial.a >> 7);
-	// surface.specular = step(0.1, surface.roughness) * (0.5 + surface.metallic * 0.5);
-	
 	vec3 normal = ComputeSurfaceNormal(barycentricCoords);
 	float ior = 1.2;
-	// vec2 uv1 = ComputeSurfaceUV1(barycentricCoords);
-	// vec2 uv2 = ComputeSurfaceUV2(barycentricCoords);
-	// float specular = step(0.1, roughness) * (0.5 + metallic * 0.5);
 	
 	AutoFlipNormal(normal, ior);
 	MakeAimable(normal, vec2(0), 0);
 	
-	// Rough metal
-	if (metallic > 0 && roughness > 0) {
-		vec3 scale = vec3(8);
-		if (abs(dot(normal, vec3(1,0,0))) < 0.4) scale.x = 100;
-		else if (abs(dot(normal, vec3(0,1,0))) < 0.4) scale.y = 100;
-		else if (abs(dot(normal, vec3(0,0,1))) < 0.4) scale.z = 100;
-		vec3 oldNormal = normal;
-		vec3 localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
-		APPLY_NORMAL_BUMP_NOISE(SurfaceDetail, localPosition * scale, normal, roughness * 0.005)
-		color.rgb *= pow(dot(oldNormal, normal), 100);
+	if (GEOMETRY.material.callableShader != 0) {
+		surface.pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
+		surface.ior = ior;
+		surface.color = color;
+		surface.normal = normal;
+		surface.roughness = roughness;
+		executeCallableEXT(GEOMETRY.material.callableShader, 0);
+		ior = surface.ior;
+		color = surface.color;
+		normal = surface.normal;
+		roughness = surface.roughness;
 	}
 	
 	uint8_t flags = RAY_SURFACE_DIFFUSE;

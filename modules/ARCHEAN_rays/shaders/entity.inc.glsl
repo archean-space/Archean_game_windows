@@ -37,7 +37,7 @@ void main() {
 	vec3 geometricNormal = normalize(MODEL2WORLDNORMAL * surface.normal);
 	
 	// if (OPTION_TEXTURES) {
-		executeCallableEXT(GEOMETRY.material.surfaceIndex, SURFACE_CALLABLE_PAYLOAD);
+		executeCallableEXT(GEOMETRY.material.callableShader, SURFACE_CALLABLE_PAYLOAD);
 	// }
 	
 	#ifdef ENTITY_AFTER_SURFACE

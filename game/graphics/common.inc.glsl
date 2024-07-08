@@ -21,6 +21,7 @@
 #define RAYTRACE_MASK_OPAQUE (RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY)
 
 #define LIGHT_LUMINOSITY_VISIBLE_THRESHOLD 0.01
+#define ENVIRONMENT_AUDIO_MAX_DISTANCE 500
 
 // Up to 32 flags
 #define PIPE_FLAG_BOX			(1u << 0)
@@ -135,7 +136,7 @@ STATIC_ASSERT_ALIGNED16_SIZE(PropellerData, 32)
 struct GeometryMaterial {
 	aligned_f32vec4 color;
 	aligned_f32vec3 emission;
-	aligned_uint32_t _deprecated_surfaceIndex;
+	aligned_uint32_t callableShader;
 	aligned_uint64_t data; // custom per surface shader, default is a pack of 4x uint16 texture indices (albedo/alpha, normal/bump, metallic/roughness, emission)
 	aligned_float32_t metallic;
 	aligned_float32_t roughness;
@@ -335,7 +336,7 @@ struct RayPayload {
 	int32_t renderableIndex;
 	vec3 localPosition;
 	uint8_t roughness;
-	uint8_t ior;
+	uint8_t ior; // 0 for interior faces
 	uint8_t surfaceFlags;
 	uint8_t rayFlags;
 };
@@ -641,7 +642,7 @@ struct RayShadowPayload {
 	// Back Face: flip normal and inverse index of refraction
 	void AutoFlipNormal(inout vec3 localNormal, inout float ior) {
 		if (dot(localNormal, gl_ObjectRayDirectionEXT) > 0) {
-			ior = 1.0;// / ior;
+			ior = 0;
 			localNormal *= -1;
 		}
 	}

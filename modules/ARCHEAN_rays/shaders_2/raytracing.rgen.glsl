@@ -18,6 +18,19 @@ float currentIOR = 1.0;
 #define EPSILON 0.0001
 #define LIGHT_LUMINOSITY_VISIBLE_THRESHOLD 0.01
 
+vec3 MapUVToSphere(vec2 uv) {
+	uv += vec2(RandomFloat(coherentSeed), RandomFloat(coherentSeed)) / 100;
+	float theta = 2.0 * 3.1415926 * uv.x;
+	float phi = acos(2.0 * uv.y - 1.0);
+	theta += RandomFloat(coherentSeed) * 0.01;
+	phi += RandomFloat(coherentSeed) * 0.01;
+	vec3 spherePoint;
+	spherePoint.x = sin(phi) * cos(theta);
+	spherePoint.y = sin(phi) * sin(theta);
+	spherePoint.z = cos(phi);
+	return normalize(spherePoint);
+}
+
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float metallic, in float roughness, in float specular, in float specularHardness) {
 	vec3 position = worldPosition + normal * EPSILON * length(worldPosition);
 	vec3 directLighting = vec3(0);
@@ -140,6 +153,22 @@ void TraceFogRay(in vec3 rayOrigin, in vec3 rayDirection, in float maxDistance, 
 	colorFilter *= shadowRay.colorAttenuation;
 }
 
+vec3 TraceAmbientLighting(in vec3 surfaceWorldPosition, in vec3 rayNormal, inout vec3 albedo) {
+	// Ambient lighting
+	uint fakeGiSeed = 598734;
+	shadowRay.colorAttenuation = vec3(1);
+	shadowRay.emission = vec3(0);
+	shadowRay.hitDistance = 100000;
+	shadowRay.rayFlags = SHADOW_RAY_FLAG_EMISSION;
+	++traceRayCount;
+	vec3 bounceDirection = normalize(rayNormal + 2.0f * vec3(RandomFloat(fakeGiSeed), RandomFloat(fakeGiSeed), RandomFloat(fakeGiSeed)) - 1.0f);
+	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_FOG, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, surfaceWorldPosition, 1000, bounceDirection, shadowRay.hitDistance, 1/*payloadIndex*/);
+	vec3 ambient = shadowRay.emission * albedo * 0.1;
+	shadowRay.rayFlags = 0;
+	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, surfaceWorldPosition, 0, bounceDirection, 1, 1/*payloadIndex*/);
+	return ambient * shadowRay.colorAttenuation;
+}
+
 bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
 	uint rayMask = RAYTRACE_MASK_SOLID;
 	if ((ray.rayFlags & RAY_FLAG_FLUID) == 0) {
@@ -157,6 +186,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 	// We have hit a solid surface
 	float ior = float(ray.ior) / 51;
 	float roughness = float(ray.roughness) / 255;
+	float metallic = float(ray.surfaceFlags & RAY_SURFACE_METALLIC);
 	vec3 hitWorldPosition = rayOrigin + rayDirection * ray.hitDistance;
 	vec3 hitLocalPosition = ray.localPosition;
 	vec3 reflectionDir = normalize(reflect(rayDirection, ray.normal));
@@ -170,6 +200,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 	// Direct Lighting (shadows with diffuse and specular lighting)
 	if (ray.surfaceFlags == RAY_SURFACE_DIFFUSE) {
 		color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, float(ray.surfaceFlags & RAY_SURFACE_METALLIC), roughness, fresnel * (1-roughness), 8);
+		color += TraceAmbientLighting(hitWorldPosition, rayNormal, rayColor);
 	}
 	
 	// Fog
@@ -185,7 +216,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 		if (dot(rayDirection, rayDirection) == 0) {
 			rayDirection = reflectionDir;
 		}
-	} else if ((ray.surfaceFlags & RAY_SURFACE_METALLIC) != 0) {
+	} else if (metallic != 0 && roughness == 0) {
 		// Metallic reflections
 		rayDirection = reflectionDir;
 	} else {
@@ -210,10 +241,25 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 	if (hitRenderableIndex == -1) {
 		// First ray hit nothing
 		TraceFogRay(rayOrigin, rayDirection, xenonRendererData.config.zFar, colorFilter);
+		return false;
 	} else {
+		// Fix Z fighting with interior faces of glass
+		if (ray.ior == 0) {
+			ray.ior = uint8_t(51);
+			RayPayload originalRay = ray;
+			float epsilon = clamp(EPSILON * originalRay.hitDistance, EPSILON, 0.1);
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_SOLID, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, originalRay.hitDistance - epsilon, rayDirection, originalRay.hitDistance + epsilon, 0/*payloadIndex*/);
+			if (ray.renderableIndex == -1) {
+				ray = originalRay;
+			} else {
+				hitRenderableIndex = ray.renderableIndex;
+			}
+		}
+		
 		// We have hit a solid surface
 		float ior = float(ray.ior) / 51;
 		float roughness = float(ray.roughness) / 255;
+		float metallic = float(ray.surfaceFlags & RAY_SURFACE_METALLIC);
 		vec3 hitWorldPosition = rayOrigin + rayDirection * ray.hitDistance;
 		vec3 hitLocalPosition = ray.localPosition;
 		vec3 rayNormal = ray.normal;
@@ -251,12 +297,13 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		}
 		
 		vec3 color = rayColor * float(raySurfaceFlags & RAY_SURFACE_EMISSIVE);
-		float fresnel = Fresnel(rayDirection, rayNormal, ior/currentIOR);
+		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
-		if (raySurfaceFlags == RAY_SURFACE_DIFFUSE) {
-			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, float(raySurfaceFlags & RAY_SURFACE_METALLIC), roughness, fresnel * (1-roughness), 8);
-		} else if (ray.surfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1) {
+		if (raySurfaceFlags == 0/*RAY_SURFACE_DIFFUSE*/ || (roughness > 0 && metallic == 1)) {
+			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, metallic, roughness, mix(fresnel, 1.0, metallic), mix(mix(256, 32, roughness), 8, metallic));
+			color += TraceAmbientLighting(hitWorldPosition, rayNormal, rayColor);
+		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, vec3(0), 0, 1, fresnel*fresnel, 16);
 		}
 		
@@ -265,7 +312,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		ssao *= max(colorFilter.x, max(colorFilter.y, colorFilter.z));
 		
 		// Glossy reflections
-		if (ray.roughness == 0 && ior > 1) {
+		if (roughness == 0 && ior > 1) {
 			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
 			vec3 reflectionDirection = reflectionDir;
 			vec3 reflectionColorFilter = fresnel * colorFilter;
@@ -287,7 +334,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			} else {
 				currentIOR = ior;
 			}
-		} else if ((raySurfaceFlags & RAY_SURFACE_METALLIC) != 0) {
+		} else if (metallic != 0 && roughness == 0) {
 			// Metallic reflections
 			rayDirection = reflectionDir;
 		} else {
@@ -295,9 +342,8 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		}
 		colorFilter *= rayColor * 0.9/*bounce attenuation*/;
 		rayOrigin = hitWorldPosition + rayDirection * EPSILON;
+		return true;
 	}
-	
-	return hitRenderableIndex != -1;
 }
 
 void main() {
@@ -351,6 +397,66 @@ void main() {
 		}
 	}
 	
+	// Trace environment audio
+	const int MAX_AUDIO_BOUNCE = 1;
+	const uvec2 environment_audio_trace_size = uvec2(200, 200);
+	vec4 testcolor = vec4(0);
+	if (gl_LaunchIDEXT.x < environment_audio_trace_size.x && gl_LaunchIDEXT.y < environment_audio_trace_size.y && xenonRendererData.config.debugViewMode <= RENDERER_DEBUG_VIEWMODE_TEST) {
+		testcolor.a = 1;
+		vec3 rayDir = inverse(mat3(renderer.viewMatrix)) * MapUVToSphere(vec2(gl_LaunchIDEXT) / vec2(environment_audio_trace_size));
+		rayOrigin = initialRayPosition;
+		int envAudioBounce = 0;
+		float audible = 1.0;
+		
+		do {
+			ray.hitDistance = -1;
+			ray.renderableIndex = -1;
+			ray.hitDistance = ENVIRONMENT_AUDIO_MAX_DISTANCE;
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_TERRAIN | RAYTRACE_MASK_ENTITY | RAYTRACE_MASK_LIQUID/*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, ENVIRONMENT_AUDIO_MAX_DISTANCE, 0/*payloadIndex*/);
+			
+			// Plasma
+			rayQueryEXT rq;
+			rayQueryInitializeEXT(rq, tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_FOG, rayOrigin, 0, rayDir, ray.hitDistance);
+			while (rayQueryProceedEXT(rq)) {
+				int renderableIndex = rayQueryGetIntersectionInstanceIdEXT(rq, false);
+				renderer.environmentAudio.audibleRenderables[renderableIndex].audible = max(renderer.environmentAudio.audibleRenderables[renderableIndex].audible, audible);
+			}
+			
+			if (ray.renderableIndex == -1) {
+				testcolor.rgb = vec3(0);
+				atomicAdd(renderer.environmentAudio.miss, 1);
+				break;
+			} else {
+				uint hitMask = renderer.tlasInstances[ray.renderableIndex].instanceCustomIndex_and_mask >> 24;
+				if (hitMask == RAYTRACE_MASK_TERRAIN) {
+					atomicAdd(renderer.environmentAudio.terrain, 1);
+					testcolor.rgb = mix(testcolor.rgb, vec3(1,0,0), audible);
+					break;
+				}
+				else if (hitMask == RAYTRACE_MASK_ENTITY) {
+					renderer.environmentAudio.audibleRenderables[ray.renderableIndex].audible = max(renderer.environmentAudio.audibleRenderables[ray.renderableIndex].audible, audible);
+					atomicAdd(renderer.environmentAudio.object, 1);
+					testcolor.rgb = mix(testcolor.rgb, vec3(0,1,0), audible);
+					if (envAudioBounce++ == MAX_AUDIO_BOUNCE) {
+						break;
+					}
+					rayOrigin += rayDir * ray.hitDistance + ray.normal * EPSILON;
+					rayDir = reflect(rayDir, ray.normal);
+					audible *= 0.5;
+				}
+				else if (hitMask == RAYTRACE_MASK_LIQUID) {
+					atomicAdd(renderer.environmentAudio.hydrosphere, 1);
+					renderer.environmentAudio.hydrosphereDistance = atomicMin(renderer.environmentAudio.hydrosphereDistance, int(ray.hitDistance * 100));
+					testcolor.rgb = mix(testcolor.rgb, vec3(0,0,1), audible);
+					break;
+				} else {
+					break;
+				}
+			}
+		} while (true);
+	}
+	
+	// Debug Views
 	switch (xenonRendererData.config.debugViewMode) {
 		default:
 		case RENDERER_DEBUG_VIEWMODE_NONE:
@@ -368,11 +474,13 @@ void main() {
 			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(float(nbDirectLights) / float(NB_LIGHTS)), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_ENVIRONMENT_AUDIO:
+			imageStore(img_normal_or_debug, COORDS, testcolor);
 			break;
 		case RENDERER_DEBUG_VIEWMODE_ALPHA:
 			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(imageLoad(img_resolved, COORDS).a, xenonRendererData.config.debugViewScale)), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_TEST:
+			// imageStore(img_normal_or_debug, COORDS, testcolor);
 			break;
 		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
 			if (ray.renderableIndex == -1) break;

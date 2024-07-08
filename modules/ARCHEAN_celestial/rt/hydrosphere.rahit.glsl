@@ -28,32 +28,37 @@ void main() {
 			vec3 lightPosition = lightTransform[3].xyz;
 			int lightID = rayQueryGetIntersectionInstanceIdEXT(lightQuery, false);
 			
-			vec3 position = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * RandomFloat(seed) * min(100, ray.hitDistance * 0.33);
-			vec3 upDir = normalize(position - vec3(water.center));
-			vec3 relativeLightPosition = lightPosition - position;
-			vec3 lightDir = normalize(relativeLightPosition);
-			float nDotL = dot(upDir, lightDir);
-			if (nDotL > 0) {
-				LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
-				float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
-				if (distanceToLightSurface < lightSource.maxDistance) {
-					if (distanceToLightSurface > 100000) { // only sun lights
-						float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
-						float underwaterDepth = float(water.radius) - distance(position, vec3(water.center));
-						vec3 lightColor = lightSource.color * effectiveLightIntensity * 0.01 * WATER_TINT * WATER_TINT * exp(underwaterDepth / nDotL / -100);
-						
-						// rayQueryEXT shadowQuery;
-						// rayQueryInitializeEXT(shadowQuery, tlas, 0, RAYTRACE_MASK_TERRAIN, position, 0, lightDir, distanceToLightSurface);
-						// if (!rayQueryProceedEXT(shadowQuery)) {
-							ray.emission += lightColor * nDotL;
-						// }
-						
+			const int nbSamples = 10;
+			
+			for (int i = 0; i < nbSamples; i++) {
+				vec3 position = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * (float(i) + RandomFloat(seed)) / nbSamples * min(200, ray.hitDistance);
+				vec3 upDir = normalize(position - vec3(water.center));
+				vec3 relativeLightPosition = lightPosition - position;
+				vec3 lightDir = normalize(relativeLightPosition);
+				float nDotL = dot(upDir, lightDir);
+				if (nDotL > 0) {
+					LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
+					float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
+					if (distanceToLightSurface < lightSource.maxDistance) {
+						if (distanceToLightSurface > 100000) { // only sun lights
+							float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
+							float underwaterDepth = float(water.radius) - distance(position, vec3(water.center));
+							vec3 lightColor = lightSource.color * effectiveLightIntensity * 0.01 * WATER_TINT * WATER_TINT * exp(underwaterDepth / nDotL / -100);
+							
+							// rayQueryEXT shadowQuery;
+							// rayQueryInitializeEXT(shadowQuery, tlas, 0, RAYTRACE_MASK_TERRAIN, position, 0, lightDir, distanceToLightSurface);
+							// if (!rayQueryProceedEXT(shadowQuery)) {
+								ray.emission += lightColor * nDotL / nbSamples;
+							// }
+							
+						}
 					}
 				}
 			}
 		}
 		
 	}
+	
 	RayTransparent(mix(
 		WATER_TINT * exp(min(T2, ray.hitDistance) / -50),
 		vec3(0.9),

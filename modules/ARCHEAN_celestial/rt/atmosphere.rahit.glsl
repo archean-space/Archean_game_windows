@@ -184,4 +184,5 @@ void main() {
 	
 	ray.emission += fog.rgb * ray.colorAttenuation;
 	// RayTransparent(vec3(1-pow(fog.a, 32)));
+	RayTransparent(vec3(1));
 }
