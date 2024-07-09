@@ -13,6 +13,7 @@ uint traceRayCount = 0;
 uint glossyRayCount = 0;
 uint nbDirectLights = 0;
 float currentIOR = 1.0;
+float ssao = 1;
 
 #define NB_LIGHTS 16
 #define SORT_LIGHTS
@@ -290,12 +291,12 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		vec3 reflectionDir = normalize(reflect(rayDirection, rayNormal));
 		vec3 refractionDir = refract(rayDirection, rayNormal, currentIOR/ior);
 		vec3 rayColor = ray.color;
-		float ssao = 1;
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
 		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
 		
 		// Write Motion Vectors
+		bool depthWritten = false;
 		if (imageLoad(img_motion, COORDS).w == 0) {
 			if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0 || dot(refractionDir, rayDirection) < 0.5) {
 				if ((ray.rayFlags & RAY_FLAG_FLUID) == 0) {
@@ -317,6 +318,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 					vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(hitWorldPosition, 1);
 					float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
 					imageStore(img_depth, COORDS, vec4(depth));
+					depthWritten = true;
 				}
 			}
 		}
@@ -360,7 +362,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		imageStore(img_composite, COORDS, vec4(color, 1) + imageLoad(img_composite, COORDS));
 		
 		// SSAO
-		if (ssao > 0 && imageLoad(img_normal_or_debug, COORDS).a == 0) {
+		if (depthWritten) {
 			imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
 		}
 		
@@ -376,6 +378,8 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 					currentIOR = ior;
 					rayOrigin = hitWorldPosition - rayNormal * EPSILON * length(hitWorldPosition);
 				}
+			} else {
+				rayOrigin = hitWorldPosition - rayNormal * EPSILON * length(hitWorldPosition);
 			}
 		} else if (metallic != 0 && roughness == 0) {
 			// Metallic reflections
