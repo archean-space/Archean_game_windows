@@ -68,6 +68,7 @@
 #include <string>
 #include <functional>
 #include <sstream>
+#include <string.h>
 
 using namespace glm;
 

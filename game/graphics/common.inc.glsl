@@ -56,10 +56,10 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 STATIC_ASSERT_ALIGNED16_SIZE(AabbData, 32)
 
 struct SunData {
-	vec3 position;
-	float radius;
-	vec3 color;
-	float temperature;
+	aligned_f32vec3 position;
+	aligned_float32_t radius;
+	aligned_f32vec3 color;
+	aligned_float32_t temperature;
 };
 STATIC_ASSERT_ALIGNED16_SIZE(SunData, 32)
 
@@ -88,7 +88,7 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) LightSourceInstanceData {
 STATIC_ASSERT_ALIGNED16_SIZE(LightSourceInstanceData, 64)
 
 BUFFER_REFERENCE_STRUCT_WRITEONLY(4) AudibleRenderableData {
-	float audible;
+	aligned_float32_t audible;
 };
 
 BUFFER_REFERENCE_STRUCT(4) EnvironmentAudioData {

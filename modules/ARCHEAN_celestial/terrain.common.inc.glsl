@@ -19,11 +19,11 @@
 #define TERRAIN_FEATURE_WAVY_SAND 3
 
 BUFFER_REFERENCE_STRUCT(4) TerrainSplatBuffer {
-	u8vec4 splat;
+	aligned_u8vec4 splat;
 };
 
 BUFFER_REFERENCE_STRUCT(4) TemperatureBuffer {
-	float temperature;
+	aligned_float32_t temperature;
 };
 
 BUFFER_REFERENCE_STRUCT(16) ChunkBuffer {
