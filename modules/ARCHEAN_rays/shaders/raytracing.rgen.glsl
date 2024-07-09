@@ -35,7 +35,7 @@ vec3 MapUVToSphere(vec2 uv) {
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float metallic, in float roughness, in float specular, in float specularHardness) {
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) == 0) return vec3(0);
 	
-	vec3 position = worldPosition + normal * EPSILON * clamp(length(worldPosition) * 0.01, 1, 1000);
+	vec3 position = worldPosition + normal * EPSILON * max(length(worldPosition) * 0.01, 1);
 	vec3 directLighting = vec3(0);
 	
 	rayQueryEXT q;
@@ -345,7 +345,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			vec3 reflectionColorFilter = fresnel * colorFilter;
 			bool reflections = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFLECTIONS : RENDERER_OPTION_GLASS_REFLECTIONS)) != 0;
 			if (++glossyRayCount < 3 && (reflections || (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0)) {
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 3; i++) {
 					if (!TraceGlossyRay(reflectionOrigin, reflectionDirection, reflectionColorFilter)) break;
 				}
 			} else if (isLiquid) {
