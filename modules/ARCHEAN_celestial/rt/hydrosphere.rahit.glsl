@@ -112,7 +112,7 @@ void main() {
 		transmittance *= pow(clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1), 2);
 	}
 	
-	float depth = max(0, min(T2, ray.hitDistance));
+	float depth = ray.hitDistance == 0? T2 : max(0, min(T2, ray.hitDistance));
 	RayTransparent(transmittance * mix(
 		WATER_TINT * exp(depth / -50),
 		vec3(0.9),

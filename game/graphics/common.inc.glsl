@@ -292,7 +292,7 @@ struct RendererData {
 
 struct RayPayload {
 	vec3 color;
-	float hitDistance;
+	float hitDistance; // 0 for ambient lighting rays for liquids
 	vec3 normal;
 	int32_t renderableIndex;
 	vec3 localPosition;
