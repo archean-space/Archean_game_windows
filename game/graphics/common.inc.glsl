@@ -26,42 +26,26 @@
 #define LIGHT_LUMINOSITY_VISIBLE_THRESHOLD 0.01
 #define ENVIRONMENT_AUDIO_MAX_DISTANCE 500
 
-// Up to 32 flags
-#define PIPE_FLAG_BOX			(1u << 0)
-#define PIPE_FLAG_CAPSULE		(1u << 1)
-#define PIPE_FLAG_STRIPES		(1u << 2)
-#define PIPE_FLAG_CHROME		(1u << 3)
-#define PIPE_FLAG_GLOSSY		(1u << 5)
-#define PIPE_FLAG_FLEXIBLE		(1u << 6)
-#define PIPE_FLAG_METAL			(1u << 7)
-
 // Up to 16 flags
 #define PLASMA_FLAG_AEROSPIKE	(1u << 0)
 #define PLASMA_FLAG_SHAKE 		(1u << 1)
 
 // Up to 32 options
-#define RENDERER_OPTION_DIRECT_LIGHTING			(1u<< 0 )
-#define RENDERER_OPTION_GLASS_REFLECTIONS		(1u<< 1 )
-#define RENDERER_OPTION_GLASS_REFRACTION		(1u<< 2 )
-#define RENDERER_OPTION_WATER_REFLECTIONS		(1u<< 3 )
-#define RENDERER_OPTION_WATER_REFRACTION		(1u<< 4 )
-#define RENDERER_OPTION_RT_AMBIENT_LIGHTING		(1u<< 5 )
-#define RENDERER_OPTION_ATMOSPHERIC_SHADOWS		(1u<< 6 )
-#define RENDERER_OPTION_UNDERWATER_LIGHT_RAYS	(1u<< 7 )
+#define RENDERER_OPTION_DIRECT_LIGHTING				(1u<< 0 )
+#define RENDERER_OPTION_GLASS_REFLECTIONS			(1u<< 1 )
+#define RENDERER_OPTION_GLASS_REFRACTION			(1u<< 2 )
+#define RENDERER_OPTION_WATER_REFLECTIONS			(1u<< 3 )
+#define RENDERER_OPTION_WATER_REFRACTION			(1u<< 4 )
+#define RENDERER_OPTION_RT_AMBIENT_LIGHTING			(1u<< 5 )
+#define RENDERER_OPTION_ATMOSPHERIC_SHADOWS			(1u<< 6 )
+#define RENDERER_OPTION_UNDERWATER_VOLUMETRIC_FOG	(1u<< 7 )
+#define RENDERER_OPTION_UNDERWATER_LIGHT_RAYS		(1u<< 8 )
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 	aligned_float32_t aabb[6];
 	aligned_uint64_t data; // Arbitrary data defined per-shader
 };
 STATIC_ASSERT_ALIGNED16_SIZE(AabbData, 32)
-
-struct SunData {
-	aligned_f32vec3 position;
-	aligned_float32_t radius;
-	aligned_f32vec3 color;
-	aligned_float32_t temperature;
-};
-STATIC_ASSERT_ALIGNED16_SIZE(SunData, 32)
 
 // This is per geometry, not per renderable, and is unique to each individual instance
 BUFFER_REFERENCE_STRUCT_READONLY(16) RenderableData {
@@ -102,25 +86,6 @@ BUFFER_REFERENCE_STRUCT(4) EnvironmentAudioData {
 };
 STATIC_ASSERT_SIZE(EnvironmentAudioData, 32)
 
-BUFFER_REFERENCE_STRUCT_READONLY(16) AtmosphereData {
-	aligned_f32vec4 rayleigh;
-	aligned_f32vec4 mie;
-	aligned_float32_t innerRadius;
-	aligned_float32_t outerRadius;
-	aligned_float32_t g;
-	aligned_float32_t temperature;
-	aligned_f32vec3 _unused;
-	aligned_int32_t nbSuns;
-	SunData suns[2];
-};
-STATIC_ASSERT_ALIGNED16_SIZE(AtmosphereData, 128)
-
-BUFFER_REFERENCE_STRUCT_READONLY(16) WaterData {
-	aligned_f64vec3 center;
-	aligned_float64_t radius;
-};
-STATIC_ASSERT_ALIGNED16_SIZE(WaterData, 32)
-
 BUFFER_REFERENCE_STRUCT_READONLY(16) PlasmaData {
 	aligned_float32_t depth;
 	aligned_float32_t radius;
@@ -131,20 +96,6 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) PlasmaData {
 	aligned_float32_t density; // [10 - 10000] (500)
 };
 STATIC_ASSERT_ALIGNED16_SIZE(PlasmaData, 32)
-
-BUFFER_REFERENCE_STRUCT_READONLY(16) PropellerData {
-	aligned_float32_t radius;
-	aligned_float32_t width;
-	aligned_float32_t base;
-	aligned_float32_t twist;
-	aligned_float32_t pitch;
-	aligned_float32_t roundedTips;
-	aligned_float32_t speed;
-	aligned_uint16_t flags;
-	aligned_uint8_t blades;
-	aligned_uint8_t _unused;
-};
-STATIC_ASSERT_ALIGNED16_SIZE(PropellerData, 32)
 
 struct GeometryMaterial {
 	aligned_f32vec4 color;
@@ -307,12 +258,9 @@ struct RendererData {
 #define SET1_BINDING_TLAS 0
 #define SET1_BINDING_LIGHTS_TLAS 1
 #define SET1_BINDING_RENDERER_DATA 2
-#define SET1_BINDING_RT_PAYLOAD_IMAGE 3
-#define SET1_BINDING_PRIMARY_ALBEDO_ROUGHNESS_IMAGE 4
-#define SET1_BINDING_POST_HISTORY_IMAGE 5
-#define SET1_BINDING_BLOOM_IMAGE 6
-#define SET1_BINDING_CLOUD_IMAGE 7
-#define SET1_BINDING_CLOUD_SAMPLER 8
+#define SET1_BINDING_BLOOM_IMAGE 3
+#define SET1_BINDING_CLOUD_IMAGE 4
+#define SET1_BINDING_CLOUD_SAMPLER 5
 
 #define COORDS ivec2(gl_LaunchIDEXT.xy)
 #define WORLD2VIEWNORMAL transpose(inverse(mat3(renderer.viewMatrix)))
@@ -718,12 +666,4 @@ struct RayShadowPayload {
 		terminateRayEXT;
 	}
 	
-#endif
-
-#ifdef SHADER_RMISS
-	layout(location = 0) rayPayloadInEXT RayPayload ray;
-	
-	void RayNoHit() {
-		ray.renderableIndex = -1;
-	}
 #endif

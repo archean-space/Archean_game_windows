@@ -1,5 +1,5 @@
 #define SHADER_RINT
-#include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 
 #define ATMOSPHERE_RAY_MIN_DISTANCE 1000
 

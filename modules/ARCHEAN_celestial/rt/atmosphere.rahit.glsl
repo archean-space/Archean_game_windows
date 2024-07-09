@@ -1,5 +1,5 @@
 #define SHADER_RAHIT
-#include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 
 // https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-1/
 

@@ -1,4 +1,4 @@
-#include "game/graphics/common.inc.glsl"
+#include "common.inc.glsl"
 
 BUFFER_REFERENCE_STRUCT_WRITEONLY(4) SunGlareBrightness {
 	aligned_float32_t brightness;

@@ -2,5 +2,4 @@
 // #include "game/graphics/common.inc.glsl"
 
 void main() {
-	// RayNoHit();
 }

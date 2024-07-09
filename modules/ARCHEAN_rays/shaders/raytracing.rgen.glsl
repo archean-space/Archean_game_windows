@@ -155,6 +155,8 @@ void TraceFogRay(in vec3 rayOrigin, in vec3 rayDirection, in float maxDistance, 
 }
 
 vec3 TraceAmbientLighting(in vec3 surfaceWorldPosition, in vec3 rayNormal, inout vec3 albedo) {
+	if ((renderer.options & RENDERER_OPTION_RT_AMBIENT_LIGHTING) == 0) return albedo * 0.01 / GetCurrentExposure();
+	
 	// Ambient lighting
 	uint fakeGiSeed = 598734;
 	shadowRay.colorAttenuation = vec3(1);
@@ -164,10 +166,11 @@ vec3 TraceAmbientLighting(in vec3 surfaceWorldPosition, in vec3 rayNormal, inout
 	++traceRayCount;
 	vec3 bounceDirection = normalize(rayNormal + 2.0f * vec3(RandomFloat(fakeGiSeed), RandomFloat(fakeGiSeed), RandomFloat(fakeGiSeed)) - 1.0f);
 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_FOG, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, surfaceWorldPosition, 1000, bounceDirection, shadowRay.hitDistance, 1/*payloadIndex*/);
-	vec3 ambient = shadowRay.emission * albedo * 0.1;
+	vec3 ambient = shadowRay.emission * 0.001;
 	shadowRay.rayFlags = 0;
-	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, surfaceWorldPosition, 0, bounceDirection, 1, 1/*payloadIndex*/);
-	return ambient * shadowRay.colorAttenuation;
+	shadowRay.hitDistance = 0;
+	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, surfaceWorldPosition, 0, bounceDirection, 0, 1/*payloadIndex*/);
+	return pow(ambient, vec3(0.5)) * albedo * shadowRay.colorAttenuation;
 }
 
 bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
@@ -326,8 +329,11 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		TraceFogRay(rayOrigin, rayDirection, rayHitDistance, colorFilter);
 		ssao *= max(colorFilter.x, max(colorFilter.y, colorFilter.z));
 		
+		
 		// Glossy reflections
 		if (roughness == 0 && ior > 1) {
+			bool shouldAim = (ray.rayFlags & RAY_FLAG_AIM) != 0;
+			ray.rayFlags &= ~RAY_FLAG_AIM;
 			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
 			vec3 reflectionDirection = reflectionDir;
 			vec3 reflectionColorFilter = fresnel * colorFilter;
@@ -340,6 +346,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 				TraceFogRay(reflectionOrigin, reflectionDirection, xenonRendererData.config.zFar, reflectionColorFilter);
 			}
 			ray.rayFlags &= ~RAY_FLAG_FLUID;
+			if (shouldAim) ray.rayFlags |= RAY_FLAG_AIM;
 		}
 		
 		// Write color

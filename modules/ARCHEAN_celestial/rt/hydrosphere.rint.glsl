@@ -1,5 +1,5 @@
 #define SHADER_RINT
-#include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 
 hitAttributeEXT hit {
 	float t1;
@@ -22,26 +22,28 @@ void main() {
 		const double T1 = double(-b - det);
 		const double T2 = double(-b + det);
 		
+		// Solid rays
 		if ((gl_IncomingRayFlagsEXT & gl_RayFlagsOpaqueEXT) != 0) {
 			// Outside of sphere
 			if (gl_RayTminEXT <= T1 && T1 <= gl_RayTmaxEXT) {
 				t1 = float(T1);
 				t2 = float(T2);
-				reportIntersectionEXT(float(T1) + 0.001, 0);
+				reportIntersectionEXT(float(T1), 0);
 			}
 			// Inside of sphere
 			if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
 				t1 = float(T1);
 				t2 = float(T2);
-				reportIntersectionEXT(float(T2) + 0.001, 1);
+				reportIntersectionEXT(float(T2), 1);
 			}
 		}
+		// Fog and Shadow rays
 		if ((gl_IncomingRayFlagsEXT & gl_RayFlagsNoOpaqueEXT) != 0) {
 			// Inside of sphere
 			if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
 				t1 = float(T1);
 				t2 = float(T2);
-				reportIntersectionEXT(gl_RayTminEXT + 0.001, 1);
+				reportIntersectionEXT(gl_RayTminEXT, 1);
 			}
 		}
 	}

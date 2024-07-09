@@ -1,5 +1,6 @@
 #define SHADER_RCHIT
 #include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 
 struct PipeAttr {
 	vec3 normal;

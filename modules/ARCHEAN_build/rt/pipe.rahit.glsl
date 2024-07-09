@@ -1,5 +1,6 @@
 #define SHADER_RAHIT
 #include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 
 void main() {
 	

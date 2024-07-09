@@ -1,5 +1,5 @@
 #define SHADER_RAHIT
-#include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 #include "xenon/renderer/shaders/perlint.inc.glsl"
 
 hitAttributeEXT hit {
@@ -56,14 +56,14 @@ void main() {
 	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) != 0) {
 		// Fog Ray: ray-march underwater fog
 		
-		#ifdef ENABLE_RAY_QUERIES_FROM_ANYHIT_SHADERS
+		WaterData water = WaterData(AABB.data);
+		bool isCameraUnderwater = distance(dvec3(inverse(renderer.viewMatrix)[3]), dvec3(water.center)) < water.radius;
 		
-			WaterData water = WaterData(AABB.data);
-			
+		#ifdef ENABLE_RAY_QUERIES_FROM_ANYHIT_SHADERS
+		if ((renderer.options & RENDERER_OPTION_UNDERWATER_VOLUMETRIC_FOG) != 0) {
+		
 			rayQueryEXT lightQuery;
 			rayQueryInitializeEXT(lightQuery, tlas_lights, 0, 0xff, gl_WorldRayOriginEXT, 0, vec3(0,1,0), 0);
-			
-			bool isCameraUnderwater = distance(dvec3(inverse(renderer.viewMatrix)[3]), dvec3(water.center)) < water.radius;
 			
 			while (rayQueryProceedEXT(lightQuery)) {
 				mat4 lightTransform = mat4(rayQueryGetIntersectionObjectToWorldEXT(lightQuery, false));
@@ -93,20 +93,23 @@ void main() {
 										ray.emission += lightColor * nDotL / nbSamples;
 									}
 								} else {
-									ray.emission += lightColor * nDotL / nbSamples;
+									ray.emission += lightColor * nDotL / nbSamples * 0.1;
 								}
 							}
 						}
 					}
 				}
 			}
-			
+		} else
 		#endif
+		if (isCameraUnderwater) {
+			ray.emission += WATER_TINT * 0.01 / GetCurrentExposure();
+		}
 		
 	} else if (T2 < ray.hitDistance && ray.hitDistance > 1000) {
 		// Shadow ray: Draw caustics
 		vec3 lightIncomingDir = normalize(normalize(vec3(renderer.worldOrigin)) + gl_WorldRayDirectionEXT); // approximation of the refracted ray, good enough here
-		transmittance *= clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1);
+		transmittance *= pow(clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1), 2);
 	}
 	
 	float depth = max(0, min(T2, ray.hitDistance));

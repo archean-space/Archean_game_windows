@@ -1,5 +1,5 @@
 #define SHADER_RCHIT
-#include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 #include "xenon/renderer/shaders/perlint.inc.glsl"
 
 WaterData water = WaterData(AABB.data);
@@ -137,13 +137,15 @@ void main() {
 			}
 		}
 		
+		float transparency = smoothstep(10000, 100, gl_HitTEXT);
+		
 		RayHitWorld(
-			/*albedo*/		vec3(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT))),
+			/*albedo*/		vec3(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT))) * transparency,
 			/*normal*/		surfaceNormal,
 			/*distance*/	gl_HitTEXT,
 			/*roughness*/	0,
 			/*ior*/			WATER_IOR,
-			/*flags*/		RAY_SURFACE_TRANSPARENT
+			/*flags*/		transparency>0? RAY_SURFACE_TRANSPARENT : RAY_SURFACE_DIFFUSE
 		);
 		ray.rayFlags |= RAY_FLAG_FLUID;
 	}

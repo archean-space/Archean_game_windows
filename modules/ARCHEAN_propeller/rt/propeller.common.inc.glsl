@@ -1,4 +1,4 @@
-#include "game/graphics/common.inc.glsl"
+#include "../common.inc.glsl"
 
 float sdBox( vec3 p, vec3 b ) {
 	vec3 q = abs(p) - b;
