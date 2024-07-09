@@ -130,7 +130,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 			shadowRay.rayFlags = 0u;
 			++traceRayCount;
 			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
-			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
 			vec3 light = lightsColor[i] * lightsPower[i];
 			float NdotL = clamp(dot(normal, shadowRayDir), 0, 1);
 			vec3 diffuse = albedo * NdotL * (1 - metallic) * mix(0.5, 1, roughness);
