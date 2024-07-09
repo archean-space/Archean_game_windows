@@ -1,4 +1,4 @@
-#include "common.inc.glsl"
+#include "game/graphics/common.inc.glsl"
 
 // Filter by brightness & horizontal blur pass
 

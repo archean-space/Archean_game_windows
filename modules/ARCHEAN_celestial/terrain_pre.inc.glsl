@@ -7,19 +7,19 @@
 #define COMPUTE_SIZE_Y 16
 
 BUFFER_REFERENCE_STRUCT(4) TerrainVertexBuffer {
-	float vertex;
+	aligned_float32_t vertex;
 };
 
 BUFFER_REFERENCE_STRUCT(4) TerrainNormalBuffer {
-	float normal;
+	aligned_float32_t normal;
 };
 
 BUFFER_REFERENCE_STRUCT(4) TerrainColorBuffer {
-	u8vec4 color;
+	aligned_u8vec4 color;
 };
 
 BUFFER_REFERENCE_STRUCT(4) TerrainUvBuffer {
-	vec2 uv;
+	aligned_f32vec2 uv;
 };
 
 PUSH_CONSTANT_STRUCT TerrainChunkPushConstant {

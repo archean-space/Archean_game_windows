@@ -1,12 +1,12 @@
-#include "game/graphics/common.inc.glsl"
+#include "common.inc.glsl"
 
 BUFFER_REFERENCE_STRUCT_WRITEONLY(4) SunGlareBrightness {
-	float brightness;
+	aligned_float32_t brightness;
 };
 
 PUSH_CONSTANT_STRUCT SunglarePushConstant {
 	aligned_f32mat4 viewMatrix;
 	SunData sunData;
 	BUFFER_REFERENCE_ADDR(SunGlareBrightness) brightnessBuffer;
-	float brightness;
+	aligned_float32_t brightness;
 };

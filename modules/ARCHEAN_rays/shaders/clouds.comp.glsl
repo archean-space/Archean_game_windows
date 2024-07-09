@@ -1,6 +1,6 @@
 #define SHADER_COMP_RAYS
 
-#include "common.inc.glsl"
+#include "game/graphics/common.inc.glsl"
 
 #define CLOUD_MAX_DISTANCE 200
 
@@ -146,7 +146,7 @@ void main() {
 	viewDistance = clamp(viewDistance, 0.5, CLOUD_MAX_DISTANCE);
 	vec3 viewDir = normalize(VIEW2WORLDNORMAL * normalize(vec4(inverse(mat4(xenonRendererData.config.projectionMatrix)) * vec4(uv*2-1, 1, 1)).xyz));
 	vec3 terrainUpDir = normalize(vec3(renderer.worldOrigin));
-	vec3 origin = inverse(renderer.viewMatrix)[3].xyz					+viewDir*EPSILON;// BUGFIX for CRASH on Windows (NVIDIA Driver Bug?)
+	vec3 origin = inverse(renderer.viewMatrix)[3].xyz			;//		+viewDir*EPSILON;// BUGFIX for CRASH on Windows (NVIDIA Driver Bug?)
 	vec3 endPosition = origin + viewDir * viewDistance;
 	float startDistance = 0;
 	float endDistance = viewDistance;

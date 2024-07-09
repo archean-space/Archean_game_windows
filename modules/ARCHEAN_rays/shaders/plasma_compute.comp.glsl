@@ -1,6 +1,6 @@
 #define SHADER_COMP_RAYS
 
-#include "common.inc.glsl"
+#include "game/graphics/common.inc.glsl"
 
 layout(local_size_x = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_X, local_size_y = XENON_RENDERER_SCREEN_COMPUTE_LOCAL_SIZE_Y) in;
 layout(set = 2, binding = 0, rg32f) uniform image2D images[];
@@ -29,7 +29,7 @@ void main() {
 	float front = boundingRadius * 32;
 	{
 		rayQueryEXT rq;
-		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
+		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
 		while (rayQueryProceedEXT(rq)) {
 			uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 			if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
@@ -50,7 +50,7 @@ void main() {
 		rayOrigin += rayDir * boundingRadius * 2;
 		rayDir *= -1;
 		rayQueryEXT rq;
-		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_SIMPLE_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
+		rayQueryInitializeEXT(rq, tlas, 0, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER, rayOrigin, 0, rayDir, boundingRadius * 2);
 		while (rayQueryProceedEXT(rq)) {
 			uint type = rayQueryGetIntersectionTypeEXT(rq, false);
 			if (type == gl_RayQueryCandidateIntersectionAABBEXT) {
