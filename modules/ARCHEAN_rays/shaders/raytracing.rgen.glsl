@@ -373,13 +373,13 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 				rayDirection = refractionDir;
 				if (dot(rayDirection, rayDirection) == 0) {
 					rayDirection = reflectionDir;
-					rayOrigin = hitWorldPosition + rayNormal * EPSILON * length(hitWorldPosition);
+					rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
 				} else {
 					currentIOR = ior;
-					rayOrigin = hitWorldPosition - rayNormal * EPSILON * length(hitWorldPosition);
+					rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
 				}
 			} else {
-				rayOrigin = hitWorldPosition - rayNormal * EPSILON * length(hitWorldPosition);
+				rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
 			}
 		} else if (metallic != 0 && roughness == 0) {
 			// Metallic reflections
