@@ -20,7 +20,7 @@ void main() {
 			vec3 pos = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * depth - rockPos;
 			float dist = Sdf(pos, detailSize, detailOctavesMediumRes);
 			depth += dist;
-			if (dist <= epsilon*0.1) {
+			if (dist < epsilon*0.01) {
 				reportIntersectionEXT(max(gl_RayTminEXT, depth), 0);
 				break;
 			}

@@ -18,7 +18,7 @@ void main() {
 	
 	vec3 color = mix(sandColor, rockColor, rocky);
 	color *= mix(0.5, 1.0, pow(abs(FastSimplexFractal(localPos*255.658, detailOctavesTextures)) + (FastSimplexFractal(localPos*29.123, detailOctavesTextures)*0.5+0.5), 0.5));
-	color *= pow(normal.y * 0.5 + 0.5, 0.25);
+	color *= clamp(pow(normal.y * 0.5 + 0.5, 0.25), 0.01, 1.0);
 	
 	// Reverse gamma
 	color = ReverseGamma(color);
