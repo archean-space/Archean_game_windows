@@ -215,7 +215,6 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 		vec3 rayNormal = ray.normal;
 		vec3 reflectionDir = normalize(reflect(rayDirection, rayNormal));
 		vec3 rayColor = ray.color;
-		float ssao = 1;
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
 		
@@ -359,7 +358,11 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		// Write color
 		color *= colorFilter;
 		imageStore(img_composite, COORDS, vec4(color, 1) + imageLoad(img_composite, COORDS));
-		imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
+		
+		// SSAO
+		if (ssao > 0 && imageLoad(img_normal_or_debug, COORDS).a == 0) {
+			imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
+		}
 		
 		if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 			// Refraction
