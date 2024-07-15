@@ -52,6 +52,7 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 
 void main() {
 	float transmittance = 1;
+	float depth = ray.hitDistance == 0? T2 : max(0, min(T2, ray.hitDistance));
 	
 	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) != 0) {
 		// Fog Ray: ray-march underwater fog
@@ -109,10 +110,9 @@ void main() {
 	} else if (T2 < ray.hitDistance && ray.hitDistance > 1000) {
 		// Shadow ray: Draw caustics
 		vec3 lightIncomingDir = normalize(normalize(vec3(renderer.worldOrigin)) + gl_WorldRayDirectionEXT); // approximation of the refracted ray, good enough here
-		transmittance *= pow(clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1), 2);
+		transmittance *= mix(pow(clamp(caustics(gl_WorldRayOriginEXT*vec3(0.9,0.5,0.7), lightIncomingDir, float(renderer.timestamp)) * 0.5 + 0.5, 0, 1), 2), 1, exp(depth/-2));
 	}
 	
-	float depth = ray.hitDistance == 0? T2 : max(0, min(T2, ray.hitDistance));
 	RayTransparent(transmittance * mix(
 		WATER_TINT * exp(depth / -50),
 		vec3(0.9),
