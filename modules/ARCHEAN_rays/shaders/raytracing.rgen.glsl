@@ -14,6 +14,7 @@ uint glossyRayCount = 0;
 uint nbDirectLights = 0;
 float currentIOR = 1.0;
 float ssao = 1;
+float alpha = 0;
 
 #define NB_LIGHTS 16
 #define SORT_LIGHTS
@@ -36,8 +37,7 @@ vec3 MapUVToSphere(vec2 uv) {
 vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 normal, in vec3 albedo, in float metallic, in float roughness, in float specular, in float specularHardness) {
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) == 0) return vec3(0);
 	
-	float realDistance = length(worldPosition - inverse(renderer.viewMatrix)[3].xyz);
-	float referenceDistance = max(realDistance, length(worldPosition));
+	float referenceDistance = length(worldPosition - inverse(renderer.viewMatrix)[3].xyz);
 	vec3 position = worldPosition + normal * EPSILON * referenceDistance;
 	vec3 directLighting = vec3(0);
 	
@@ -236,7 +236,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 		
 		// Write color
 		color *= colorFilter;
-		imageStore(img_composite, COORDS, vec4(color, 1) + imageLoad(img_composite, COORDS));
+		imageStore(img_composite, COORDS, vec4(color, 0) + imageLoad(img_composite, COORDS));
 		
 		if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 			// Refractions
@@ -296,13 +296,14 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		vec3 rayColor = ray.color;
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
+		bool isTransparent = (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0;
 		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
 		
 		// Write Motion Vectors
 		bool depthWritten = false;
 		if (imageLoad(img_motion, COORDS).w == 0) {
-			if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0 || dot(refractionDir, rayDirection) < 0.5) {
-				if ((ray.rayFlags & RAY_FLAG_FLUID) == 0) {
+			if (!isTransparent || dot(refractionDir, rayDirection) < 0.5) {
+				if (!isLiquid) {
 					mat4 mvp = xenonRendererData.config.projectionMatrix * renderer.viewMatrix * mat4(transpose(renderer.tlasInstances[hitRenderableIndex].transform));
 					renderer.mvpBuffer[hitRenderableIndex].mvp = mvp;
 					renderer.realtimeBuffer[hitRenderableIndex].mvpFrameIndex = xenonRendererData.frameIndex;
@@ -339,7 +340,9 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		
 		// Fog
 		TraceFogRay(rayOrigin, rayDirection, rayHitDistance, colorFilter);
-		ssao *= max(colorFilter.x, max(colorFilter.y, colorFilter.z));
+		float transparency = max(colorFilter.x, max(colorFilter.y, colorFilter.z));
+		alpha += (isTransparent && !isLiquid)? (1.01 - transparency) : 1;
+		ssao *= clamp(transparency, 0, 1);
 		
 		// Glossy reflections
 		if (roughness == 0 && ior > 1) {
@@ -349,7 +352,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			vec3 reflectionDirection = reflectionDir;
 			vec3 reflectionColorFilter = fresnel * colorFilter;
 			bool reflections = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFLECTIONS : RENDERER_OPTION_GLASS_REFLECTIONS)) != 0;
-			if (++glossyRayCount < 3 && (reflections || (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) == 0)) {
+			if (++glossyRayCount < 3 && (reflections || !isTransparent)) {
 				for (int i = 0; i < 3; i++) {
 					if (!TraceGlossyRay(reflectionOrigin, reflectionDirection, reflectionColorFilter)) break;
 				}
@@ -362,14 +365,14 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		
 		// Write color
 		color *= colorFilter;
-		imageStore(img_composite, COORDS, vec4(color, 1) + imageLoad(img_composite, COORDS));
+		imageStore(img_composite, COORDS, vec4(color, alpha) + imageLoad(img_composite, COORDS));
 		
 		// SSAO
 		if (depthWritten) {
 			imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
 		}
 		
-		if ((raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0) {
+		if (isTransparent) {
 			// Refraction
 			bool refraction = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFRACTION : RENDERER_OPTION_GLASS_REFRACTION)) != 0;
 			if (refraction || (isLiquid && ior < 1)) {
@@ -377,6 +380,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 				if (dot(rayDirection, rayDirection) == 0) {
 					rayDirection = reflectionDir;
 					rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
+					alpha = 1;
 				} else {
 					currentIOR = ior;
 					rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
@@ -388,6 +392,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			// Metallic reflections
 			rayDirection = reflectionDir;
 			rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
+			alpha = 1;
 		} else {
 			return false;
 		}
