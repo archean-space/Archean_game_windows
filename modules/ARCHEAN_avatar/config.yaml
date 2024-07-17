@@ -11,6 +11,7 @@ inventory_creative_backpack:
   ARCHEAN_computer.MiniComputer: 50
   ARCHEAN_computer.HDD: 50
   ARCHEAN_computer.Router: 50
+  ARCHEAN_computer.MiniRouter: 50
   ARCHEAN_celestial.NavInstrument: 50
   ARCHEAN_beacon.Beacon: 50
   ARCHEAN_hid.PushButton: 50
