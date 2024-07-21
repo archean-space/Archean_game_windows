@@ -38,7 +38,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) == 0) return vec3(0);
 	
 	float referenceDistance = length(worldPosition - inverse(renderer.viewMatrix)[3].xyz);
-	vec3 position = worldPosition + normal * EPSILON * referenceDistance;
+	vec3 position = worldPosition + normal * EPSILON * max(1, referenceDistance);
 	vec3 directLighting = vec3(0);
 	
 	rayQueryEXT q;
@@ -348,7 +348,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		if (roughness == 0 && ior > 1) {
 			bool shouldAim = (ray.rayFlags & RAY_FLAG_AIM) != 0;
 			ray.rayFlags &= ~RAY_FLAG_AIM;
-			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * rayHitDistance;
+			vec3 reflectionOrigin = hitWorldPosition + rayNormal * EPSILON * max(rayHitDistance, 1);
 			vec3 reflectionDirection = reflectionDir;
 			vec3 reflectionColorFilter = fresnel * colorFilter;
 			bool reflections = (renderer.options & (isLiquid? RENDERER_OPTION_WATER_REFLECTIONS : RENDERER_OPTION_GLASS_REFLECTIONS)) != 0;
@@ -379,19 +379,19 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 				rayDirection = refractionDir;
 				if (dot(rayDirection, rayDirection) == 0) {
 					rayDirection = reflectionDir;
-					rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
+					rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(rayHitDistance * 0.01, 1);
 					alpha = 1;
 				} else {
 					currentIOR = ior;
-					rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
+					rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(rayHitDistance * 0.01, 1);
 				}
 			} else {
-				rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
+				rayOrigin = hitWorldPosition - rayNormal * EPSILON * max(rayHitDistance * 0.01, 1);
 			}
 		} else if (metallic != 0 && roughness == 0) {
 			// Metallic reflections
 			rayDirection = reflectionDir;
-			rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(length(hitWorldPosition) * 0.01, 1);
+			rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(rayHitDistance * 0.01, 1);
 			alpha = 1;
 		} else {
 			return false;
