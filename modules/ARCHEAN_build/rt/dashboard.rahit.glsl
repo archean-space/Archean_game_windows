@@ -25,7 +25,7 @@ void main() {
 				vec3 aabb_size = abs(aabb_max - aabb_min);
 				vec3 localPosition = gl_ObjectRayOriginEXT + gl_ObjectRayDirectionEXT * gl_HitTEXT;
 				vec3 pos = (localPosition - aabb_min) / aabb_size;
-				uv1 = step(0.5, pos.z) * vec2(pos.x, 1 - pos.y);
+				uv1 = pos.z > 0.5? vec2(pos.x, 1 - pos.y) : vec2(-1);
 			}
 		}
 		RenderableData data = RenderableData(instanceData)[gl_GeometryIndexEXT];
