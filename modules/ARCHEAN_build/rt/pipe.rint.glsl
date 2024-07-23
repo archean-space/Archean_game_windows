@@ -157,6 +157,7 @@ void CapsuleIntersection() {
 	// Compute pa, pb, r  from just the aabb info
 	vec3 axis = vec3(0);
 	float r;
+	float l;
 	vec3 pa;
 	vec3 pb;
 	{
@@ -165,6 +166,7 @@ void CapsuleIntersection() {
 		const float z = aabb_max.z - aabb_min.z;
 		if (abs(x-y) < EPSILON) { // Z is length
 			r = (aabb_max.x - aabb_min.x) / 2.0;
+			l = aabb_max.z - aabb_min.z;
 			pa.xy = (aabb_min.xy + aabb_max.xy) / 2.0;
 			pb.xy = pa.xy;
 			pa.z = aabb_min.z + sign(aabb_max.z - aabb_min.z) * r;
@@ -172,6 +174,7 @@ void CapsuleIntersection() {
 			axis.z = 1;
 		} else if (abs(x-z) < EPSILON) { // Y is length
 			r = (aabb_max.x - aabb_min.x) / 2.0;
+			l = aabb_max.y - aabb_min.y;
 			pa.xz = (aabb_min.xz + aabb_max.xz) / 2.0;
 			pb.xz = pa.xz;
 			pa.y = aabb_min.y + sign(aabb_max.y - aabb_min.y) * r;
@@ -179,12 +182,17 @@ void CapsuleIntersection() {
 			axis.y = 1;
 		} else { // X is length
 			r = (aabb_max.y - aabb_min.y) / 2.0;
+			l = aabb_max.x - aabb_min.x;
 			pa.yz = (aabb_min.yz + aabb_max.yz) / 2.0;
 			pb.yz = pa.yz;
 			pa.x = aabb_min.x + sign(aabb_max.x - aabb_min.x) * r;
 			pb.x = aabb_max.x + sign(aabb_min.x - aabb_max.x) * r;
 			axis.x = 1;
 		}
+	}
+	
+	if ((gl_IncomingRayFlagsEXT & gl_RayFlagsNoOpaqueEXT) != 0 && l > 4.0) {
+		r *= 0.8;
 	}
 	
 	// Ray-Capsule Intersection (ro, rd, pa, pb, r)
