@@ -38,18 +38,17 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	if ((renderer.options & RENDERER_OPTION_DIRECT_LIGHTING) == 0) return vec3(0);
 	
 	float referenceDistance = length(worldPosition - inverse(renderer.viewMatrix)[3].xyz);
-	vec3 position = worldPosition + normal * EPSILON * max(1, referenceDistance);
+	float epsilonDistance = EPSILON * max(1, referenceDistance);
+	vec3 position = worldPosition + normal * epsilonDistance;
 	vec3 directLighting = vec3(0);
 	
 	rayQueryEXT q;
 	rayQueryInitializeEXT(q, tlas_lights, 0, 0xff, position, 0, vec3(0,1,0), 0);
 	
-	vec3 lightsDir[NB_LIGHTS];
-	float lightsDistance[NB_LIGHTS];
+	vec3 lightsPos[NB_LIGHTS];
 	vec3 lightsColor[NB_LIGHTS];
 	float lightsPower[NB_LIGHTS];
 	float lightsRadius[NB_LIGHTS];
-	// uint32_t lightsID[NB_LIGHTS];
 	uint32_t nbLights = 0;
 	
 	while (rayQueryProceedEXT(q)) {
@@ -60,8 +59,8 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		vec3 lightDir = normalize(relativeLightPosition);
 		float nDotL = dot(normal, lightDir);
 		LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
-		float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
-		if (distanceToLightSurface <= 0.001) {
+		float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius);
+		if (distanceToLightSurface < epsilonDistance) {
 			if (lightSource.innerRadius > 0) {
 				directLighting += lightSource.color * lightSource.power;
 			}
@@ -72,7 +71,7 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				surfaceArea = 2 * lightSource.angle;
 				vec3 spotlightDirection = (lightTransform * vec4(lightSource.direction, 0)).xyz;
 				float spotlightHalfAngle = lightSource.angle * 0.5;
-				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(abs(dot(-lightDir, spotlightDirection))));
+				penombra = smoothstep(spotlightHalfAngle, spotlightHalfAngle * 0.8, acos(dot(-lightDir, spotlightDirection)));
 				if (penombra == 0) continue;
 			}
 			float effectiveLightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra;
@@ -81,24 +80,20 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				for (index = 0; index < nbLights; ++index) {
 					if (effectiveLightIntensity > lightsPower[index]) {
 						for (int i = min(NB_LIGHTS-1, int(nbLights)); i > int(index); --i) {
-							lightsDir[i] = lightsDir[i-1];
-							lightsDistance[i] = lightsDistance[i-1];
+							lightsPos[i] = lightsPos[i-1];
 							lightsColor[i] = lightsColor[i-1];
 							lightsPower[i] = lightsPower[i-1];
 							lightsRadius[i] = lightsRadius[i-1];
-							// lightsID[i] = lightsID[i-1];
 						}
 						break;
 					}
 				}
 				if (index == NB_LIGHTS) continue;
 			#endif
-			lightsDir[index] = lightDir;
-			lightsDistance[index] = distanceToLightSurface;
+			lightsPos[index] = lightPosition;
 			lightsColor[index] = lightSource.color;
 			lightsPower[index] = effectiveLightIntensity;
 			lightsRadius[index] = abs(lightSource.innerRadius);
-			// lightsID[index] = lightID;
 			if (nbLights < NB_LIGHTS) ++nbLights;
 			#ifndef /*NOT*/SORT_LIGHTS
 				else {
@@ -112,25 +107,32 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	nbDirectLights += nbLights;
 	
 	for (uint i = 0; i < nbLights; ++i) {
-		vec3 shadowRayDir = lightsDir[i];
-		bool isSunLight = lightsDistance[i] > 1e5; // 100 km
-		
-		// // Soft Shadows
-		// vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
-		// float pointRadius = lightsRadius[i] / lightsDistance[i] * rnd.x;
-		// float pointAngle = rnd.y * 2.0 * PI;
-		// vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
-		// vec3 lightTangent = normalize(cross(shadowRayDir, normal));
-		// vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
-		// shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
+		vec3 relativeLightPosition = lightsPos[i] - position;
+		vec3 shadowRayDir = normalize(relativeLightPosition);
 		
 		if (dot(shadowRayDir, normal) > 0) {
+			float distanceToLightSurface = length(relativeLightPosition) - lightsRadius[i];
+			
+			// // Soft Shadows
+			// vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
+			// float pointRadius = lightsRadius[i] / distanceToLightSurface * rnd.x;
+			// float pointAngle = rnd.y * 2.0 * PI;
+			// vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
+			// vec3 lightTangent = normalize(cross(shadowRayDir, normal));
+			// vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
+			// shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
+			
 			shadowRay.colorAttenuation = vec3(1);
-			shadowRay.hitDistance = lightsDistance[i] - EPSILON;
+			shadowRay.hitDistance = distanceToLightSurface - epsilonDistance;
 			shadowRay.rayFlags = 0u;
 			++traceRayCount;
-			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
-			traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+			if (dot(lightsPos[i], lightsPos[i]) > dot(position, position)) {
+				traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+				traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+			} else {
+				traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, lightsPos[i], lightsRadius[i], -shadowRayDir, shadowRay.hitDistance, 1);
+				traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, lightsPos[i], lightsRadius[i], -shadowRayDir, shadowRay.hitDistance, 1);
+			}
 			vec3 light = lightsColor[i] * lightsPower[i];
 			float NdotL = clamp(dot(normal, shadowRayDir), 0, 1);
 			vec3 diffuse = albedo * NdotL * (1 - metallic) * mix(0.5, 1, roughness);
