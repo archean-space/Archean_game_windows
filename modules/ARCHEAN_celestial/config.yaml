@@ -43,6 +43,7 @@ recipes:
       ARCHEAN_celestial.Tungsten: input.composition.W
       ARCHEAN_celestial.Uranium: input.composition.U
       ARCHEAN_celestial.Carbon: input.composition.C
+      ARCHEAN_celestial.Cheese: input.composition.Ch
   
   - label: RockRakeTool
     context: crafter

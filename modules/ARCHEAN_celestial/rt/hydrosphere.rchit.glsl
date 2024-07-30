@@ -2,6 +2,8 @@
 #include "../common.inc.glsl"
 #include "xenon/renderer/shaders/perlint.inc.glsl"
 
+#define WORKAROUND_AMD_BUG
+
 WaterData water = WaterData(AABB.data);
 
 hitAttributeEXT hit {
@@ -95,15 +97,28 @@ float WaterWaves(vec3 pos) {
 
 void main() {
 	
-	bool inside = gl_HitKindEXT == 1;
-	const float waterWavesStrength = pow(0.5/*water.wavesStrength*/, 2);
-
-	// Compute normal
-	const vec3 spherePosition = vec3(water.center);
-	vec3 downDir = normalize(spherePosition);
+#ifdef WORKAROUND_AMD_BUG
+	const double r = water.radius + double( sin(float(double(renderer.timestamp*1.06))) + sin(float(double(renderer.timestamp*4.25))) + sin(float(double(renderer.timestamp*1.895))) ) * 0.01;
+	const dvec3 oc = dvec3(gl_WorldRayOriginEXT) - water.center;
+	const dvec3 dir = dvec3(gl_WorldRayDirectionEXT);
+	const double b = dot(oc, dir);
+	const double discriminantSqr = b * b - dot(oc, oc) + r*r;
+	const double det = double(sqrt(discriminantSqr));
+	const float t1 = float(-b - det);
+	const float t2 = float(-b + det);
+	const vec3 hitPoint1 = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * t1;
+	const vec3 hitPoint2 = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * t2;
+	bool inside = t1 <= gl_RayTminEXT && t2 >= gl_RayTminEXT;
+#else
 	const vec3 hitPoint1 = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * T1;
 	const vec3 hitPoint2 = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * T2;
-	float hitDistance;
+	bool inside = gl_HitKindEXT == 1;
+#endif
+	
+	const float waterWavesStrength = pow(0.5/*water.wavesStrength*/, 2);
+	const vec3 spherePosition = vec3(water.center);
+	vec3 downDir = normalize(spherePosition);
+	
 	if (inside) {
 		// Underwater looking at surface
 		vec3 surfaceNormal = normalize(spherePosition - hitPoint2);
