@@ -66,7 +66,7 @@ tick
 		if system_storage == 0
 			write(0,40+$h_offset,cyan,"Storage Capacity: NONE")
 		else
-			write(0,40+$h_offset,cyan,text("Storage Capacity: {} values", system_storage))
+			write(0,40+$h_offset,cyan,text("Storage Capacity: {}", system_storage))
 			
 	if tick > 80
 		write(0,50+$h_offset,cyan,text("I/O ports: {}", system_io))

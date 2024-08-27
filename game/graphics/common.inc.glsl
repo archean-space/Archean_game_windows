@@ -611,13 +611,12 @@ struct RayShadowPayload {
 	void HandleDefaultInstanceData(uint64_t instanceData, inout vec4 color, inout vec3 localNormal, inout float metallic, inout float roughness, inout float ior, inout vec3 emission, inout vec2 uv1) {
 		if (instanceData != 0) {
 			RenderableData data = RenderableData(instanceData)[gl_GeometryIndexEXT];
-			emission += data.emission;
+			emission += data.emission / GetCurrentExposure();
 			color = mix(color, data.color, data.colorMix);
 			metallic = mix(metallic, data.pbrMetallic, data.pbrMix);
 			roughness = mix(roughness, data.pbrRoughness, data.pbrMix);
 			if (data.monitorIndex > 0) {
 				emission *= ReverseGamma(texture(textures[nonuniformEXT(data.monitorIndex)], uv1).rgb);
-				emission /= GetCurrentExposure();
 			}
 			MakeAimable(localNormal, uv1, data.monitorIndex);
 		} else {
@@ -641,7 +640,7 @@ struct RayShadowPayload {
 				roughness = pbr.g;
 			}
 			if (tex_emission > 0) {
-				vec3 emissionPower = vec3(10);
+				vec3 emissionPower = vec3(1);
 				// if (instanceData != 0) {
 				// 	emissionPower = emission;
 				// }
