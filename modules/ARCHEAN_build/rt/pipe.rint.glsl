@@ -191,10 +191,6 @@ void CapsuleIntersection() {
 		}
 	}
 	
-	if ((gl_IncomingRayFlagsEXT & gl_RayFlagsNoOpaqueEXT) != 0 && l > 4.0) {
-		r *= 0.8;
-	}
-	
 	// Ray-Capsule Intersection (ro, rd, pa, pb, r)
 	const vec3 ba = pb - pa;
 	const vec3 oa = ro - pa;

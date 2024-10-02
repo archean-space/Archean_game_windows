@@ -393,7 +393,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		} else if (metallic != 0 && roughness == 0) {
 			// Metallic reflections
 			rayDirection = reflectionDir;
-			rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(rayHitDistance * 0.01, 1);
+			rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(rayHitDistance, 1);
 			alpha = 1;
 		} else {
 			return false;
