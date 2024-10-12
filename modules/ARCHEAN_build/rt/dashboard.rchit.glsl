@@ -50,13 +50,13 @@ void main() {
 			uv1.xy = surface.in_pos_out_uv.xy;
 			
 			RenderableData data = RenderableData(INSTANCE.data)[gl_GeometryIndexEXT];
-			MakeAimable(normal, uv1, data.monitorIndex);
 			if (data.monitorIndex > 0) {
-				vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], uv1);
-				color.rgb = ReverseGamma(tex.rgb);
 				if ((surface.rayFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 					color.rgb = vec3(1);
 				} else {
+					MakeAimable(normal, uv1, data.monitorIndex);
+					vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], uv1);
+					color.rgb = ReverseGamma(tex.rgb);
 					if (tex.a < 1) {
 						surface.rayFlags = RAY_SURFACE_TRANSPARENT;
 						color.rgb = vec3(mix(vec3(1), tex.rgb, tex.a));
@@ -65,6 +65,8 @@ void main() {
 						color.rgb *= data.emission / GetCurrentExposure();
 					}
 				}
+			} else {
+				MakeAimable(normal, uv1, 0);
 			}
 			
 			RayHit(
