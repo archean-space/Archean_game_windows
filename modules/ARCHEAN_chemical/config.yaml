@@ -26,3 +26,16 @@ recipes:
       ARCHEAN_celestial.Copper: 100
     output:
       ARCHEAN_chemical.Electrolyser: 1
+
+  - label: SabatierReactor
+    context: crafter
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 5
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_celestial.Nickel: 100
+    output:
+      ARCHEAN_chemical.SabatierReactor: 1

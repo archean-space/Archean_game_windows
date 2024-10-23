@@ -56,3 +56,18 @@ recipes:
       ARCHEAN_parts.Connector: 1
     output:
       ARCHEAN_hid.Numpad: 1
+
+  - label: Keyboard
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 20
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_hid.Keyboard: 1
