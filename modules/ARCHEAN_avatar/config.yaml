@@ -18,6 +18,7 @@ inventory_creative_backpack:
   ARCHEAN_hid.ToggleButton: 50
   ARCHEAN_hid.ThrottleLever: 50
   ARCHEAN_hid.Numpad: 50
+  ARCHEAN_hid.Keyboard: 50
   ARCHEAN_avatar.PilotSeat: 50
   ARCHEAN_avatar.Bobblehead: 50
   ARCHEAN_battery.LowVoltageBattery: 50
@@ -37,6 +38,7 @@ inventory_creative_backpack:
   ARCHEAN_tank.BigFluidTank: 50
   ARCHEAN_chemical.FluidPort: 50
   ARCHEAN_chemical.Electrolyser: 50
+  ARCHEAN_chemical.SabatierReactor: 50
   ARCHEAN_junction.FluidJunction: 50
   ARCHEAN_junction.DataJunction: 50
   ARCHEAN_junction.LowVoltageJunction: 50
