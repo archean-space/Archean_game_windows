@@ -3,52 +3,59 @@ var $resetTimer = 0
 var $rolesTimer = 0
 var $debounce = ""
 
-tick
+
+function @ownerpad()
 	output.0("")
 	blank(color(16,16,16))
 
-	
 	; Save button
 	if button(3,3,color(0,128,128),34,9)
 		if $saveTimer == 0
 			save()
 			output.0("save")
-			$saveTimer = 5
+			$saveTimer = 6
 	write(8,4,black,"SAVE")
-
-	; Save animation
-	if $saveTimer > 0
-		draw(3,4,color(0,255,255),34,9)
-		$saveTimer--
-		
-		
-		
+	
 	; Reset button
 	if button(3,27,color(0,128,128),34,9)
 		if $resetTimer == 0
 			reset()
 			output.0("reset")
-			$resetTimer = 5
+			$resetTimer = 6
 	write(5,28,black,"RESET")
-
-	; Reset animation
-	if $resetTimer > 0
-		draw(3,27,color(0,255,255),34,9)
-		$resetTimer--
-
-
 
 	; Roles button
 	if button(3,15,color(0,128,0),34,9) && (user == owner || owner == "")
 		if $rolesTimer == 0
-			$rolesTimer = 5
+			$rolesTimer = 6
 			roles(user)
 	write(5,16,black,"ROLES")
 
+		
+tick
+	; Save animation
+	if $saveTimer > 0
+		draw(3,3,color(0,255,255),34,9)
+		$saveTimer--
+		if $saveTimer == 0
+			@ownerpad()
+	; Reset animation
+	if $resetTimer > 0
+		draw(3,27,color(0,255,255),34,9)
+		$resetTimer--
+		if $resetTimer == 0
+			@ownerpad()
 	; Roles animation
 	if $rolesTimer > 0
-		draw(3,14,color(0,255,0),34,9)
+		draw(3,15,color(0,255,0),34,9)
 		$rolesTimer--
+		if $rolesTimer == 0
+			@ownerpad()
+
+init
+	@ownerpad()
+click
+	@ownerpad()
 
 
 
