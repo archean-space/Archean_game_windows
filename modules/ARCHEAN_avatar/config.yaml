@@ -55,6 +55,7 @@ inventory_creative_backpack:
   ARCHEAN_junction.FluidValve: 50
   ARCHEAN_sensor.AltitudeSensor: 50
   ARCHEAN_sensor.SpeedSensor: 50
+  ARCHEAN_sensor.DensitySensor: 50
   ARCHEAN_sensor.TiltSensor: 50
   ARCHEAN_sensor.LinearVelocitySensor: 50
   ARCHEAN_sensor.AngularVelocitySensor: 50
