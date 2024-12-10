@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.0.44",
+		"generator":"Khronos glTF Blender I/O v4.3.47",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -15,7 +15,7 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Cube"
+			"name":"base"
 		}
 	],
 	"materials":[
@@ -23,12 +23,6 @@
 			"doubleSided":true,
 			"name":"color1",
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					1,
-					1,
-					1,
-					1
-				],
 				"metallicFactor":0,
 				"roughnessFactor":0
 			}
@@ -42,9 +36,7 @@
 					0.05000007152557373,
 					0.5,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -56,9 +48,7 @@
 					0,
 					0,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		}
 	],
