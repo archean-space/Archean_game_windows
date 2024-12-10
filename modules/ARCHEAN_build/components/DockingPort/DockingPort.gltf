@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.0.44",
+		"generator":"Khronos glTF Blender I/O v4.3.47",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -15,7 +15,7 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Cube"
+			"name":"base"
 		}
 	],
 	"materials":[
@@ -23,12 +23,6 @@
 			"doubleSided":true,
 			"name":"color1",
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					1,
-					1,
-					1,
-					1
-				],
 				"metallicFactor":0,
 				"roughnessFactor":0
 			}
@@ -42,9 +36,7 @@
 					0.800000011920929,
 					0.800000011920929,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -57,7 +49,6 @@
 					0.800000011920929,
 					1
 				],
-				"metallicFactor":1,
 				"roughnessFactor":0
 			}
 		},
@@ -66,13 +57,11 @@
 			"name":"port",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.006370149087160826,
-					0.006370149087160826,
-					0.006370149087160826,
+					0,
+					0,
+					0,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -80,13 +69,11 @@
 			"name":"fluid-connector",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.44999998807907104,
-					0.44999998807907104,
-					0.44999998807907104,
+					0.5,
+					0.5,
+					0.5,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -94,13 +81,11 @@
 			"name":"lv-connector",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.8000000715255737,
+					0.5,
 					0,
-					0.006208333652466536,
+					0,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -108,13 +93,11 @@
 			"name":"hv-connector",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.8000000715255737,
-					0.5071301460266113,
+					0.5,
+					0.15000000596046448,
 					0,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -123,12 +106,10 @@
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0,
-					0,
-					0.8000000715255737,
+					0.05000000074505806,
+					0.5,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		}
 	],

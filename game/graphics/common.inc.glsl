@@ -635,7 +635,7 @@ struct RayShadowPayload {
 				//TODO: normal maps using tex_normal
 			}
 			if (tex_metallic_roughness > 0) {
-				vec2 pbr = texture(textures[nonuniformEXT(tex_metallic_roughness)], uv1).rg;
+				vec2 pbr = texture(textures[nonuniformEXT(tex_metallic_roughness)], uv1).rg; //TODO: maybe have two following indices instead
 				metallic = pbr.r;
 				roughness = pbr.g;
 			}

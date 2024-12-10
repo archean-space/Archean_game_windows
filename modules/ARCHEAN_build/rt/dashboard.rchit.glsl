@@ -56,7 +56,11 @@ void main() {
 				} else {
 					MakeAimable(normal, uv1, data.monitorIndex);
 					vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], uv1);
-					color.rgb = ReverseGamma(tex.rgb);
+					if ((surface.rayFlags & RAY_SURFACE_EMISSIVE) != 0) {
+						color.rgb = ReverseGamma(tex.rgb);
+					} else {
+						color.rgb = tex.rgb;
+					}
 					if (tex.a < 1) {
 						surface.rayFlags = RAY_SURFACE_TRANSPARENT;
 						color.rgb = vec3(mix(vec3(1), tex.rgb, tex.a));

@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.0.44",
+		"generator":"Khronos glTF Blender I/O v4.3.47",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -15,7 +15,7 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"body",
+			"name":"base",
 			"translation":[
 				-1.144195795059204,
 				0,
@@ -28,12 +28,6 @@
 			"doubleSided":true,
 			"name":"color1",
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					1,
-					1,
-					1,
-					1
-				],
 				"metallicFactor":0,
 				"roughnessFactor":0
 			}
@@ -47,22 +41,13 @@
 					0.8004003763198853,
 					0.8004003763198853,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
 			"doubleSided":true,
 			"name":"Nut",
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					1,
-					1,
-					1,
-					1
-				],
-				"metallicFactor":1,
 				"roughnessFactor":0
 			}
 		},
@@ -75,9 +60,7 @@
 					0.5,
 					0.5,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -89,9 +72,7 @@
 					0.05000019073486328,
 					0.5,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -103,9 +84,7 @@
 					0.1499999761581421,
 					0,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -118,8 +97,7 @@
 					0.009999999776482582,
 					1
 				],
-				"metallicFactor":0,
-				"roughnessFactor":1
+				"metallicFactor":0
 			}
 		},
 		{
@@ -131,9 +109,7 @@
 					0.7361952066421509,
 					0.1600424200296402,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -145,9 +121,7 @@
 					1,
 					1,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		},
 		{
@@ -159,9 +133,7 @@
 					0.22404392063617706,
 					0.8001565933227539,
 					1
-				],
-				"metallicFactor":1,
-				"roughnessFactor":1
+				]
 			}
 		}
 	],

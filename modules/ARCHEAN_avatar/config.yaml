@@ -53,12 +53,13 @@ inventory_creative_backpack:
   ARCHEAN_junction.FluidBridge: 50
   ARCHEAN_junction.ItemBridge: 50
   ARCHEAN_junction.FluidValve: 50
-  ARCHEAN_sensor.AltitudeSensor: 50
-  ARCHEAN_sensor.SpeedSensor: 50
-  ARCHEAN_sensor.TiltSensor: 50
-  ARCHEAN_sensor.LinearVelocitySensor: 50
-  ARCHEAN_sensor.AngularVelocitySensor: 50
-  ARCHEAN_sensor.VehiclePhysicsSensor: 50
+  ARCHEAN_sensor1.AltitudeSensor: 50
+  ARCHEAN_sensor1.SpeedSensor: 50
+  ARCHEAN_sensor1.DensitySensor: 50
+  ARCHEAN_sensor1.TiltSensor: 50
+  ARCHEAN_sensor1.LinearVelocitySensor: 50
+  ARCHEAN_sensor1.AngularVelocitySensor: 50
+  ARCHEAN_sensor1.VehiclePhysicsSensor: 50
   ARCHEAN_build.SmallPivot: 50
   ARCHEAN_build.SmallHinge: 50
   ARCHEAN_build.DockableDoor: 50

@@ -46,6 +46,7 @@ void main() {
 		) * 0.5 + 0.5;
 		
 		color *= texture(textures[tex], uv);
+		color.rgb = ApplyGamma(color.rgb);
 		
 		MakeAimable(normal, uv, 0);
 	
