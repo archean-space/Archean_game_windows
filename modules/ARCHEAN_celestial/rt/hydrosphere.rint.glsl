@@ -1,10 +1,12 @@
 #define SHADER_RINT
 #include "../common.inc.glsl"
 
+#ifndef WORKAROUND_AMD_BUG
 hitAttributeEXT hit {
 	float t1;
 	float t2;
 };
+#endif
 
 void main() {
 	WaterData water = WaterData(AABB.data);
@@ -26,14 +28,18 @@ void main() {
 		if ((gl_IncomingRayFlagsEXT & gl_RayFlagsOpaqueEXT) != 0) {
 			// Outside of sphere
 			if (gl_RayTminEXT <= T1 && T1 <= gl_RayTmaxEXT) {
+				#ifndef WORKAROUND_AMD_BUG
 				t1 = float(T1);
 				t2 = float(T2);
+				#endif
 				reportIntersectionEXT(float(T1), 0);
 			}
 			// Inside of sphere
 			if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
+				#ifndef WORKAROUND_AMD_BUG
 				t1 = float(T1);
 				t2 = float(T2);
+				#endif
 				reportIntersectionEXT(float(T2), 1);
 			}
 		}
@@ -41,8 +47,10 @@ void main() {
 		if ((gl_IncomingRayFlagsEXT & gl_RayFlagsNoOpaqueEXT) != 0) {
 			// Inside of sphere
 			if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
+				#ifndef WORKAROUND_AMD_BUG
 				t1 = float(T1);
 				t2 = float(T2);
+				#endif
 				reportIntersectionEXT(gl_RayTminEXT, 1);
 			}
 		}

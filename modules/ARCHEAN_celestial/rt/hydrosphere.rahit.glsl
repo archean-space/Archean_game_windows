@@ -2,10 +2,12 @@
 #include "../common.inc.glsl"
 #include "xenon/renderer/shaders/perlint.inc.glsl"
 
+#ifndef WORKAROUND_AMD_BUG
 hitAttributeEXT hit {
 	float T1;
 	float T2;
 };
+#endif
 
 #define WATER_TINT vec3(0.1,0.25,0.35)
 #define EPSILON 0.0001
@@ -51,13 +53,26 @@ float caustics(vec3 worldPosition, vec3 normal, float t) {
 }
 
 void main() {
+	#ifdef WORKAROUND_AMD_BUG
+		WaterData water = WaterData(AABB.data);
+		const double r = water.radius + double( sin(float(double(renderer.timestamp*1.06))) + sin(float(double(renderer.timestamp*4.25))) + sin(float(double(renderer.timestamp*1.895))) ) * 0.01;
+		const dvec3 oc = dvec3(gl_WorldRayOriginEXT) - water.center;
+		const dvec3 dir = dvec3(gl_WorldRayDirectionEXT);
+		const double b = dot(oc, dir);
+		const double discriminantSqr = b * b - dot(oc, oc) + r*r;
+		const double det = double(sqrt(discriminantSqr));
+		const float T2 = float(-b + det);
+	#endif
+	
 	float transmittance = 1;
 	float depth = ray.hitDistance == 0? T2 : max(0, min(T2, ray.hitDistance));
 	
 	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) != 0) {
 		// Fog Ray: ray-march underwater fog
 		
+		#ifndef WORKAROUND_AMD_BUG
 		WaterData water = WaterData(AABB.data);
+		#endif
 		bool isCameraUnderwater = distance(dvec3(inverse(renderer.viewMatrix)[3]), dvec3(water.center)) < water.radius;
 		
 		#ifdef ENABLE_RAY_QUERIES_FROM_ANYHIT_SHADERS

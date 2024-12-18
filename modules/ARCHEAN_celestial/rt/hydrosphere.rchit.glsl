@@ -2,14 +2,14 @@
 #include "../common.inc.glsl"
 #include "xenon/renderer/shaders/perlint.inc.glsl"
 
-#define WORKAROUND_AMD_BUG
-
 WaterData water = WaterData(AABB.data);
 
+#ifndef WORKAROUND_AMD_BUG
 hitAttributeEXT hit {
 	float T1;
 	float T2;
 };
+#endif
 
 #define WATER_IOR 1.333
 

@@ -3,9 +3,11 @@
 
 #define ATMOSPHERE_RAY_MIN_DISTANCE 1000
 
+#ifndef WORKAROUND_AMD_BUG
 hitAttributeEXT hit {
 	float t2;
 };
+#endif
 
 void main() {
 	AtmosphereData atmosphere = AtmosphereData(AABB.data);
@@ -24,13 +26,17 @@ void main() {
 		
 		// Outside of sphere
 		if (gl_RayTminEXT <= T1 && T1 < gl_RayTmaxEXT) {
+			#ifndef WORKAROUND_AMD_BUG
 			t2 = T2;
+			#endif
 			reportIntersectionEXT(T1, 0);
 		}
 		
 		// Inside of sphere
 		if (T1 <= gl_RayTminEXT && T2 >= gl_RayTminEXT) {
+			#ifndef WORKAROUND_AMD_BUG
 			t2 = T2;
+			#endif
 			reportIntersectionEXT(max(gl_RayTminEXT, ATMOSPHERE_RAY_MIN_DISTANCE), 1);
 		}
 	}

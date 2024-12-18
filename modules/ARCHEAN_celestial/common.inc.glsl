@@ -4,6 +4,8 @@
 
 #include "game/graphics/common.inc.glsl"
 
+#define WORKAROUND_AMD_BUG
+
 struct SunData {
 	aligned_f32vec3 position;
 	aligned_float32_t radius;
