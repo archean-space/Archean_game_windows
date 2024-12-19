@@ -4,6 +4,20 @@ components:
 
 recipes:
 
+  - label: BigWheel
+    context: crafter
+    category: components
+    time: 20
+    input:
+      ARCHEAN_parts.Casing: 3
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Plastic: 1000
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_parts.Disk: 1
+    output:
+      ARCHEAN_wheel.BigWheel: 1
+  
   - label: Wheel
     context: crafter
     category: components

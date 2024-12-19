@@ -28,9 +28,11 @@ bool RaySphereIntersection(in vec3 position, in vec3 rayDir, in float radius, ou
 	return inside || outside;
 }
 
+#ifndef WORKAROUND_AMD_BUG
 hitAttributeEXT hit {
 	float intersectionT2;
 };
+#endif
 
 void main() {
 	if ((ray.rayFlags & SHADOW_RAY_FLAG_EMISSION) == 0) return;
@@ -49,7 +51,13 @@ void main() {
 	vec3 origin = gl_WorldRayOriginEXT;
 	vec3 viewDir = gl_WorldRayDirectionEXT;
 	float t1 = gl_HitTEXT;
-	float t2 = intersectionT2;
+	
+	#ifdef WORKAROUND_AMD_BUG
+		float t1_, t2;
+		if (!RaySphereIntersection(atmospherePosition, viewDir, outerRadius, t1_, t2)) return;
+	#else
+		float t2 = intersectionT2;
+	#endif
 	
 	float startAltitude = distance(origin, atmospherePosition);
 	float thickness = outerRadius - innerRadius;

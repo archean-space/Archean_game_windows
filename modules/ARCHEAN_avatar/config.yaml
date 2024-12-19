@@ -25,6 +25,7 @@ inventory_creative_backpack:
   ARCHEAN_battery.HighVoltageBattery: 50
   ARCHEAN_celestial.SolarPanel: 50
   ARCHEAN_rtg.RTG: 50
+  ARCHEAN_wheel.BigWheel: 50
   ARCHEAN_wheel.Wheel: 50
   ARCHEAN_wheel.SmallWheel: 50
   ARCHEAN_propeller.Propeller: 50
