@@ -660,10 +660,6 @@ struct RayShadowPayload {
 		ignoreIntersectionEXT;
 	}
 	
-	void RayIgnore() {
-		ignoreIntersectionEXT;
-	}
-	
 	void RayOpaque() {
 		ray.colorAttenuation = vec3(0);
 		terminateRayEXT;
