@@ -6,6 +6,7 @@ inventory_creative_backpack:
   ARCHEAN_build.PaintTool: 1
   ARCHEAN_build.LabelTool: 1
   ARCHEAN_build.DashboardTool: 1
+  ARCHEAN_build.Volume: 50
   ARCHEAN_ownership.OwnerPad: 50
   ARCHEAN_computer.Computer: 50
   ARCHEAN_computer.MiniComputer: 50
@@ -72,6 +73,7 @@ inventory_creative_backpack:
   ARCHEAN_light.SpotLight: 50
   ARCHEAN_light.Lamp: 50
   ARCHEAN_storage.TrashCan: 50
+  ARCHEAN_storage.SmallContainer: 50
   ARCHEAN_storage.Container: 50
   ARCHEAN_celestial.MiningDrill: 50
   ARCHEAN_celestial.OreScanner: 50
