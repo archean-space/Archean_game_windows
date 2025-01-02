@@ -17,6 +17,7 @@
 #define VOXELS_Z 3
 #define VOXELS_HD 4
 #define VOXELS_PER_FRAME (VOXELS_X*VOXELS_Y*VOXELS_Z)
+#define SINGLE_VOXEL_VOLUME (0.25 * 0.25 * 0.25)
 
 #define VOXEL_INDEX(x,y,z) ((x) + (z)*VOXELS_X + (y)*VOXELS_X*VOXELS_Z)
 #define VOXEL_INDEX_HD(x,y,z) ((x) + (y)*VOXELS_HD + (z)*VOXELS_HD*VOXELS_HD)
@@ -46,7 +47,21 @@ BUFFER_REFERENCE_STRUCT(8) VolumeData {
 
 #ifdef __cplusplus
 	#include "Frame.h"
-	using VoxelArray = std::array<uint64_t, VOXELS_PER_FRAME>;
+	struct VoxelArray : std::array<uint64_t, VOXELS_PER_FRAME> {
+		VoxelArray() {
+			fill(0ull);
+		}
+		VoxelArray(const std::array<uint64_t, VOXELS_PER_FRAME>& other) {
+			*this = other;
+		}
+		VoxelArray& operator=(const std::array<uint64_t, VOXELS_PER_FRAME>& other) {
+			for (size_t i = 0; i < VOXELS_PER_FRAME; i++) {
+				(*this)[i] = other[i];
+			}
+			return *this;
+		}
+	};
+	// using VoxelArray = std::array<VoxelHD, VOXELS_PER_FRAME>;
 	using Voxels = std::unordered_map<Frame::ID_t, VoxelArray>;
 	
 	static VoxelArray& operator |= (VoxelArray& voxels, const VoxelArray& other) {
