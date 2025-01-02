@@ -102,15 +102,7 @@ void main() {
 								float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
 								float underwaterDepth = float(water.radius) - distance(position, vec3(water.center));
 								vec3 lightColor = lightSource.color * effectiveLightIntensity * WATER_TINT * 0.01 * exp(underwaterDepth / nDotL / -100);
-								if (isCameraUnderwater && (renderer.options & RENDERER_OPTION_UNDERWATER_LIGHT_RAYS) != 0) {
-									rayQueryEXT shadowQuery;
-									rayQueryInitializeEXT(shadowQuery, tlas, 0, RAYTRACE_MASK_OPAQUE, position, 0, lightDir, distanceToLightSurface);
-									if (!rayQueryProceedEXT(shadowQuery)) {
-										ray.emission += lightColor * nDotL / nbSamples;
-									}
-								} else {
-									ray.emission += lightColor * nDotL / nbSamples * 0.1;
-								}
+								ray.emission += lightColor * nDotL / nbSamples * 0.1;
 							}
 						}
 					}
@@ -130,7 +122,7 @@ void main() {
 	
 	RayTransparent(transmittance * mix(
 		WATER_TINT * exp(depth / -50),
-		vec3(0.9),
+		vec3(1),
 		exp(depth / -25)
 	));
 }

@@ -154,7 +154,7 @@ void TraceFogRay(in vec3 rayOrigin, in vec3 rayDirection, in float maxDistance, 
 	++traceRayCount;
 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, rayOrigin, EPSILON * 100, rayDirection, maxDistance, 1/*payloadIndex*/);
 	++traceRayCount;
-	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_FOG, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, rayOrigin, EPSILON * 100, rayDirection, maxDistance, 1/*payloadIndex*/);
+	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_FOG /*| RAYTRACE_MASK_VOLUME*/, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, rayOrigin, EPSILON * 100, rayDirection, maxDistance, 1/*payloadIndex*/);
 	if (dot(shadowRay.emission, shadowRay.emission) > 0) {
 		imageStore(img_composite, COORDS, vec4(shadowRay.emission * colorFilter, 0) + imageLoad(img_composite, COORDS));
 	}
@@ -255,7 +255,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 }
 
 bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
-	uint rayMask = RAYTRACE_MASK_SOLID;
+	uint rayMask = RAYTRACE_MASK_SOLID | RAYTRACE_MASK_VOLUME;
 	if ((ray.rayFlags & RAY_FLAG_FLUID) == 0) {
 		rayMask |= RAYTRACE_MASK_LIQUID;
 	}
@@ -263,6 +263,14 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 	ray.surfaceFlags = uint8_t(0);
 	++traceRayCount;
 	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+	if ((ray.rayFlags & RAY_FLAG_CULL_WATER) != 0) {
+		ray.rayFlags &= ~RAY_FLAG_CULL_WATER;
+		rayMask = RAYTRACE_MASK_SOLID;
+		ray.renderableIndex = -1;
+		ray.surfaceFlags = uint8_t(0);
+		++traceRayCount;
+		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
+	}
 	int hitRenderableIndex = ray.renderableIndex;
 	
 	if (hitRenderableIndex == -1) {
@@ -469,12 +477,13 @@ void main() {
 		rayOrigin = initialRayPosition;
 		int envAudioBounce = 0;
 		float audible = 1.0;
+		bool insideVolume = false;
 		
 		do {
 			ray.hitDistance = -1;
 			ray.renderableIndex = -1;
 			ray.hitDistance = ENVIRONMENT_AUDIO_MAX_DISTANCE;
-			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_TERRAIN | RAYTRACE_MASK_ENTITY | RAYTRACE_MASK_LIQUID/*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, ENVIRONMENT_AUDIO_MAX_DISTANCE, 0/*payloadIndex*/);
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_TERRAIN | RAYTRACE_MASK_ENTITY | RAYTRACE_MASK_LIQUID | RAYTRACE_MASK_VOLUME /*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, ENVIRONMENT_AUDIO_MAX_DISTANCE, 0/*payloadIndex*/);
 			
 			// Plasma
 			rayQueryEXT rq;
@@ -506,11 +515,14 @@ void main() {
 					rayDir = reflect(rayDir, ray.normal);
 					audible *= 0.5;
 				}
-				else if (hitMask == RAYTRACE_MASK_LIQUID) {
+				else if (hitMask == RAYTRACE_MASK_LIQUID && !insideVolume) {
 					atomicAdd(renderer.environmentAudio.hydrosphere, 1);
 					renderer.environmentAudio.hydrosphereDistance = atomicMin(renderer.environmentAudio.hydrosphereDistance, int(ray.hitDistance * 100));
 					testcolor.rgb = mix(testcolor.rgb, vec3(0,0,1), audible);
 					break;
+				} if (hitMask == RAYTRACE_MASK_VOLUME) {
+					insideVolume = true;
+					renderer.environmentAudio.hydrosphere = 0;
 				} else {
 					break;
 				}

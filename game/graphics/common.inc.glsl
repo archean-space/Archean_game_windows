@@ -16,7 +16,7 @@
 #define RAYTRACE_MASK_FOG 4u // applied after solid geometries, on top, does not block rays nor affect ray direction
 #define RAYTRACE_MASK_CLUTTER 8u // small highly detailed geometries, may cast shadows but doesn't block ambient lighting
 #define RAYTRACE_MASK_LIQUID 16u // transparent dynamic volume with refraction
-// #define RAYTRACE_MASK_ 32u
+#define RAYTRACE_MASK_VOLUME 32u // transparent volume that negates liquid and potentially adds its own liquid and/or fog
 // #define RAYTRACE_MASK_ 64u
 // #define RAYTRACE_MASK_ 128u
 
@@ -39,7 +39,6 @@
 #define RENDERER_OPTION_RT_AMBIENT_LIGHTING			(1u<< 5 )
 #define RENDERER_OPTION_ATMOSPHERIC_SHADOWS			(1u<< 6 )
 #define RENDERER_OPTION_UNDERWATER_VOLUMETRIC_FOG	(1u<< 7 )
-#define RENDERER_OPTION_UNDERWATER_LIGHT_RAYS		(1u<< 8 )
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 	aligned_float32_t aabb[6];
@@ -318,7 +317,8 @@ struct RayShadowPayload {
 #define RAY_FLAG_RECURSION uint8_t(0x1)
 #define RAY_FLAG_AIM uint8_t(0x2)
 #define RAY_FLAG_FLUID uint8_t(0x4) // when inside a fluid volume
-//... 5 more
+#define RAY_FLAG_CULL_WATER uint8_t(0x8) // when inside a volume that negates water
+//... 4 more
 
 #define SHADOW_RAY_FLAG_EMISSION uint32_t(0x1)
 //... 31 more
@@ -657,6 +657,10 @@ struct RayShadowPayload {
 	
 	void RayTransparent(in vec3 transparency) {
 		ray.colorAttenuation *= transparency;
+		ignoreIntersectionEXT;
+	}
+	
+	void RayIgnore() {
 		ignoreIntersectionEXT;
 	}
 	

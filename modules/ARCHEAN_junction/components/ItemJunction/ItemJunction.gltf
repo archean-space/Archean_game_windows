@@ -75,10 +75,10 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":24,
+			"count":32,
 			"max":[
 				0.5,
-				0.125,
+				0.17439395189285278,
 				0.125
 			],
 			"min":[
@@ -100,7 +100,7 @@
 			"count":180,
 			"max":[
 				0.5,
-				0.17500001192092896,
+				0.22439396381378174,
 				0.125
 			],
 			"min":[
@@ -120,32 +120,32 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":288,
+			"byteLength":384,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":264,
-			"byteOffset":288,
+			"byteOffset":384,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":2160,
-			"byteOffset":552,
+			"byteOffset":648,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1980,
-			"byteOffset":2712,
+			"byteOffset":2808,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":4692,
+			"byteLength":4788,
 			"uri":"ItemJunction.bin"
 		}
 	]

@@ -27,6 +27,7 @@ components:
   - ARCHEAN_build.SmallHinge
   - ARCHEAN_build.DockableDoor
   - ARCHEAN_build.DockingPort
+  - ARCHEAN_build.Volume
 
 recipes:
 
@@ -271,3 +272,18 @@ recipes:
       ARCHEAN_build.DockingPort: 2
     output:
       ARCHEAN_build.DockableDoor: 1
+
+  - label: Volume
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.LED: 10
+    output:
+      ARCHEAN_build.Volume: 1
+    
