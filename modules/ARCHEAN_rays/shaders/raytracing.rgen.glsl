@@ -480,17 +480,28 @@ void main() {
 		bool insideVolume = false;
 		
 		do {
+			// Volume
+			if (!insideVolume) {
+				rayQueryEXT rq;
+				rayQueryInitializeEXT(rq, tlas, gl_RayFlagsTerminateOnFirstHitEXT, RAYTRACE_MASK_VOLUME, rayOrigin, 0, rayDir, 0);
+				if (rayQueryProceedEXT(rq)) {
+					insideVolume = true;
+				}
+			}
+			
 			ray.hitDistance = -1;
 			ray.renderableIndex = -1;
 			ray.hitDistance = ENVIRONMENT_AUDIO_MAX_DISTANCE;
-			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, RAYTRACE_MASK_TERRAIN | RAYTRACE_MASK_ENTITY | RAYTRACE_MASK_LIQUID | RAYTRACE_MASK_VOLUME /*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, ENVIRONMENT_AUDIO_MAX_DISTANCE, 0/*payloadIndex*/);
+			traceRayEXT(tlas, gl_RayFlagsCullBackFacingTrianglesEXT|gl_RayFlagsOpaqueEXT/*flags*/, insideVolume? RAYTRACE_MASK_ENTITY : (RAYTRACE_MASK_TERRAIN | RAYTRACE_MASK_ENTITY | RAYTRACE_MASK_LIQUID) /*rayMask*/, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0.0, rayDir, ENVIRONMENT_AUDIO_MAX_DISTANCE, 0/*payloadIndex*/);
 			
 			// Plasma
-			rayQueryEXT rq;
-			rayQueryInitializeEXT(rq, tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_FOG, rayOrigin, 0, rayDir, ray.hitDistance);
-			while (rayQueryProceedEXT(rq)) {
-				int renderableIndex = rayQueryGetIntersectionInstanceIdEXT(rq, false);
-				renderer.environmentAudio.audibleRenderables[renderableIndex].audible = max(renderer.environmentAudio.audibleRenderables[renderableIndex].audible, audible);
+			if (!insideVolume) {
+				rayQueryEXT rq;
+				rayQueryInitializeEXT(rq, tlas, gl_RayFlagsNoOpaqueEXT, RAYTRACE_MASK_FOG, rayOrigin, 0, rayDir, ray.hitDistance);
+				while (rayQueryProceedEXT(rq)) {
+					int renderableIndex = rayQueryGetIntersectionInstanceIdEXT(rq, false);
+					renderer.environmentAudio.audibleRenderables[renderableIndex].audible = max(renderer.environmentAudio.audibleRenderables[renderableIndex].audible, audible);
+				}
 			}
 			
 			if (ray.renderableIndex == -1) {
@@ -520,9 +531,6 @@ void main() {
 					renderer.environmentAudio.hydrosphereDistance = atomicMin(renderer.environmentAudio.hydrosphereDistance, int(ray.hitDistance * 100));
 					testcolor.rgb = mix(testcolor.rgb, vec3(0,0,1), audible);
 					break;
-				} if (hitMask == RAYTRACE_MASK_VOLUME) {
-					insideVolume = true;
-					renderer.environmentAudio.hydrosphere = 0;
 				} else {
 					break;
 				}
