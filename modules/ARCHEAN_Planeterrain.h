@@ -55,7 +55,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef XENON_GAME
-	#define GLM_FORCE_INTRINSICS
+	#define GLM_FORCE_SIMD_AVX2
 	#define GLM_FORCE_CXX17
 	#define GLM_FORCE_RADIANS
 	#define GLM_FORCE_DEPTH_ZERO_TO_ONE
