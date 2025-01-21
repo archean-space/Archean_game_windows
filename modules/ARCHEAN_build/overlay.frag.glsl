@@ -9,7 +9,7 @@ layout(location = 0) out vec4 out_color;
 void main() {
 	
 	// depth test
-	float overlayDepth = (in_position.z + 0.00001) / in_position.w;
+	float overlayDepth = (in_position.z + 0.0001) / in_position.w;
 	vec2 uv = gl_FragCoord.xy / xenonRendererData.config.screenSize.xy;
 	float solidDepth = texture(sampler_depth, uv).r;
 	if (overlayDepth < solidDepth) discard;

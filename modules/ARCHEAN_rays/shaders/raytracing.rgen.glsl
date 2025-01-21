@@ -16,7 +16,7 @@ float currentIOR = 1.0;
 float ssao = 1;
 float alpha = 0;
 
-#define NB_LIGHTS 16
+#define NB_LIGHTS 8
 #define SORT_LIGHTS
 #define EPSILON 0.0001
 #define LIGHT_LUMINOSITY_VISIBLE_THRESHOLD 0.01
@@ -62,7 +62,9 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 		float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius);
 		if (distanceToLightSurface < epsilonDistance) {
 			if (lightSource.innerRadius > 0) {
-				directLighting += lightSource.color * lightSource.power;
+				if (lightSource.angle == 0 || dot(normal, (mat3(lightTransform) * lightSource.direction)) > 0.01) {
+					directLighting += lightSource.color * lightSource.power;
+				}
 			}
 		} else if (nDotL > 0 && distanceToLightSurface < lightSource.maxDistance) {
 			float penombra = 1;
