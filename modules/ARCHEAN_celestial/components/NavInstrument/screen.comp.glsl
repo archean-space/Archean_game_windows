@@ -40,7 +40,7 @@ void main() {
 		vec2 screen = (uv * 2 - 1) * vec2(-1);
 		
 		// compute pitch
-		float pitch = dot(-planetUp, forward);
+		float pitch = asin(dot(-planetUp, forward)) / PI * 2;
 		
 		// compute roll
 		float roll = atan(dot(normalize(cross(planetUp, forward)), up), dot(planetUp, up));
