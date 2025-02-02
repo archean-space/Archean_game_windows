@@ -152,7 +152,7 @@ void main() {
 			}
 		}
 		
-		float transparency = smoothstep(10000, 100, gl_HitTEXT);
+		float transparency = 1;//smoothstep(10000, 100, gl_HitTEXT);
 		
 		RayHitWorld(
 			/*albedo*/		vec3(sqrt(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT)))) * transparency,

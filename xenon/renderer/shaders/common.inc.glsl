@@ -106,7 +106,10 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 #define XENON_RENDERER_SET0_SAMPLER_MOTION 12
 #define XENON_RENDERER_SET0_SAMPLER_RESOLVED 13
 #define XENON_RENDERER_SET0_RENDERER_DATA 14
-#define XENON_RENDERER_SET0_TEXTURES 15
+#define XENON_RENDERER_SET0_IMG_DIFFUSE_ALBEDO 15
+#define XENON_RENDERER_SET0_IMG_SPECULAR_ALBEDO 16
+#define XENON_RENDERER_SET0_IMG_DLSS_MASK 17
+#define XENON_RENDERER_SET0_TEXTURES 18
 
 #ifdef GLSL
 	
@@ -121,6 +124,9 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_DEPTH, r32f) uniform image2D img_depth;
 	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_MOTION, rgba32f) uniform image2D img_motion;
 	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_NORMAL_OR_DEBUG, rgba32f) uniform image2D img_normal_or_debug;
+	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_DIFFUSE_ALBEDO, rgba8) uniform image2D img_diffuse_albedo;
+	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_SPECULAR_ALBEDO, rgba8) uniform image2D img_specular_albedo;
+	layout(set = 0, binding = XENON_RENDERER_SET0_IMG_DLSS_MASK, rgba8) uniform image2D img_dlss_mask;
 	
 	layout(set = 0, binding = XENON_RENDERER_SET0_SAMPLER_HISTORY) uniform sampler2D sampler_history;
 	layout(set = 0, binding = XENON_RENDERER_SET0_SAMPLER_COMPOSITE) uniform sampler2D sampler_composite;
