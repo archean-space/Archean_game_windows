@@ -83,8 +83,10 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	rayQueryEXT q;
 	rayQueryInitializeEXT(q, tlas_lights, 0, 0xff, position, 0, vec3(0,1,0), 0);
 	
-	Reservoir res;
-	res.totalLightJuice = 0;
+	Reservoir res[2];
+	for (int i = 0; i < 2; ++i) {
+		res[i].totalLightJuice = 0;
+	}
 	
 	while (rayQueryProceedEXT(q)) {
 		++nbDirectLights;
@@ -113,43 +115,46 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				if (penombra == 0) continue;
 			}
 			float effectiveLightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penombra * nDotL;
-			ReservoirMix(res, lightPosition, lightSource.color, effectiveLightIntensity, abs(lightSource.innerRadius));
+			int reservoirIndex = lightSource.power > renderer.lightReservoirSunPowerThreshold ? 0 : 1;
+			ReservoirMix(res[reservoirIndex], lightPosition, lightSource.color, effectiveLightIntensity, abs(lightSource.innerRadius));
 		}
 	}
 	
-	if (res.totalLightJuice > 0) {
-		vec3 relativeLightPosition = res.lightPos - position;
-		vec3 shadowRayDir = normalize(relativeLightPosition);
-		
-		if (dot(shadowRayDir, normal) > 0) {
-			float distanceToLightSurface = length(relativeLightPosition) - res.lightRadius;
+	for (int reservoirIndex = 0; reservoirIndex < 2; ++reservoirIndex) {
+		if (res[reservoirIndex].totalLightJuice > 0) {
+			vec3 relativeLightPosition = res[reservoirIndex].lightPos - position;
+			vec3 shadowRayDir = normalize(relativeLightPosition);
 			
-			// Soft Shadows
-			vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
-			float pointRadius = res.lightRadius / distanceToLightSurface * rnd.x;
-			float pointAngle = rnd.y * 2.0 * PI;
-			vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
-			vec3 lightTangent = normalize(cross(shadowRayDir, normal));
-			vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
-			shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
-			
-			shadowRay.colorAttenuation = vec3(1);
-			shadowRay.hitDistance = distanceToLightSurface - epsilonDistance;
-			shadowRay.rayFlags = 0u;
-			++traceRayCount;
-			if (dot(res.lightPos, res.lightPos) > dot(position, position)) {
-				traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
-			} else {
-				traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, res.lightPos, res.lightRadius, -shadowRayDir, shadowRay.hitDistance, 1);
+			if (dot(shadowRayDir, normal) > 0) {
+				float distanceToLightSurface = length(relativeLightPosition) - res[reservoirIndex].lightRadius;
+				
+				// Soft Shadows
+				vec2 rnd = vec2(RandomFloat(seed), RandomFloat(seed));
+				float pointRadius = res[reservoirIndex].lightRadius / distanceToLightSurface * rnd.x;
+				float pointAngle = rnd.y * 2.0 * PI;
+				vec2 diskPoint = vec2(pointRadius * cos(pointAngle), pointRadius * sin(pointAngle));
+				vec3 lightTangent = normalize(cross(shadowRayDir, normal));
+				vec3 lightBitangent = normalize(cross(lightTangent, shadowRayDir));
+				shadowRayDir = normalize(shadowRayDir + diskPoint.x * lightTangent + diskPoint.y * lightBitangent);
+				
+				shadowRay.colorAttenuation = vec3(1);
+				shadowRay.hitDistance = distanceToLightSurface - epsilonDistance;
+				shadowRay.rayFlags = 0u;
+				++traceRayCount;
+				if (dot(res[reservoirIndex].lightPos, res[reservoirIndex].lightPos) > dot(position, position)) {
+					traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+				} else {
+					traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_TERRAIN|RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, res[reservoirIndex].lightPos, res[reservoirIndex].lightRadius, -shadowRayDir, shadowRay.hitDistance, 1);
+				}
+				// if (dot(res[reservoirIndex].lightPos, res[reservoirIndex].lightPos) > dot(position, position)) {
+				// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+				// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
+				// } else {
+				// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, res[reservoirIndex].lightPos, res[reservoirIndex].lightRadius, -shadowRayDir, shadowRay.hitDistance, 1);
+				// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, res[reservoirIndex].lightPos, res[reservoirIndex].lightRadius, -shadowRayDir, shadowRay.hitDistance, 1);
+				// }
+				directLighting += shadowRay.colorAttenuation * res[reservoirIndex].lightColor * res[reservoirIndex].totalLightJuice;
 			}
-			// if (dot(res.lightPos, res.lightPos) > dot(position, position)) {
-			// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
-			// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, position, 0, shadowRayDir, shadowRay.hitDistance, 1);
-			// } else {
-			// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT | gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsCullBackFacingTrianglesEXT, RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, res.lightPos, res.lightRadius, -shadowRayDir, shadowRay.hitDistance, 1);
-			// 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, RAYTRACE_MASK_ENTITY|RAYTRACE_MASK_CLUTTER|RAYTRACE_MASK_LIQUID, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, res.lightPos, res.lightRadius, -shadowRayDir, shadowRay.hitDistance, 1);
-			// }
-			directLighting += shadowRay.colorAttenuation * res.lightColor * res.totalLightJuice;
 		}
 	}
 	
@@ -304,17 +309,17 @@ void main() {
 			// Write G-Buffers
 			if (i == 0) {
 				imageStore(img_normal_or_debug, COORDS, vec4(ray.normal, roughness));
+				imageStore(img_diffuse_albedo, COORDS, vec4(ray.color, 0));
 				if (isEmissive) {
 					imageStore(img_dlss_mask, COORDS, vec4(1));
 				} else {
-					imageStore(img_diffuse_albedo, COORDS, vec4(ray.color, 0));
-					vec3 specularAlbedo = EnvBRDFApprox2(ray.color * float(isMetallic || isLiquid), roughness*roughness, dot(rayDirection, ray.normal));
+					vec3 specularAlbedo = EnvBRDFApprox2(ray.color * float(isMetallic || isLiquid), roughness*roughness, dot(rayDirection, rayNormal));
 					imageStore(img_specular_albedo, COORDS, vec4(specularAlbedo, 0));
 				}
 				if (isLiquid) {
 					imageStore(img_dlss_mask, COORDS, vec4(1));
 					float depth = float(GetDepthBufferFromTrueDistance(ray.hitDistance));
-					imageStore(img_depth, COORDS, vec4(depth));
+					// imageStore(img_depth, COORDS, vec4(depth));
 				} else {
 					// Write Motion Vectors
 					mat4 mvp = xenonRendererData.config.projectionMatrix * renderer.viewMatrix * mat4(transpose(renderer.tlasInstances[ray.renderableIndex].transform));
@@ -334,13 +339,14 @@ void main() {
 					imageStore(img_motion, COORDS, vec4(motion, rayHitDistance));
 					vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(hitWorldPosition, 1);
 					float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
-					imageStore(img_depth, COORDS, vec4(depth));
+					// imageStore(img_depth, COORDS, vec4(depth));
 				}
 				ray.rayFlags &= ~RAY_FLAG_AIM;
 			}
 			
 			vec3 directLighting = vec3(0);
 			vec3 fogEmission = TraceFogRay(rayOrigin, rayDirection, rayHitDistance, colorFilter);
+			vec3 emission = rayColor * float(isEmissive) * colorFilter;
 			
 			if (isMetallic) {
 				if (roughness > 0) {
@@ -359,14 +365,14 @@ void main() {
 				colorFilter *= rayColor;
 			} else {
 				// float fresnel = pow(1 - max(0, dot(-rayDirection, rayNormal)), 2);
-				float fresnel = 0;// Fresnel(rayDirection, rayNormal, ior);
+				float fresnel = Fresnel(rayDirection, rayNormal, ior);
 				if (isTransparent) {
 					// float alpha = max(rayColor.r, max(rayColor.g, rayColor.b));
 					// directLighting += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal) * pow(1 - alpha, 2);
 					if (dot(refractionDir,refractionDir) == 0) refractionDir = reflectionDir;
 					if (isLiquid && ior > 1) {
-						// rayDirection = roughness == 0 && RandomFloat(seed) > dot(-rayDirection, rayNormal) ? reflectionDir : refractionDir;
-						rayDirection = reflectionDir;
+						rayDirection = roughness == 0 && RandomFloat(seed) > dot(-rayDirection, rayNormal) ? reflectionDir : refractionDir;
+						// rayDirection = reflectionDir;
 						// rayDirection = refractionDir;
 					} else {
 						rayDirection = refractionDir;
@@ -380,7 +386,6 @@ void main() {
 					colorFilter *= rayColor;
 				}
 			}
-			vec3 emission = rayColor * float(isEmissive) * colorFilter;
 			imageStore(img_composite, COORDS, vec4(rayColor * directLighting + emission + fogEmission + imageLoad(img_composite, COORDS).rgb, 1));
 			
 			rayOrigin = hitWorldPosition + rayNormal * sign(dot(rayNormal, rayDirection)) * EPSILON;
@@ -487,30 +492,16 @@ void main() {
 			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(imageLoad(img_resolved, COORDS).a, xenonRendererData.config.debugViewScale)), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_TEST:
-			/* Depth */ imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(imageLoad(img_depth, COORDS).r, xenonRendererData.config.debugViewScale)), 1));
-			// /* Motion */ imageStore(img_normal_or_debug, COORDS, vec4(imageLoad(img_motion, COORDS).rgb * xenonRendererData.config.debugViewScale, 1));
+			// /* Depth */ imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(imageLoad(img_depth, COORDS).r, xenonRendererData.config.debugViewScale)), 1));
+			// /* Motion */ imageStore(img_normal_or_debug, COORDS, vec4(abs(imageLoad(img_motion, COORDS).rgb) * xenonRendererData.config.debugViewScale, 1));
 			// /* Normal */ imageStore(img_normal_or_debug, COORDS, vec4(imageLoad(img_normal_or_debug, COORDS).rgb, 1));
 			// /* Roughness */ imageStore(img_normal_or_debug, COORDS, vec4(vec3(imageLoad(img_normal_or_debug, COORDS).a), 1));
-			// /* Diffuse Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_diffuse_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
+			/* Diffuse Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_diffuse_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
 			// /* Sspecular Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_specular_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
 			if (ray.renderableIndex == -1) break;
 			imageStore(img_normal_or_debug, COORDS, vec4(HeatmapClamped(pow(ray.hitDistance / 1000 * xenonRendererData.config.debugViewScale, 0.4)), 1));
-			break;
-		case RENDERER_DEBUG_VIEWMODE_ROUGHNESS:
-			if (ray.renderableIndex == -1) break;
-			imageStore(img_normal_or_debug, COORDS, vec4(vec3(ray.roughness), 1));
-			break;
-		case RENDERER_DEBUG_VIEWMODE_DIFFUSE_ALBEDO:
-			if (ray.renderableIndex == -1) break;
-			imageStore(img_normal_or_debug, COORDS, vec4(ray.color, 1));
-			break;
-		case RENDERER_DEBUG_VIEWMODE_SPECULAR_ALBEDO:
-			if (ray.renderableIndex == -1) break;
-			bool isMetallic = (ray.surfaceFlags & RAY_SURFACE_METALLIC) != 0;
-			bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
-			imageStore(img_normal_or_debug, COORDS, vec4(EnvBRDFApprox2(ray.color * float(isMetallic || isLiquid), ray.roughness*ray.roughness, dot(rayDirection, ray.normal)), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_NORMALS_VIEWSPACE:
 			if (ray.renderableIndex == -1) break;

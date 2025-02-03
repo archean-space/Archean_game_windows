@@ -234,7 +234,7 @@ struct RendererData {
 	aligned_uint32_t rays_max_bounces;
 	aligned_float32_t warp;
 	
-	aligned_uint32_t ambientAtmosphereSamples;
+	aligned_uint32_t lightReservoirSunPowerThreshold;
 	aligned_uint32_t ambientOcclusionSamples;
 	aligned_float32_t terrain_detail;
 	aligned_float32_t globalLightingFactor;
@@ -666,6 +666,7 @@ struct RayShadowPayload {
 	
 	void RayOpaque() {
 		ray.colorAttenuation = vec3(0);
+		ray.hitDistance = gl_HitTEXT;
 		terminateRayEXT;
 	}
 	
