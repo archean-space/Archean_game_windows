@@ -276,6 +276,13 @@ void main() {
 				break;
 			}
 			
+			// Write Depth
+			if (i == 0) {
+				vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(rayOrigin + rayDirection * ray.hitDistance, 1);
+				float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
+				imageStore(img_depth, COORDS, vec4(depth));
+			}
+		
 			// Fix Z fighting with interior faces of glass
 			if (ray.ior == 0) {
 				ray.ior = uint8_t(51);
@@ -319,7 +326,6 @@ void main() {
 				if (isLiquid) {
 					imageStore(img_dlss_mask, COORDS, vec4(1));
 					float depth = float(GetDepthBufferFromTrueDistance(ray.hitDistance));
-					// imageStore(img_depth, COORDS, vec4(depth));
 				} else {
 					// Write Motion Vectors
 					mat4 mvp = xenonRendererData.config.projectionMatrix * renderer.viewMatrix * mat4(transpose(renderer.tlasInstances[ray.renderableIndex].transform));
@@ -337,9 +343,6 @@ void main() {
 					ndc_history /= ndc_history.w;
 					vec3 motion = ndc_history.xyz - ndc.xyz;
 					imageStore(img_motion, COORDS, vec4(motion, rayHitDistance));
-					vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(hitWorldPosition, 1);
-					float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
-					// imageStore(img_depth, COORDS, vec4(depth));
 				}
 				ray.rayFlags &= ~RAY_FLAG_AIM;
 			}
@@ -356,7 +359,7 @@ void main() {
 					vec3 tangent = normalize(cross(rayNormal, reflectionDir));
 					vec3 bitangent = normalize(cross(tangent, reflectionDir));
 					do {
-						rayDirection = reflectionDir * 0.25 + (RandomFloat(seed) - 0.5) * tangent * roughness + (RandomFloat(seed) - 0.5) * bitangent * roughness;
+						rayDirection = reflectionDir * 0.5 + (RandomFloat(seed) - 0.5) * tangent * roughness + (RandomFloat(seed) - 0.5) * bitangent * roughness;
 					} while (dot(rayDirection, rayNormal) < 0);
 					rayDirection = normalize(rayDirection);
 				} else {

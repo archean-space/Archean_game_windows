@@ -125,6 +125,16 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) GeometryData {
 };
 STATIC_ASSERT_ALIGNED16_SIZE(GeometryData, 128)
 
+struct ScreenPushConstant {
+	aligned_f32mat4 modelViewMatrix;
+	aligned_VkDeviceAddress vertices;
+	aligned_VkDeviceAddress indices16;
+	aligned_VkDeviceAddress indices32;
+	aligned_VkDeviceAddress uv;
+	aligned_uint32_t monitorIndex;
+};
+STATIC_ASSERT_PUSH_CONSTANT(ScreenPushConstant);
+
 BUFFER_REFERENCE_STRUCT_READONLY(16) RenderableInstanceData {
 	BUFFER_REFERENCE_ADDR(GeometryData) geometries; // shared data between all renderables loaded from the same mesh file
 	aligned_uint64_t data; // custom data defined per renderable type (defaults to an array of RenderableData per geometry)
@@ -234,7 +244,7 @@ struct RendererData {
 	aligned_uint32_t rays_max_bounces;
 	aligned_float32_t warp;
 	
-	aligned_uint32_t lightReservoirSunPowerThreshold;
+	aligned_float32_t lightReservoirSunPowerThreshold;
 	aligned_uint32_t ambientOcclusionSamples;
 	aligned_float32_t terrain_detail;
 	aligned_float32_t globalLightingFactor;
@@ -260,6 +270,10 @@ struct RendererData {
 #define SET1_BINDING_BLOOM_IMAGE 3
 #define SET1_BINDING_CLOUD_IMAGE 4
 #define SET1_BINDING_CLOUD_SAMPLER 5
+#define SET1_BINDING_EMISSION_IMAGE 6
+#define SET1_IMG_DIFFUSE_ALBEDO 7
+#define SET1_IMG_SPECULAR_ALBEDO 8
+#define SET1_IMG_DLSS_MASK 9
 
 #define COORDS ivec2(gl_LaunchIDEXT.xy)
 #define WORLD2VIEWNORMAL transpose(inverse(mat3(renderer.viewMatrix)))
@@ -272,6 +286,10 @@ struct RendererData {
 	layout(set = 1, binding = SET1_BINDING_BLOOM_IMAGE, rgba8) uniform image2D img_bloom;
 	layout(set = 1, binding = SET1_BINDING_CLOUD_IMAGE, rgba32f) uniform image2D img_cloud[2];
 	layout(set = 1, binding = SET1_BINDING_CLOUD_SAMPLER) uniform sampler2D sampler_cloud;
+	layout(set = 1, binding = SET1_BINDING_EMISSION_IMAGE, rgba8) uniform image2D img_emission;
+	layout(set = 1, binding = SET1_IMG_DIFFUSE_ALBEDO, rgba8) uniform image2D img_diffuse_albedo;
+	layout(set = 1, binding = SET1_IMG_SPECULAR_ALBEDO, rgba8) uniform image2D img_specular_albedo;
+	layout(set = 1, binding = SET1_IMG_DLSS_MASK, rgba8) uniform image2D img_dlss_mask;
 #endif
 
 // layout(set = 1, binding = 9, rgba32f) uniform image2D images[];

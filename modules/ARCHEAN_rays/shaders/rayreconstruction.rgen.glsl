@@ -208,7 +208,7 @@ vec3 TraceAmbientLighting(in vec3 surfaceWorldPosition, in vec3 rayNormal, inout
 	++traceRayCount;
 	vec3 bounceDirection = normalize(RandomInUnitHemiSphere(seed, rayNormal));
 	traceRayEXT(tlas, gl_RayFlagsNoOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT/*flags*/, RAYTRACE_MASK_FOG|RAYTRACE_MASK_TERRAIN, 0/*rayType*/, 0/*nbRayTypes*/, 1/*missIndex*/, surfaceWorldPosition + rayNormal * EPSILON, 0, bounceDirection, shadowRay.hitDistance, 1/*payloadIndex*/);
-	vec3 ambient = shadowRay.emission * 0.1;
+	vec3 ambient = shadowRay.emission * 0.5;
 	shadowRay.rayFlags = 0;
 	shadowRay.hitDistance = 0;
 	++traceRayCount;
@@ -290,6 +290,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 }
 
 bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 colorFilter) {
+	bool isPrimaryRay = traceRayCount == 0;
 	uint rayMask = RAYTRACE_MASK_SOLID | RAYTRACE_MASK_VOLUME;
 	if ((ray.rayFlags & RAY_FLAG_FLUID) == 0) {
 		rayMask |= RAYTRACE_MASK_LIQUID;
@@ -307,6 +308,11 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		traceRayEXT(tlas, gl_RayFlagsOpaqueEXT/*flags*/, rayMask, 0/*rayType*/, 0/*nbRayTypes*/, 0/*missIndex*/, rayOrigin, 0, rayDirection, xenonRendererData.config.zFar, 0/*payloadIndex*/);
 	}
 	int hitRenderableIndex = ray.renderableIndex;
+	if (isPrimaryRay && hitRenderableIndex != -1) {
+		vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(rayOrigin + rayDirection * ray.hitDistance, 1);
+		float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
+		imageStore(img_depth, COORDS, vec4(depth));
+	}
 	
 	if (hitRenderableIndex == -1) {
 		// First ray hit nothing
@@ -345,7 +351,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
 		
 		// Write Motion Vectors
-		bool depthWritten = false;
+		bool writeNormalBuffer = false;
 		if (imageLoad(img_motion, COORDS).w == 0) {
 			if (!isTransparent || dot(refractionDir, rayDirection) < 0.5) {
 				if (!isLiquid) {
@@ -364,10 +370,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 					ndc_history /= ndc_history.w;
 					vec3 motion = ndc_history.xyz - ndc.xyz;
 					imageStore(img_motion, COORDS, vec4(motion, rayHitDistance));
-					vec4 clipSpace = mat4(xenonRendererData.config.projectionMatrix) * mat4(renderer.viewMatrix) * vec4(hitWorldPosition, 1);
-					float depth = clamp(clipSpace.z / clipSpace.w, 0, 1);
-					imageStore(img_depth, COORDS, vec4(depth));
-					depthWritten = true;
+					writeNormalBuffer = true;
 				}
 				imageStore(img_diffuse_albedo, COORDS, vec4(ray.color, 0));
 			}
@@ -414,7 +417,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		imageStore(img_composite, COORDS, vec4(color, alpha) + imageLoad(img_composite, COORDS));
 		
 		// SSAO
-		if (depthWritten) {
+		if (writeNormalBuffer) {
 			imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
 		}
 		
