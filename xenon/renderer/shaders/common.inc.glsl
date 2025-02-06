@@ -347,6 +347,9 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 		}
 	}
 	vec3 RandomInUnitHemiSphere(inout uint seed, in vec3 normal) {
+		if (normal == vec3(0) || isnan(normal.x)) {
+			return RandomInUnitSphere(seed);
+		}
 		for (;;) {
 			const vec3 p = 2 * vec3(RandomFloat(seed), RandomFloat(seed), RandomFloat(seed)) - 1;
 			if (dot(p, p) < 1 && dot(p, normal) > 0) {

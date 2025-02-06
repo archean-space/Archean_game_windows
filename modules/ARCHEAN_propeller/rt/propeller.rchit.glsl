@@ -9,6 +9,7 @@ void main() {
 		Sdf(pos+e.yxy) - Sdf(pos-e.yxy),
 		Sdf(pos+e.yyx) - Sdf(pos-e.yyx)
 	));
+	if (isnan(normal.x)) normal = vec3(0,0,1);
 	
 	// Reverse gamma
 	vec3 color = ReverseGamma(vec3(0.5));
