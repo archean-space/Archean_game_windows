@@ -50,7 +50,11 @@ void main() {
 			uv1.xy = surface.in_pos_out_uv.xy;
 			
 			RenderableData data = RenderableData(INSTANCE.data)[gl_GeometryIndexEXT];
-			if (data.monitorIndex > 0 && uv1 != vec2(-1)) {
+			if (uv1 == vec2(-1)) {
+				if ((surface.rayFlags & RAY_SURFACE_TRANSPARENT) != 0) {
+					color.rgb = vec3(1);
+				}
+			} else if (data.monitorIndex > 0) {
 				if ((surface.rayFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 					color.rgb = vec3(1);
 				} else {

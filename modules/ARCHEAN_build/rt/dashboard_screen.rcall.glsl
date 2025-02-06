@@ -13,9 +13,11 @@ void main() {
 	if (pos.z > 0.01) {
 		surface.rayFlags = RAY_SURFACE_EMISSIVE;
 	} else {
-		surface.rayFlags = RAY_SURFACE_DIFFUSE;
+		surface.rayFlags = RAY_SURFACE_TRANSPARENT;
+		surface.in_pos_out_uv.xy = vec2(-1);
 	}
 	if (pos.x < 0.001 || pos.y < 0.001 || pos.x > 0.999 || pos.y > 0.999) {
+		surface.rayFlags = RAY_SURFACE_DIFFUSE;
 		surface.in_pos_out_uv.xy = vec2(-1);
 	}
 }
