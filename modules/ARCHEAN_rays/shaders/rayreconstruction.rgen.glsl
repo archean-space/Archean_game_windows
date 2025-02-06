@@ -377,7 +377,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			}
 		}
 		
-		vec3 color = rayColor * float(isEmissive && ((renderer.options & RENDERER_OPTION_RASTERIZE_SCREENS) == 0 || !writeGBuffers));
+		vec3 color = rayColor * float(isEmissive && ((renderer.options & RENDERER_OPTION_RASTERIZE_SCREENS) == 0 || !writeGBuffers || rayHitDistance > 5/* half of maxScreenDistance in screen rasterizer*/));
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
@@ -612,7 +612,7 @@ void main() {
 			// /* Roughness */ imageStore(img_normal_or_debug, COORDS, vec4(vec3(imageLoad(img_normal_or_debug, COORDS).a), 1));
 			/* Diffuse Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_diffuse_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
 			// /* Specular Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_specular_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
-			// /* Emissive */ imageStore(img_normal_or_debug, COORDS, vec4(abs(imageLoad(img_dlss_particles, COORDS).rgb) * xenonRendererData.config.debugViewScale, 1));
+			// /* Particles */ imageStore(img_normal_or_debug, COORDS, vec4(abs(imageLoad(img_dlss_particles, COORDS).rgb) * xenonRendererData.config.debugViewScale, 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
 			if (ray.renderableIndex == -1) break;

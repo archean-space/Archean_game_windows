@@ -317,14 +317,11 @@ void main() {
 			if (i == 0) {
 				imageStore(img_normal_or_debug, COORDS, vec4(ray.normal, roughness));
 				imageStore(img_diffuse_albedo, COORDS, vec4(ray.color, 0));
-				if (isEmissive) {
-					imageStore(img_dlss_particles_opacity, COORDS, vec4(1));
-				} else {
+				if (!isEmissive) {
 					vec3 specularAlbedo = EnvBRDFApprox2(ray.color * float(isMetallic || isLiquid), roughness*roughness, dot(rayDirection, rayNormal));
 					imageStore(img_specular_albedo, COORDS, vec4(specularAlbedo, 0));
 				}
 				if (isLiquid) {
-					imageStore(img_dlss_particles_opacity, COORDS, vec4(1));
 					float depth = float(GetDepthBufferFromTrueDistance(ray.hitDistance));
 				} else {
 					// Write Motion Vectors
