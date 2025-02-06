@@ -349,9 +349,10 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		float rayHitDistance = ray.hitDistance;
 		bool isTransparent = (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0;
 		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
+		bool isEmissive = (raySurfaceFlags & RAY_SURFACE_EMISSIVE) != 0;
 		
 		// Write Motion Vectors
-		bool writeNormalBuffer = false;
+		bool writeGBuffers = false;
 		if (imageLoad(img_motion, COORDS).w == 0) {
 			if (!isTransparent || dot(refractionDir, rayDirection) < 0.5) {
 				if (!isLiquid) {
@@ -370,13 +371,13 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 					ndc_history /= ndc_history.w;
 					vec3 motion = ndc_history.xyz - ndc.xyz;
 					imageStore(img_motion, COORDS, vec4(motion, rayHitDistance));
-					writeNormalBuffer = true;
+					writeGBuffers = true;
 				}
 				imageStore(img_diffuse_albedo, COORDS, vec4(ray.color, 0));
 			}
 		}
 		
-		vec3 color = rayColor * float(raySurfaceFlags & RAY_SURFACE_EMISSIVE);
+		vec3 color = rayColor * float(isEmissive && ((renderer.options & RENDERER_OPTION_RASTERIZE_SCREENS) == 0 || !writeGBuffers));
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
@@ -416,8 +417,8 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		color *= colorFilter;
 		imageStore(img_composite, COORDS, vec4(color, alpha) + imageLoad(img_composite, COORDS));
 		
-		// SSAO
-		if (writeNormalBuffer) {
+		// Normal / SSAO
+		if (writeGBuffers) {
 			imageStore(img_normal_or_debug, COORDS, vec4(rayNormal, ssao));
 		}
 		
@@ -482,7 +483,8 @@ void main() {
 	imageStore(img_normal_or_debug, COORDS, vec4(0));
 	imageStore(img_diffuse_albedo, COORDS, vec4(0));
 	imageStore(img_specular_albedo, COORDS, vec4(0));
-	imageStore(img_dlss_mask, COORDS, vec4(0)); // this seems to not really matter at all
+	imageStore(img_dlss_particles_opacity, COORDS, vec4(0));
+	imageStore(img_dlss_particles, COORDS, vec4(0));
 	
 	// Clear motion vectors/depth
 	vec4 ndc = vec4(uv * 2 - 1, 0, 1);
@@ -609,7 +611,8 @@ void main() {
 			// /* Normal */ imageStore(img_normal_or_debug, COORDS, vec4(imageLoad(img_normal_or_debug, COORDS).rgb, 1));
 			// /* Roughness */ imageStore(img_normal_or_debug, COORDS, vec4(vec3(imageLoad(img_normal_or_debug, COORDS).a), 1));
 			/* Diffuse Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_diffuse_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
-			// /* Sspecular Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_specular_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
+			// /* Specular Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_specular_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
+			// /* Emissive */ imageStore(img_normal_or_debug, COORDS, vec4(abs(imageLoad(img_dlss_particles, COORDS).rgb) * xenonRendererData.config.debugViewScale, 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
 			if (ray.renderableIndex == -1) break;

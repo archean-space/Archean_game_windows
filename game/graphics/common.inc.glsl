@@ -39,6 +39,7 @@
 #define RENDERER_OPTION_RT_AMBIENT_LIGHTING			(1u<< 5 )
 #define RENDERER_OPTION_ATMOSPHERIC_SHADOWS			(1u<< 6 )
 #define RENDERER_OPTION_UNDERWATER_VOLUMETRIC_FOG	(1u<< 7 )
+#define RENDERER_OPTION_RASTERIZE_SCREENS			(1u<< 8 )
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 	aligned_float32_t aabb[6];
@@ -273,7 +274,8 @@ struct RendererData {
 #define SET1_BINDING_EMISSION_IMAGE 6
 #define SET1_IMG_DIFFUSE_ALBEDO 7
 #define SET1_IMG_SPECULAR_ALBEDO 8
-#define SET1_IMG_DLSS_MASK 9
+#define SET1_IMG_DLSS_PARTICLES 9
+#define SET1_IMG_DLSS_PARTICLES_OPACITY 10
 
 #define COORDS ivec2(gl_LaunchIDEXT.xy)
 #define WORLD2VIEWNORMAL transpose(inverse(mat3(renderer.viewMatrix)))
@@ -289,7 +291,8 @@ struct RendererData {
 	layout(set = 1, binding = SET1_BINDING_EMISSION_IMAGE, rgba8) uniform image2D img_emission;
 	layout(set = 1, binding = SET1_IMG_DIFFUSE_ALBEDO, rgba8) uniform image2D img_diffuse_albedo;
 	layout(set = 1, binding = SET1_IMG_SPECULAR_ALBEDO, rgba8) uniform image2D img_specular_albedo;
-	layout(set = 1, binding = SET1_IMG_DLSS_MASK, rgba8) uniform image2D img_dlss_mask;
+	layout(set = 1, binding = SET1_IMG_DLSS_PARTICLES, rgba8) uniform image2D img_dlss_particles;
+	layout(set = 1, binding = SET1_IMG_DLSS_PARTICLES_OPACITY, r8) uniform image2D img_dlss_particles_opacity;
 #endif
 
 // layout(set = 1, binding = 9, rgba32f) uniform image2D images[];
