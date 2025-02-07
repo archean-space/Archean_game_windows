@@ -350,6 +350,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		bool isTransparent = (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0;
 		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
 		bool isEmissive = (raySurfaceFlags & RAY_SURFACE_EMISSIVE) != 0;
+		bool isScreen = (raySurfaceFlags & RAY_SURFACE_SCREEN) != 0;
 		
 		// Write Motion Vectors
 		bool writeGBuffers = false;
@@ -377,7 +378,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			}
 		}
 		
-		vec3 color = rayColor * float(isEmissive && ((renderer.options & RENDERER_OPTION_RASTERIZE_SCREENS) == 0 || !writeGBuffers || rayHitDistance > 5/* half of maxScreenDistance in screen rasterizer*/));
+		vec3 color = rayColor * float(isEmissive && ((renderer.options & RENDERER_OPTION_RASTERIZE_SCREENS) == 0 || !isScreen || !writeGBuffers || rayHitDistance > 5/* half of maxScreenDistance in screen rasterizer*/));
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)

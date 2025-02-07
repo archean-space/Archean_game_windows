@@ -333,7 +333,8 @@ struct RayShadowPayload {
 #define RAY_SURFACE_METALLIC uint8_t(0x1)
 #define RAY_SURFACE_EMISSIVE uint8_t(0x2)
 #define RAY_SURFACE_TRANSPARENT uint8_t(0x4)
-//... 4 more
+#define RAY_SURFACE_SCREEN uint8_t(0x8)
+//... 3 more
 
 #define RAY_FLAG_RECURSION uint8_t(0x1)
 #define RAY_FLAG_AIM uint8_t(0x2)
