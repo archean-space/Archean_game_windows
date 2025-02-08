@@ -293,6 +293,8 @@ void main() {
 		}
 	}
 	
+	albedo *= vec3(0.9, 0.8, 0.7);
+	
 	// Reverse gamma
 	albedo = ReverseGamma(albedo);
 	

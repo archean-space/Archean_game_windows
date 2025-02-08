@@ -40,6 +40,7 @@
 #define RENDERER_OPTION_ATMOSPHERIC_SHADOWS			(1u<< 6 )
 #define RENDERER_OPTION_UNDERWATER_VOLUMETRIC_FOG	(1u<< 7 )
 #define RENDERER_OPTION_RASTERIZE_SCREENS			(1u<< 8 )
+#define RENDERER_OPTION_STOCHASTIC_RENDERING		(1u<< 9 )
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 	aligned_float32_t aabb[6];
@@ -245,7 +246,7 @@ struct RendererData {
 	aligned_uint32_t rays_max_bounces;
 	aligned_float32_t warp;
 	
-	aligned_float32_t lightReservoirSunPowerThreshold;
+	aligned_float32_t _unused4;
 	aligned_uint32_t ambientOcclusionSamples;
 	aligned_float32_t terrain_detail;
 	aligned_float32_t globalLightingFactor;

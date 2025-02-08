@@ -115,6 +115,9 @@ void main() {
 
 				// Ray-March
 				vec3 rayPos = startPoint;
+				// if ((renderer.options & RENDERER_OPTION_STOCHASTIC_RENDERING) != 0) {
+				// 	rayPos += viewDir * RandomFloat(seed) * stepSize;
+				// }
 				for (int i = 0; i < raymarchSteps; ++i) {
 					rayPos += viewDir * stepSize;
 					vec3 posOnSphere = rayPos - atmospherePosition;
