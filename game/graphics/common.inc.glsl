@@ -247,7 +247,7 @@ struct RendererData {
 	aligned_float32_t warp;
 	
 	aligned_float32_t _unused4;
-	aligned_uint32_t ambientOcclusionSamples;
+	aligned_uint32_t _unused5;
 	aligned_float32_t terrain_detail;
 	aligned_float32_t globalLightingFactor;
 	
@@ -270,13 +270,11 @@ struct RendererData {
 #define SET1_BINDING_LIGHTS_TLAS 1
 #define SET1_BINDING_RENDERER_DATA 2
 #define SET1_BINDING_BLOOM_IMAGE 3
-#define SET1_BINDING_CLOUD_IMAGE 4
-#define SET1_BINDING_CLOUD_SAMPLER 5
-#define SET1_BINDING_EMISSION_IMAGE 6
-#define SET1_IMG_DIFFUSE_ALBEDO 7
-#define SET1_IMG_SPECULAR_ALBEDO 8
-#define SET1_IMG_DLSS_PARTICLES 9
-#define SET1_IMG_DLSS_PARTICLES_OPACITY 10
+#define SET1_BINDING_EMISSION_IMAGE 4
+#define SET1_IMG_DIFFUSE_ALBEDO 5
+#define SET1_IMG_SPECULAR_ALBEDO 6
+#define SET1_IMG_DLSS_PARTICLES 7
+#define SET1_IMG_DLSS_PARTICLES_OPACITY 8
 
 #define COORDS ivec2(gl_LaunchIDEXT.xy)
 #define WORLD2VIEWNORMAL transpose(inverse(mat3(renderer.viewMatrix)))
@@ -287,8 +285,6 @@ struct RendererData {
 	layout(set = 1, binding = SET1_BINDING_LIGHTS_TLAS) uniform accelerationStructureEXT tlas_lights;
 	layout(set = 1, binding = SET1_BINDING_RENDERER_DATA) uniform RendererDataBuffer { RendererData renderer; };
 	layout(set = 1, binding = SET1_BINDING_BLOOM_IMAGE, rgba8) uniform image2D img_bloom;
-	layout(set = 1, binding = SET1_BINDING_CLOUD_IMAGE, rgba32f) uniform image2D img_cloud[2];
-	layout(set = 1, binding = SET1_BINDING_CLOUD_SAMPLER) uniform sampler2D sampler_cloud;
 	layout(set = 1, binding = SET1_BINDING_EMISSION_IMAGE, rgba8) uniform image2D img_emission;
 	layout(set = 1, binding = SET1_IMG_DIFFUSE_ALBEDO, rgba8) uniform image2D img_diffuse_albedo;
 	layout(set = 1, binding = SET1_IMG_SPECULAR_ALBEDO, rgba8) uniform image2D img_specular_albedo;
