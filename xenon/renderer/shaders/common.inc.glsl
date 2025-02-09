@@ -32,7 +32,7 @@ struct XenonRendererConfig {
 	aligned_float32_t minExposure;
 	aligned_float32_t maxExposure;
 	
-	aligned_float32_t _unused;
+	aligned_float32_t globalLightingFactor;
 	aligned_i32vec2 screenSize;
 	
 	#ifdef __cplusplus
@@ -50,6 +50,7 @@ struct XenonRendererConfig {
 		, gamma(2.4f)
 		, minExposure(0.0001f)
 		, maxExposure(10.0f)
+		, globalLightingFactor(1.0f)
 		, screenSize(1.0f, 1.0f)
 		{}
 	#endif
@@ -347,6 +348,9 @@ STATIC_ASSERT_SIZE(FSRPushConstant, 80)
 		}
 	}
 	vec3 RandomInUnitHemiSphere(inout uint seed, in vec3 normal) {
+		if (normal == vec3(0) || isnan(normal.x)) {
+			return RandomInUnitSphere(seed);
+		}
 		for (;;) {
 			const vec3 p = 2 * vec3(RandomFloat(seed), RandomFloat(seed), RandomFloat(seed)) - 1;
 			if (dot(p, p) < 1 && dot(p, normal) > 0) {

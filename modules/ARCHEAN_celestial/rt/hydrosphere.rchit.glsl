@@ -152,15 +152,13 @@ void main() {
 			}
 		}
 		
-		float transparency = smoothstep(10000, 100, gl_HitTEXT);
-		
 		RayHitWorld(
-			/*albedo*/		vec3(sqrt(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT)))) * transparency,
+			/*albedo*/		vec3(sqrt(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT)))),
 			/*normal*/		surfaceNormal,
 			/*distance*/	gl_HitTEXT,
 			/*roughness*/	0,
 			/*ior*/			WATER_IOR,
-			/*flags*/		transparency>0? RAY_SURFACE_TRANSPARENT : RAY_SURFACE_DIFFUSE
+			/*flags*/		RAY_SURFACE_TRANSPARENT
 		);
 		ray.rayFlags |= RAY_FLAG_FLUID;
 	}

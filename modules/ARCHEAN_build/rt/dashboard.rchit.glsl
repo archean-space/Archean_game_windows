@@ -50,13 +50,21 @@ void main() {
 			uv1.xy = surface.in_pos_out_uv.xy;
 			
 			RenderableData data = RenderableData(INSTANCE.data)[gl_GeometryIndexEXT];
-			if (data.monitorIndex > 0) {
+			if (uv1 == vec2(-1)) {
+				if ((surface.rayFlags & RAY_SURFACE_TRANSPARENT) != 0) {
+					color.rgb = vec3(1);
+				}
+			} else if (data.monitorIndex > 0) {
 				if ((surface.rayFlags & RAY_SURFACE_TRANSPARENT) != 0) {
 					color.rgb = vec3(1);
 				} else {
 					MakeAimable(normal, uv1, data.monitorIndex);
 					vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], uv1);
-					color.rgb = ReverseGamma(tex.rgb);
+					if ((surface.rayFlags & RAY_SURFACE_EMISSIVE) != 0) {
+						color.rgb = ReverseGamma(tex.rgb);
+					} else {
+						color.rgb = tex.rgb;
+					}
 					if (tex.a < 1) {
 						surface.rayFlags = RAY_SURFACE_TRANSPARENT;
 						color.rgb = vec3(mix(vec3(1), tex.rgb, tex.a));

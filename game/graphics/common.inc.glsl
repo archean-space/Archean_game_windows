@@ -39,6 +39,8 @@
 #define RENDERER_OPTION_RT_AMBIENT_LIGHTING			(1u<< 5 )
 #define RENDERER_OPTION_ATMOSPHERIC_SHADOWS			(1u<< 6 )
 #define RENDERER_OPTION_UNDERWATER_VOLUMETRIC_FOG	(1u<< 7 )
+#define RENDERER_OPTION_RASTERIZE_SCREENS			(1u<< 8 )
+#define RENDERER_OPTION_STOCHASTIC_RENDERING		(1u<< 9 )
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) AabbData {
 	aligned_float32_t aabb[6];
@@ -124,6 +126,16 @@ BUFFER_REFERENCE_STRUCT_READONLY(16) GeometryData {
 	GeometryMaterial material;
 };
 STATIC_ASSERT_ALIGNED16_SIZE(GeometryData, 128)
+
+struct ScreenPushConstant {
+	aligned_f32mat4 modelViewMatrix;
+	aligned_VkDeviceAddress vertices;
+	aligned_VkDeviceAddress indices16;
+	aligned_VkDeviceAddress indices32;
+	aligned_VkDeviceAddress uv;
+	aligned_uint32_t monitorIndex;
+};
+STATIC_ASSERT_PUSH_CONSTANT(ScreenPushConstant);
 
 BUFFER_REFERENCE_STRUCT_READONLY(16) RenderableInstanceData {
 	BUFFER_REFERENCE_ADDR(GeometryData) geometries; // shared data between all renderables loaded from the same mesh file
@@ -234,10 +246,10 @@ struct RendererData {
 	aligned_uint32_t rays_max_bounces;
 	aligned_float32_t warp;
 	
-	aligned_uint32_t ambientAtmosphereSamples;
-	aligned_uint32_t ambientOcclusionSamples;
+	aligned_float32_t _unused4;
+	aligned_uint32_t _unused5;
 	aligned_float32_t terrain_detail;
-	aligned_float32_t globalLightingFactor;
+	aligned_float32_t _unused6;
 	
 	aligned_uint32_t options; // RENDERER_OPTION_*
 	aligned_int32_t atmosphere_raymarch_steps;
@@ -258,8 +270,11 @@ struct RendererData {
 #define SET1_BINDING_LIGHTS_TLAS 1
 #define SET1_BINDING_RENDERER_DATA 2
 #define SET1_BINDING_BLOOM_IMAGE 3
-#define SET1_BINDING_CLOUD_IMAGE 4
-#define SET1_BINDING_CLOUD_SAMPLER 5
+#define SET1_BINDING_EMISSION_IMAGE 4
+#define SET1_IMG_DIFFUSE_ALBEDO 5
+#define SET1_IMG_SPECULAR_ALBEDO 6
+#define SET1_IMG_DLSS_PARTICLES 7
+#define SET1_IMG_DLSS_PARTICLES_OPACITY 8
 
 #define COORDS ivec2(gl_LaunchIDEXT.xy)
 #define WORLD2VIEWNORMAL transpose(inverse(mat3(renderer.viewMatrix)))
@@ -270,8 +285,11 @@ struct RendererData {
 	layout(set = 1, binding = SET1_BINDING_LIGHTS_TLAS) uniform accelerationStructureEXT tlas_lights;
 	layout(set = 1, binding = SET1_BINDING_RENDERER_DATA) uniform RendererDataBuffer { RendererData renderer; };
 	layout(set = 1, binding = SET1_BINDING_BLOOM_IMAGE, rgba8) uniform image2D img_bloom;
-	layout(set = 1, binding = SET1_BINDING_CLOUD_IMAGE, rgba32f) uniform image2D img_cloud[2];
-	layout(set = 1, binding = SET1_BINDING_CLOUD_SAMPLER) uniform sampler2D sampler_cloud;
+	layout(set = 1, binding = SET1_BINDING_EMISSION_IMAGE, rgba8) uniform image2D img_emission;
+	layout(set = 1, binding = SET1_IMG_DIFFUSE_ALBEDO, rgba8) uniform image2D img_diffuse_albedo;
+	layout(set = 1, binding = SET1_IMG_SPECULAR_ALBEDO, rgba8) uniform image2D img_specular_albedo;
+	layout(set = 1, binding = SET1_IMG_DLSS_PARTICLES, rgba8) uniform image2D img_dlss_particles;
+	layout(set = 1, binding = SET1_IMG_DLSS_PARTICLES_OPACITY, r8) uniform image2D img_dlss_particles_opacity;
 #endif
 
 // layout(set = 1, binding = 9, rgba32f) uniform image2D images[];
@@ -312,7 +330,8 @@ struct RayShadowPayload {
 #define RAY_SURFACE_METALLIC uint8_t(0x1)
 #define RAY_SURFACE_EMISSIVE uint8_t(0x2)
 #define RAY_SURFACE_TRANSPARENT uint8_t(0x4)
-//... 4 more
+#define RAY_SURFACE_SCREEN uint8_t(0x8)
+//... 3 more
 
 #define RAY_FLAG_RECURSION uint8_t(0x1)
 #define RAY_FLAG_AIM uint8_t(0x2)
@@ -666,6 +685,7 @@ struct RayShadowPayload {
 	
 	void RayOpaque() {
 		ray.colorAttenuation = vec3(0);
+		ray.hitDistance = gl_HitTEXT;
 		terminateRayEXT;
 	}
 	

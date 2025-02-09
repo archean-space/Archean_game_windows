@@ -49,6 +49,10 @@ float NormalDetail(in vec3 pos) {
 	return (SimplexFractal(pos, 3) + SimplexFractal(pos * 2, 3)) * 0.5;
 }
 
+float TextureDetail(in vec3 pos) {
+	return SimplexFractal(pos, 2);
+}
+
 #define BUMP(_noiseFunc, _position, _normal, _waveLength) {\
 	vec3 _tangentZ = normalize(cross(vec3(1,0,0), _normal));\
 	vec3 _tangentX = normalize(cross(_normal, _tangentZ));\
@@ -65,6 +69,7 @@ const float textureNearDistance = 0;
 const float textureFarDistance = 32;
 const float textureNormalMaxDistance = 32;
 const float textureMaxDistance = 500;
+const float textureDetailMaxDistance = 10;
 
 ChunkBuffer chunk = ChunkBuffer(GEOMETRY.material.data);
 
@@ -195,13 +200,14 @@ void main() {
 		vec2 uvFar = vec2(fract(uvD / FAR_TEXTURE_SPAN_METERS));
 		
 		float textureMaxDistanceRatio = pow(clamp(gl_HitTEXT / textureMaxDistance, 0, 1), 0.5);
+		float textureDetailMaxDistanceRatio = pow(clamp(gl_HitTEXT / textureDetailMaxDistance, 0, 1), 0.5);
 		float textureNearDistanceRatio = pow(smoothstep(textureNearDistance, textureFarDistance, gl_HitTEXT), 0.5);
 		
 		// Base terrain
 		vec3 surfaceNormal = normal;
 		BUMP(NormalDetail, localPosition * 20, surfaceNormal, 0.01)
 		normal = mix(surfaceNormal, normal, pow(clamp(gl_HitTEXT / textureNormalMaxDistance, 0, 1), 0.5));
-		albedo *= mix(pow(clamp(NormalDetail(localPosition * 100) + 1, 0, 1), 0.5), 1, textureMaxDistanceRatio);
+		albedo *= mix(pow(clamp(TextureDetail(localPosition * 50) + 1, 0, 1), 0.5), 1, textureDetailMaxDistanceRatio);
 		vec3 disturbedNormal = normal;
 		
 		vec3 color = albedo;
@@ -286,6 +292,8 @@ void main() {
 			}
 		}
 	}
+	
+	albedo *= vec3(0.9, 0.8, 0.7);
 	
 	// Reverse gamma
 	albedo = ReverseGamma(albedo);

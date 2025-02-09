@@ -92,11 +92,12 @@ void main() {
 					vec3 position = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * (float(i) + RandomFloat(seed)) / nbSamples * min(200, ray.hitDistance);
 					vec3 upDir = normalize(position - vec3(water.center));
 					vec3 relativeLightPosition = lightPosition - position;
-					vec3 lightDir = normalize(relativeLightPosition);
+					float lightDistance = length(relativeLightPosition);
+					vec3 lightDir = relativeLightPosition / lightDistance;
 					float nDotL = dot(upDir, lightDir);
 					if (nDotL > 0) {
 						LightSourceInstanceData lightSource = renderer.lightSources[lightID].instance;
-						float distanceToLightSurface = length(relativeLightPosition) - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
+						float distanceToLightSurface = lightDistance - abs(lightSource.innerRadius) - EPSILON * length(lightPosition);
 						if (distanceToLightSurface < lightSource.maxDistance) {
 							if (distanceToLightSurface > 100000) { // only sun lights
 								float effectiveLightIntensity = max(0, lightSource.power / (4 * PI * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD);
