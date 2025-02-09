@@ -504,6 +504,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			if (roughness == 0) {
 				rayDirection = reflectionDir;
 			} else {
+				if (rayBounceIndex > 2) return false;
 				if (dot(reflectionDir, rayNormal) <= 0) {
 					return false;
 				}
