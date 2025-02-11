@@ -33,6 +33,30 @@ vec3 MapUVToSphere(vec2 uv) {
 	return normalize(spherePoint);
 }
 
+vec3 EnvBRDFApprox2(vec3 SpecularColor, float alpha, float NoV) {
+	NoV = abs(NoV);
+	// [Ray Tracing Gems, Chapter 32]
+	vec4 X;
+	X.x = 1.f;
+	X.y = NoV;
+	X.z = NoV * NoV;
+	X.w = NoV * X.z;
+	vec4 Y;
+	Y.x = 1.f;
+	Y.y = alpha;
+	Y.z = alpha * alpha;
+	Y.w = alpha * Y.z;
+	mat2 M1 = mat2(0.99044f, -1.28514f, 1.29678f, -0.755907f);
+	mat3 M2 = mat3(1.f, 2.92338f, 59.4188f, 20.3225f, -27.0302f, 222.592f, 121.563f, 626.13f, 316.627f);
+	mat2 M3 = mat2(0.0365463f, 3.32707, 9.0632f, -9.04756);
+	mat3 M4 = mat3(1.f, 3.59685f, -1.36772f, 9.04401f, -16.3174f, 9.22949f, 5.56589f, 19.7886f, -20.2123f);
+	float bias = dot(M1 * X.xy, Y.xy) / dot(M2 * X.xyw, Y.xyw);
+	float scale = dot(M3 * X.xy, Y.xy) / dot(M4 * X.xzw, Y.xyw);
+	// This is a hack for specular reflectance of 0
+	bias *= clamp(SpecularColor.g * 50, 0, 1);
+	return SpecularColor * max(0, scale) + max(0, bias);
+}
+
 struct Reservoir {
 	vec3 lightPos;
 	vec3 lightColor;
@@ -162,10 +186,10 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				}
 				vec3 light = res[reservoirIndex].lightColor * res[reservoirIndex].lightIntensity / res[reservoirIndex].pdf;
 				float NdotL = clamp(dot(normal, shadowRayDir), 0, 1);
-				vec3 diffuse = albedo * NdotL;
+				vec3 diffuse = albedo * NdotL * (1 - metallic);
 				vec3 H = normalize(shadowRayDir - rayDirection);
 				float NdotH = clamp(dot(normal, H), 0, 1);
-				vec3 spec = pow(NdotH, specularHardness) * mix(vec3(1), albedo, metallic); // Fresnel is applied to specular from the caller
+				vec3 spec = pow(NdotH, specularHardness) * mix(vec3(1), albedo * sqrt(roughness), metallic); // Fresnel is applied to specular from the caller
 				directLighting += shadowRay.colorAttenuation * light * (diffuse + spec * specular);
 			}
 		}
@@ -406,7 +430,11 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 					imageStore(img_motion, COORDS, vec4(motion, rayHitDistance));
 					writeGBuffers = true;
 				}
-				imageStore(img_diffuse_albedo, COORDS, vec4(ray.color * 0.5 + 0.1, 0)); // DLSS RR does not like high contrast albedo here, it causes weird glowing colors...
+				if (!isEmissive) {
+					imageStore(img_diffuse_albedo, COORDS, vec4(ray.color * 0.9 + 0.05, 0)); // DLSS RR does not like high contrast albedo here, it causes weird glowing colors...
+					vec3 specularAlbedo = EnvBRDFApprox2(ray.color * 0.9 + 0.05, roughness*roughness, dot(rayDirection, rayNormal));
+					imageStore(img_specular_albedo, COORDS, vec4(specularAlbedo, 0));
+				}
 			}
 		}
 		
@@ -414,8 +442,8 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
-		if (raySurfaceFlags == 0) {
-			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, float(isMetallic), roughness, mix(fresnel*fresnel, 1.0, float(isMetallic)), mix(64, 8, float(isMetallic)));
+		if (raySurfaceFlags == 0 || (roughness > 0 && isMetallic)) {
+			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, float(isMetallic), roughness, mix(fresnel*fresnel, 1.0, float(isMetallic)), 64);
 		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, vec3(0), 0, 1, fresnel*fresnel, 64);
 		}
@@ -476,6 +504,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			if (roughness == 0) {
 				rayDirection = reflectionDir;
 			} else {
+				if (rayBounceIndex > 2) return false;
 				if (dot(reflectionDir, rayNormal) <= 0) {
 					return false;
 				}
@@ -492,8 +521,6 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			if (++glossyRayCount > 1) return false;
 			rayDirection = roughness == 0 && RandomFloat(seed) < fresnel ? reflectionDir : CosineSampleWorld(rayNormal);
 			rayOrigin = hitWorldPosition + rayNormal * EPSILON * max(rayHitDistance, 1);
-			float cosTheta = max(0, dot(rayDirection, rayNormal));
-			colorFilter *= 2; // approximation to simulate an additional bounce
 		} else {
 			return false;
 		}
@@ -555,10 +582,6 @@ void main() {
 	} else {
 		for (rayBounceIndex = 0; rayBounceIndex < max(1, renderer.rays_max_bounces); rayBounceIndex++) {
 			if (!TraceSolidRay(rayOrigin, rayDirection, colorFilter)) break;
-		}
-		if (renderer.globalLightingFactor < 1) {
-			vec4 composite = imageLoad(img_composite, COORDS);
-			imageStore(img_composite, COORDS, vec4(composite.rgb * renderer.globalLightingFactor*renderer.globalLightingFactor, mix(1, composite.a, renderer.globalLightingFactor)));
 		}
 	}
 	
@@ -664,7 +687,7 @@ void main() {
 			// /* Diffuse Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_diffuse_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
 			// /* Specular Albedo */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_specular_albedo, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
 			// /* Particles */ imageStore(img_normal_or_debug, COORDS, vec4(abs(imageLoad(img_dlss_particles, COORDS).rgb) * xenonRendererData.config.debugViewScale, 1));
-			/* Composite image */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_composite, COORDS).rgb, vec3(xenonRendererData.config.debugViewScale)), 1));
+			/* Composite image */ imageStore(img_normal_or_debug, COORDS, vec4(pow(imageLoad(img_composite, COORDS).rgb * 0.5, vec3(xenonRendererData.config.debugViewScale)), 1));
 			break;
 		case RENDERER_DEBUG_VIEWMODE_DISTANCE:
 			if (ray.renderableIndex == -1) break;

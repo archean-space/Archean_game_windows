@@ -466,10 +466,6 @@ void main() {
 		for (int i = 0; i < max(1, renderer.rays_max_bounces); i++) {
 			if (!TraceSolidRay(rayOrigin, rayDirection, colorFilter)) break;
 		}
-		if (renderer.globalLightingFactor < 1) {
-			vec4 composite = imageLoad(img_composite, COORDS);
-			imageStore(img_composite, COORDS, vec4(composite.rgb * renderer.globalLightingFactor*renderer.globalLightingFactor, mix(1, composite.a, renderer.globalLightingFactor)));
-		}
 	}
 	
 	// Trace environment audio

@@ -249,7 +249,7 @@ struct RendererData {
 	aligned_float32_t _unused4;
 	aligned_uint32_t _unused5;
 	aligned_float32_t terrain_detail;
-	aligned_float32_t globalLightingFactor;
+	aligned_float32_t _unused6;
 	
 	aligned_uint32_t options; // RENDERER_OPTION_*
 	aligned_int32_t atmosphere_raymarch_steps;

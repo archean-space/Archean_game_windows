@@ -32,7 +32,7 @@ struct XenonRendererConfig {
 	aligned_float32_t minExposure;
 	aligned_float32_t maxExposure;
 	
-	aligned_float32_t _unused;
+	aligned_float32_t globalLightingFactor;
 	aligned_i32vec2 screenSize;
 	
 	#ifdef __cplusplus
@@ -50,6 +50,7 @@ struct XenonRendererConfig {
 		, gamma(2.4f)
 		, minExposure(0.0001f)
 		, maxExposure(10.0f)
+		, globalLightingFactor(1.0f)
 		, screenSize(1.0f, 1.0f)
 		{}
 	#endif

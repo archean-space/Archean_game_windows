@@ -13,5 +13,5 @@ void main() {
 	ApplyToneMapping(starColor.rgb);
 	starColor.rgb = mix(vec3(0.5), starColor.rgb, contrast);
 	
-	out_post = vec4(starColor.rgb * pow(1-alpha, 4), 0);
+	out_post = vec4(starColor.rgb * pow(1-alpha, 4) * xenonRendererData.config.globalLightingFactor, 0);
 }

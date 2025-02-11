@@ -23,7 +23,7 @@ void main() {
 	vec2 uv = gl_FragCoord.xy / imageSize(img_emission);
 	float solidDepth = texture(sampler_depth, uv).r;
 	if (screenDepth < solidDepth) discard;
-	vec4 color = texture(textures[screen.monitorIndex], in_uv) * renderer.globalLightingFactor;
+	vec4 color = texture(textures[screen.monitorIndex], in_uv) * xenonRendererData.config.globalLightingFactor;
 	out_post = vec4(color.rgb, color.a * smoothstep(maxScreenDistance, maxScreenDistance/2, GetTrueDistanceFromDepthBuffer(screenDepth)));
 	// out_post = vec4(in_uv, 0, 1);
 }
