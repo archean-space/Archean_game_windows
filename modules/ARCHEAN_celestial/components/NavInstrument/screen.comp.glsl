@@ -32,7 +32,7 @@ float writeNumber(int n, vec2 uv) {
 }
 
 void main() {
-	vec4 overlay = imageLoad(images[imageIndex*2], ivec2(uv*vec2(imageSize(images[imageIndex*2]))));
+	vec4 overlay = imageLoad(images[imageIndex*2], ivec2(uv*(vec2(imageSize(images[imageIndex*2])) - 0.5)));
 	vec3 col = vec3(0);
 	
 	if (mode > 0 && screenPowerCycle > 0) {

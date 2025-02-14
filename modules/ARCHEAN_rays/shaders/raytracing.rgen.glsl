@@ -349,7 +349,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		if (raySurfaceFlags == 0/*RAY_SURFACE_DIFFUSE*/ || (roughness > 0 && metallic == 1)) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, metallic, roughness, mix(fresnel*fresnel, 1.0, metallic), mix(64, 8, metallic));
 			color += TraceAmbientLighting(hitWorldPosition, rayNormal, rayColor);
-		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1) {
+		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1 && isPrimaryRay) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, vec3(0), 0, 1, fresnel*fresnel, 64);
 		}
 		
@@ -411,7 +411,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		} else {
 			return false;
 		}
-		colorFilter *= rayColor * 0.9/*bounce attenuation*/;
+		colorFilter *= rayColor;
 		rayOrigin += rayDirection * EPSILON;
 		return true;
 	}

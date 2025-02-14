@@ -444,7 +444,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		// Direct Lighting (shadows with diffuse and specular lighting)
 		if (raySurfaceFlags == 0 || (roughness > 0 && isMetallic)) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, rayColor, float(isMetallic), roughness, mix(fresnel*fresnel, 1.0, float(isMetallic)), 64);
-		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1) {
+		} else if (raySurfaceFlags == RAY_SURFACE_TRANSPARENT && ior > 1 && isPrimaryRay) {
 			color += GetDirectLighting(hitWorldPosition, rayDirection, rayNormal, vec3(0), 0, 1, fresnel*fresnel, 64);
 		}
 		
