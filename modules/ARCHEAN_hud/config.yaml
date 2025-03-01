@@ -1,0 +1,17 @@
+components:
+  - ARCHEAN_hud.HudController
+
+recipes:
+
+  - label: HudController
+    context: crafter
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Connector: 1
+    output:
+      ARCHEAN_hud.HudController: 1

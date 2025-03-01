@@ -20,6 +20,7 @@ inventory_creative_backpack:
   ARCHEAN_hid.ThrottleLever: 50
   ARCHEAN_hid.Numpad: 50
   ARCHEAN_hid.Keyboard: 50
+  ARCHEAN_hud.HudController: 50
   ARCHEAN_avatar.PilotSeat: 50
   ARCHEAN_avatar.Bobblehead: 50
   ARCHEAN_battery.LowVoltageBattery: 50

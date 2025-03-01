@@ -438,7 +438,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			}
 		}
 		
-		vec3 color = rayColor * float(isEmissive && ((renderer.options & RENDERER_OPTION_RASTERIZE_SCREENS) == 0 || !isScreen || !writeGBuffers || rayHitDistance > 5/* half of maxScreenDistance in screen rasterizer*/));
+		vec3 color = rayColor * float(isEmissive);
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
