@@ -133,6 +133,7 @@ void main() {
 		
 		RayHitWorld(
 			/*albedo*/		vec3(1),
+			/*emission*/	vec3(0),
 			/*normal*/		surfaceNormal,
 			/*distance*/	gl_HitTEXT,
 			/*roughness*/	0,
@@ -154,6 +155,7 @@ void main() {
 		
 		RayHitWorld(
 			/*albedo*/		vec3(sqrt(max(0, dot(surfaceNormal, -gl_WorldRayDirectionEXT)))),
+			/*emission*/	vec3(0),
 			/*normal*/		surfaceNormal,
 			/*distance*/	gl_HitTEXT,
 			/*roughness*/	0,

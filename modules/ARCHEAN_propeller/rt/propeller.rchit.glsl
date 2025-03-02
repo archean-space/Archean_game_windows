@@ -19,6 +19,7 @@ void main() {
 	uint8_t flags = RAY_SURFACE_DIFFUSE;
 	RayHit(
 		/*albedo*/		color,
+		/*emission*/	vec3(0),
 		/*normal*/		normal,
 		/*distance*/	gl_HitTEXT,
 		/*roughness*/	1,

@@ -32,6 +32,7 @@ inventory_creative_backpack:
   ARCHEAN_wheel.SmallWheel: 50
   ARCHEAN_propeller.Propeller: 50
   ARCHEAN_rcs.RCS: 50
+  ARCHEAN_thruster.MiniThruster: 50
   ARCHEAN_thruster.SmallThruster: 50
   ARCHEAN_thruster.BigThruster: 50
   ARCHEAN_thruster.SmallTurboPump: 50
@@ -84,6 +85,7 @@ inventory_creative_backpack:
   ARCHEAN_machines.Crafter: 50
   ARCHEAN_machines.ItemConveyor: 50
   ARCHEAN_beep.Buzzer: 50
+  ARCHEAN_misc.Step: 50
   ARCHEAN_build.DataCable: 1
   ARCHEAN_build.LowVoltageCable: 1
   ARCHEAN_build.HighVoltageCable: 1

@@ -103,6 +103,20 @@
 				],
 				"metallicFactor":0
 			}
+		},
+		{
+			"doubleSided":true,
+			"name":"data-connector",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0,
+					0.05000019073486328,
+					0.5,
+					1
+				],
+				"metallicFactor":1,
+				"roughnessFactor":1
+			}
 		}
 	],
 	"meshes":[
@@ -150,6 +164,13 @@
 					},
 					"indices":11,
 					"material":5
+				},
+				{
+					"attributes":{
+						"POSITION":12
+					},
+					"indices":13,
+					"material":6
 				}
 			]
 		}
@@ -158,7 +179,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":35,
+			"count":67,
 			"max":[
 				0.125,
 				0,
@@ -180,7 +201,7 @@
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":48,
+			"count":104,
 			"max":[
 				0.11250847578048706,
 				0,
@@ -202,7 +223,7 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":279,
+			"count":293,
 			"max":[
 				0.1101866289973259,
 				0.0034521296620368958,
@@ -224,7 +245,7 @@
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":161,
+			"count":175,
 			"max":[
 				0.1101866289973259,
 				0.0034521296620368958,
@@ -246,7 +267,7 @@
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":527,
+			"count":827,
 			"max":[
 				0.08992233872413635,
 				0.0034521296620368958,
@@ -268,7 +289,7 @@
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":289,
+			"count":521,
 			"max":[
 				0.09728611260652542,
 				0.0034521296620368958,
@@ -286,85 +307,119 @@
 			"componentType":5123,
 			"count":1248,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":12,
+			"componentType":5126,
+			"count":376,
+			"max":[
+				0.02985917031764984,
+				-0.04999998211860657,
+				0.02985917031764984
+			],
+			"min":[
+				-0.02985917031764984,
+				-0.07064895331859589,
+				-0.02985917590558529
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":13,
+			"componentType":5123,
+			"count":1020,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":420,
+			"byteLength":804,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":288,
-			"byteOffset":420,
+			"byteOffset":804,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":576,
-			"byteOffset":708,
+			"byteLength":1248,
+			"byteOffset":1092,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":432,
-			"byteOffset":1284,
+			"byteOffset":2340,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":3348,
-			"byteOffset":1716,
+			"byteLength":3516,
+			"byteOffset":2772,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1722,
-			"byteOffset":5064,
+			"byteOffset":6288,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":1932,
-			"byteOffset":6788,
+			"byteLength":2100,
+			"byteOffset":8012,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1050,
-			"byteOffset":8720,
+			"byteOffset":10112,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":6324,
-			"byteOffset":9772,
+			"byteLength":9924,
+			"byteOffset":11164,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4692,
-			"byteOffset":16096,
+			"byteOffset":21088,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":3468,
-			"byteOffset":20788,
+			"byteLength":6252,
+			"byteOffset":25780,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2496,
-			"byteOffset":24256,
+			"byteOffset":32032,
+			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":4512,
+			"byteOffset":34528,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2040,
+			"byteOffset":39040,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":26752,
+			"byteLength":41080,
 			"uri":"HudController.bin"
 		}
 	]

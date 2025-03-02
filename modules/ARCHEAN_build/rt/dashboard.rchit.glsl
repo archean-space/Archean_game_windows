@@ -60,8 +60,9 @@ void main() {
 				} else {
 					MakeAimable(normal, uv1, data.monitorIndex);
 					vec4 tex = texture(textures[nonuniformEXT(data.monitorIndex)], uv1);
-					if ((surface.rayFlags & RAY_SURFACE_EMISSIVE) != 0) {
-						color.rgb = ReverseGamma(tex.rgb);
+					if ((surface.rayFlags & RAY_SURFACE_SCREEN) != 0) {
+						emission = ReverseGamma(tex.rgb);
+						color.rgb = vec3(1);
 					} else {
 						color.rgb = tex.rgb;
 					}
@@ -69,8 +70,8 @@ void main() {
 						surface.rayFlags = RAY_SURFACE_TRANSPARENT;
 						color.rgb = vec3(mix(vec3(1), tex.rgb, tex.a));
 					}
-					if ((surface.rayFlags & RAY_SURFACE_EMISSIVE) != 0) {
-						color.rgb *= data.emission / GetCurrentExposure();
+					if ((surface.rayFlags & RAY_SURFACE_SCREEN) != 0) {
+						emission *= data.emission / GetCurrentExposure();
 					}
 				}
 			} else {
@@ -79,6 +80,7 @@ void main() {
 			
 			RayHit(
 				/*albedo*/		color.rgb,
+				/*emission*/	emission,
 				/*normal*/		normal,
 				/*distance*/	gl_HitTEXT,
 				/*roughness*/	roughness,
@@ -100,34 +102,21 @@ void main() {
 			color.rgb *= pow(dot(oldNormal, normal), 100);
 		}
 		
-		if (dot(emission, emission) > 0) {
-			uint8_t flags = RAY_SURFACE_EMISSIVE;
-			if (color.a < 0) flags |= RAY_SURFACE_TRANSPARENT;
-			RayHit(
-				/*albedo*/		emission,
-				/*normal*/		normal,
-				/*distance*/	gl_HitTEXT,
-				/*roughness*/	roughness,
-				/*ior*/			ior,
-				flags
-			);
-		} else {
-			uint8_t flags = RAY_SURFACE_DIFFUSE;
-			if (metallic > 0) flags |= RAY_SURFACE_METALLIC;
-			else if (color.a < 1) {
-				flags |= RAY_SURFACE_TRANSPARENT;
-				color.rgb *= 1 - color.a;
-			}
-			RayHit(
-				/*albedo*/		color.rgb,
-				/*normal*/		normal,
-				/*distance*/	gl_HitTEXT,
-				/*roughness*/	roughness,
-				/*ior*/			ior,
-				flags
-			);
+		uint8_t flags = RAY_SURFACE_DIFFUSE;
+		if (metallic > 0) flags |= RAY_SURFACE_METALLIC;
+		else if (color.a < 1) {
+			flags |= RAY_SURFACE_TRANSPARENT;
+			color.rgb *= 1 - color.a;
 		}
-		
+		RayHit(
+			/*albedo*/		color.rgb,
+			/*emission*/	emission,
+			/*normal*/		normal,
+			/*distance*/	gl_HitTEXT,
+			/*roughness*/	roughness,
+			/*ior*/			ior,
+			flags
+		);
 	}
 	
 }

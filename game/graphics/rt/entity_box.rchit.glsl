@@ -30,32 +30,19 @@ void main() {
 		color.rgb *= pow(dot(oldNormal, normal), 100);
 	}
 	
-	if (dot(emission, emission) > 0) {
-		uint8_t flags = RAY_SURFACE_EMISSIVE;
-		if (color.a < 0) flags |= RAY_SURFACE_TRANSPARENT;
-		RayHit(
-			/*albedo*/		emission,
-			/*normal*/		normal,
-			/*distance*/	gl_HitTEXT,
-			/*roughness*/	roughness,
-			/*ior*/			ior,
-			flags
-		);
-	} else {
-		uint8_t flags = RAY_SURFACE_DIFFUSE;
-		if (metallic > 0) flags |= RAY_SURFACE_METALLIC;
-		else if (color.a < 1) {
-			flags |= RAY_SURFACE_TRANSPARENT;
-			color.rgb *= 1 - color.a;
-		}
-		RayHit(
-			/*albedo*/		color.rgb,
-			/*normal*/		normal,
-			/*distance*/	gl_HitTEXT,
-			/*roughness*/	roughness,
-			/*ior*/			ior,
-			flags
-		);
+	uint8_t flags = RAY_SURFACE_DIFFUSE;
+	if (metallic > 0) flags |= RAY_SURFACE_METALLIC;
+	else if (color.a < 1) {
+		flags |= RAY_SURFACE_TRANSPARENT;
+		color.rgb *= 1 - color.a;
 	}
-	
+	RayHit(
+		/*albedo*/		color.rgb,
+		/*emission*/	emission,
+		/*normal*/		normal,
+		/*distance*/	gl_HitTEXT,
+		/*roughness*/	roughness,
+		/*ior*/			ior,
+		flags
+	);
 }

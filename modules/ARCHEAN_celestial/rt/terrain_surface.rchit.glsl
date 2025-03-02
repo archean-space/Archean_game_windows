@@ -301,24 +301,13 @@ void main() {
 	// Fix black specs caused by skirts
 	if (dot(normal, vec3(0,1,0)) < 0.15) normal = vec3(0,1,0);
 
-	if (dot(emission, emission) > 0) {
-		RayHit(
-			/*albedo*/		emission,
-			/*normal*/		normal,
-			/*distance*/	gl_HitTEXT,
-			/*roughness*/	1.0,
-			/*ior*/			mix(1.01, 2.0, specular),
-			RAY_SURFACE_EMISSIVE
-		);
-	} else {
-		RayHit(
-			/*albedo*/		albedo,
-			/*normal*/		normal,
-			/*distance*/	gl_HitTEXT,
-			/*roughness*/	1.0,
-			/*ior*/			mix(1.01, 2.0, specular),
-			RAY_SURFACE_DIFFUSE
-		);
-	}
-	
+	RayHit(
+		/*albedo*/		albedo,
+		/*emission*/	emission,
+		/*normal*/		normal,
+		/*distance*/	gl_HitTEXT,
+		/*roughness*/	1.0,
+		/*ior*/			mix(1.01, 2.0, specular),
+		RAY_SURFACE_DIFFUSE
+	);
 }
