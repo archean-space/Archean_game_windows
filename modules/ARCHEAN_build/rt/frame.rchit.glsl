@@ -24,6 +24,7 @@ void main() {
 	
 	RayHit(
 		/*albedo*/		color.rgb,
+		/*emission*/	vec3(0),
 		/*normal*/		normal,
 		/*distance*/	gl_HitTEXT,
 		/*roughness*/	1,

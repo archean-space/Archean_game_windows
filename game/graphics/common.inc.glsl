@@ -309,6 +309,7 @@ struct RendererData {
 
 struct RayPayload {
 	vec3 color;
+	vec3 emission;
 	float hitDistance; // 0 for ambient lighting rays for liquids
 	vec3 normal;
 	int32_t renderableIndex;
@@ -328,10 +329,9 @@ struct RayShadowPayload {
 
 #define RAY_SURFACE_DIFFUSE uint8_t(0) // no flags
 #define RAY_SURFACE_METALLIC uint8_t(0x1)
-#define RAY_SURFACE_EMISSIVE uint8_t(0x2)
-#define RAY_SURFACE_TRANSPARENT uint8_t(0x4)
-#define RAY_SURFACE_SCREEN uint8_t(0x8)
-//... 3 more
+#define RAY_SURFACE_TRANSPARENT uint8_t(0x2)
+#define RAY_SURFACE_SCREEN uint8_t(0x4)
+//... 4 more
 
 #define RAY_FLAG_RECURSION uint8_t(0x1)
 #define RAY_FLAG_AIM uint8_t(0x2)
@@ -575,8 +575,9 @@ struct RayShadowPayload {
 
 	layout(location = 0) rayPayloadInEXT RayPayload ray;
 	
-	void RayHit(in vec3 color, in vec3 localNormal, in float hitDistance, in float roughness, in float ior, uint8_t surfaceFlags) {
+	void RayHit(in vec3 color, in vec3 emission, in vec3 localNormal, in float hitDistance, in float roughness, in float ior, uint8_t surfaceFlags) {
 		ray.color = color;
+		ray.emission = emission;
 		ray.hitDistance = hitDistance;
 		ray.normal = normalize(MODEL2WORLDNORMAL * localNormal);
 		ray.renderableIndex = gl_InstanceID;
@@ -586,8 +587,9 @@ struct RayShadowPayload {
 		ray.surfaceFlags = surfaceFlags;
 	}
 	
-	void RayHitWorld(in vec3 color, in vec3 worldNormal, in float hitDistance, in float roughness, in float ior, uint8_t surfaceFlags) {
+	void RayHitWorld(in vec3 color, in vec3 emission, in vec3 worldNormal, in float hitDistance, in float roughness, in float ior, uint8_t surfaceFlags) {
 		ray.color = color;
+		ray.emission = emission;
 		ray.hitDistance = hitDistance;
 		ray.normal = worldNormal;
 		ray.renderableIndex = gl_InstanceID;

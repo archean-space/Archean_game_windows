@@ -1,4 +1,5 @@
 components:
+  - ARCHEAN_thruster.MiniThruster
   - ARCHEAN_thruster.SmallThruster
   - ARCHEAN_thruster.BigThruster
   - ARCHEAN_thruster.SmallTurboPump
@@ -6,6 +7,20 @@ components:
 
 recipes:
 
+  - label: MiniThruster
+    context: crafter
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_parts.Disk: 10
+      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_celestial.Iron: 1
+    output:
+      ARCHEAN_thruster.MiniThruster: 1
+  
   - label: SmallThruster
     context: crafter
     category: components

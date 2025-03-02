@@ -226,7 +226,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
 		
-		vec3 color = rayColor * float(raySurfaceFlags & RAY_SURFACE_EMISSIVE);
+		vec3 color = ray.emission;
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
@@ -342,7 +342,7 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 			}
 		}
 		
-		vec3 color = rayColor * float(raySurfaceFlags & RAY_SURFACE_EMISSIVE);
+		vec3 color = ray.emission;
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)

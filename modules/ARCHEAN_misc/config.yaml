@@ -1,0 +1,13 @@
+components:
+  - ARCHEAN_misc.Step
+
+recipes:
+
+  - label: Step
+    context: crafter
+    category: components
+    time: 0.5
+    input:
+      ARCHEAN_parts.Plastic: 20
+    output:
+      ARCHEAN_misc.Step: 1

@@ -288,7 +288,7 @@ bool TraceGlossyRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 co
 		uint8_t raySurfaceFlags = ray.surfaceFlags;
 		float rayHitDistance = ray.hitDistance;
 		
-		vec3 color = rayColor * float(raySurfaceFlags & RAY_SURFACE_EMISSIVE);
+		vec3 color = ray.emission;
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)
@@ -405,8 +405,6 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 		bool isMetallic = (ray.surfaceFlags & RAY_SURFACE_METALLIC) != 0;
 		bool isTransparent = (raySurfaceFlags & RAY_SURFACE_TRANSPARENT) != 0;
 		bool isLiquid = (ray.rayFlags & RAY_FLAG_FLUID) != 0;
-		bool isEmissive = (raySurfaceFlags & RAY_SURFACE_EMISSIVE) != 0;
-		bool isScreen = (raySurfaceFlags & RAY_SURFACE_SCREEN) != 0;
 		
 		// Write Motion Vectors
 		bool writeGBuffers = false;
@@ -430,15 +428,13 @@ bool TraceSolidRay(inout vec3 rayOrigin, inout vec3 rayDirection, inout vec3 col
 					imageStore(img_motion, COORDS, vec4(motion, rayHitDistance));
 					writeGBuffers = true;
 				}
-				if (!isEmissive) {
-					imageStore(img_diffuse_albedo, COORDS, vec4(ray.color * 0.9 + 0.05, 0)); // DLSS RR does not like high contrast albedo here, it causes weird glowing colors...
-					vec3 specularAlbedo = EnvBRDFApprox2(ray.color * 0.9 + 0.05, roughness*roughness, dot(rayDirection, rayNormal));
-					imageStore(img_specular_albedo, COORDS, vec4(specularAlbedo, 0));
-				}
+				imageStore(img_diffuse_albedo, COORDS, vec4(ray.color * 0.9 + 0.05, 0)); // DLSS RR does not like high contrast albedo here, it causes weird glowing colors...
+				vec3 specularAlbedo = EnvBRDFApprox2(ray.color * 0.9 + 0.05, roughness*roughness, dot(rayDirection, rayNormal));
+				imageStore(img_specular_albedo, COORDS, vec4(specularAlbedo, 0));
 			}
 		}
 		
-		vec3 color = rayColor * float(isEmissive);
+		vec3 color = ray.emission;
 		float fresnel = Fresnel(rayDirection, rayNormal, ior);
 		
 		// Direct Lighting (shadows with diffuse and specular lighting)

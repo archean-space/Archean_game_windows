@@ -46,6 +46,7 @@ void main() {
 		) * 0.5 + 0.5;
 		
 		color *= texture(textures[tex], uv);
+		color.rgb = ApplyGamma(color.rgb);
 		
 		MakeAimable(normal, uv, 0);
 	
@@ -61,6 +62,7 @@ void main() {
 	}
 	RayHit(
 		/*albedo*/		color.rgb,
+		/*emission*/	vec3(0),
 		/*normal*/		normal,
 		/*distance*/	gl_HitTEXT,
 		/*roughness*/	roughness,
