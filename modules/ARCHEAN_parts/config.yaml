@@ -154,3 +154,14 @@ recipes:
       ARCHEAN_parts.Diode: 1
     output:
       ARCHEAN_parts.LED: 1
+
+  - label: Fuse
+    context: crafter
+    category: parts
+    time: 1
+    input:
+      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_parts.Wire: 1
+    output:
+      ARCHEAN_parts.Fuse: 1
+  
