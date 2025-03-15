@@ -60,6 +60,7 @@ inventory_creative_backpack:
   ARCHEAN_sensor1.AltitudeSensor: 50
   ARCHEAN_sensor1.SpeedSensor: 50
   ARCHEAN_sensor1.DensitySensor: 50
+  ARCHEAN_sensor1.TemperatureSensor: 50
   ARCHEAN_sensor1.TiltSensor: 50
   ARCHEAN_sensor1.LinearVelocitySensor: 50
   ARCHEAN_sensor1.AngularVelocitySensor: 50
