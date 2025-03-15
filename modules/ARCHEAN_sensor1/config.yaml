@@ -88,3 +88,15 @@ recipes:
       ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.DensitySensor: 1
+
+  - label: TemperatureSensor
+    context: crafter
+    category: components
+    time: 1
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Magnet: 1
+    output:
+      ARCHEAN_sensor1.TemperatureSensor: 1
