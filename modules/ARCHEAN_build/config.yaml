@@ -1,33 +1,55 @@
-construction:
-  - ARCHEAN_build.SteelBeam
-  - ARCHEAN_build.ConcreteBlock
-  - ARCHEAN_build.CompositeBlock
-  - ARCHEAN_build.SteelBlock
-  - ARCHEAN_build.AluminiumBlock
-  - ARCHEAN_build.GlassBlock
-  - ARCHEAN_build.LeadBlock
+items:
+  ARCHEAN_build.SteelBeam:
+    max_stack: 10000
 
-tools:
-  - ARCHEAN_build.ConstructorTool
-  - ARCHEAN_build.DestructorTool
-  - ARCHEAN_build.BlueprintTool
-  - ARCHEAN_build.PaintTool
-  - ARCHEAN_build.LabelTool
-  - ARCHEAN_build.DashboardTool
+  ARCHEAN_build.ConcreteBlock:
+    max_stack: 10000
+  ARCHEAN_build.CompositeBlock:
+    max_stack: 10000
+  ARCHEAN_build.SteelBlock:
+    max_stack: 10000
+  ARCHEAN_build.AluminiumBlock:
+    max_stack: 10000
+  ARCHEAN_build.GlassBlock:
+    max_stack: 10000
+  ARCHEAN_build.LeadBlock:
+    max_stack: 256
 
-spools:
-  - ARCHEAN_build.DataCable
-  - ARCHEAN_build.LowVoltageCable
-  - ARCHEAN_build.HighVoltageCable
-  - ARCHEAN_build.FluidPipe
-  - ARCHEAN_build.ItemConduit
+  ARCHEAN_build.ConstructorTool:
+    max_stack: 1
+  ARCHEAN_build.DestructorTool:
+    max_stack: 1
+  ARCHEAN_build.BlueprintTool:
+    max_stack: 1
+  ARCHEAN_build.PaintTool:
+    max_stack: 1
+  ARCHEAN_build.LabelTool:
+    max_stack: 1
+  ARCHEAN_build.DashboardTool:
+    max_stack: 1
 
-components:
-  - ARCHEAN_build.SmallPivot
-  - ARCHEAN_build.SmallHinge
-  - ARCHEAN_build.DockableDoor
-  - ARCHEAN_build.DockingPort
-  - ARCHEAN_build.Volume
+  ARCHEAN_build.DataCable:
+    max_stack: 1
+  ARCHEAN_build.LowVoltageCable:
+    max_stack: 1
+  ARCHEAN_build.HighVoltageCable:
+    max_stack: 1
+  ARCHEAN_build.FluidPipe:
+    max_stack: 1
+  ARCHEAN_build.ItemConduit:
+    max_stack: 1
+
+  ARCHEAN_build.SmallPivot:
+    max_stack: 256
+  ARCHEAN_build.SmallHinge:
+    max_stack: 256
+  ARCHEAN_build.DockableDoor:
+    max_stack: 8
+  ARCHEAN_build.DockingPort:
+    max_stack: 64
+  ARCHEAN_build.Volume:
+    max_stack: 256
+
 
 recipes:
 
@@ -36,8 +58,8 @@ recipes:
     category: construction
     time: 0.1
     input:
-      ARCHEAN_celestial.Iron: 1
-      ARCHEAN_celestial.Carbon: 1
+      ARCHEAN_celestial.Iron: 9990
+      ARCHEAN_celestial.Carbon: 10
     output:
       ARCHEAN_build.SteelBeam: 1
   
@@ -46,7 +68,7 @@ recipes:
     category: construction
     time: 0.1
     input:
-      ARCHEAN_celestial.Silicon: 1
+      ARCHEAN_celestial.Silicon: 10000
       H2O: 0.005
       O2: 0.001
     output:
@@ -66,7 +88,7 @@ recipes:
     category: construction
     time: 0.1
     input:
-      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Iron: 1000
       ARCHEAN_celestial.Carbon: 1
     output:
       ARCHEAN_build.SteelBlock: 1
@@ -76,7 +98,7 @@ recipes:
     category: construction
     time: 0.1
     input:
-      ARCHEAN_celestial.Aluminium: 1
+      ARCHEAN_celestial.Aluminium: 500
     output:
       ARCHEAN_build.AluminiumBlock: 1
   
@@ -85,7 +107,7 @@ recipes:
     category: construction
     time: 0.1
     input:
-      ARCHEAN_celestial.Silicon: 10
+      ARCHEAN_celestial.Silicon: 1000
       O2: 0.001
       H2: 0.001
     output:
@@ -96,7 +118,7 @@ recipes:
     category: construction
     time: 1
     input:
-      ARCHEAN_celestial.Lead: 1
+      ARCHEAN_celestial.Lead: 150000
     output:
       ARCHEAN_build.LeadBlock: 1
 
@@ -105,7 +127,7 @@ recipes:
     category: tools
     time: 10
     input:
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Iron: 1000
       ARCHEAN_parts.Screw: 10
     output:
       ARCHEAN_build.ConstructorTool: 1
@@ -115,7 +137,7 @@ recipes:
     category: tools
     time: 10
     input:
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_build.DestructorTool: 1
   
@@ -125,10 +147,8 @@ recipes:
     time: 10
     input:
       ARCHEAN_celestial.Iron: 1000
-      ARCHEAN_parts.Screw: 100
-      ARCHEAN_parts.LED: 10
-      ARCHEAN_parts.Circuit: 10
-      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Circuit: 1
     output:
       ARCHEAN_build.BlueprintTool: 1
     
@@ -137,7 +157,7 @@ recipes:
     category: tools
     time: 10
     input:
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Iron: 1000
       ARCHEAN_parts.Screw: 10
     output:
       ARCHEAN_build.PaintTool: 1
@@ -147,7 +167,7 @@ recipes:
     category: tools
     time: 10
     input:
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Iron: 1000
       ARCHEAN_parts.Screw: 10
     output:
       ARCHEAN_build.LabelTool: 1
@@ -157,10 +177,10 @@ recipes:
     category: tools
     time: 10
     input:
-      ARCHEAN_celestial.Iron: 100
-      ARCHEAN_parts.Screw: 100
+      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_parts.Screw: 10
       ARCHEAN_parts.LED: 10
-      ARCHEAN_parts.Circuit: 10
+      ARCHEAN_parts.Circuit: 1
     output:
       ARCHEAN_build.DashboardTool: 1
 
@@ -187,7 +207,7 @@ recipes:
   - label: HighVoltageCable
     context: crafter
     category: spools
-    time: 30
+    time: 10
     input:
       ARCHEAN_parts.Wire: 200
       ARCHEAN_parts.Connector: 10
@@ -197,9 +217,9 @@ recipes:
   - label: FluidPipe
     context: crafter
     category: spools
-    time: 30
+    time: 10
     input:
-      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_celestial.Iron: 100
       ARCHEAN_parts.Connector: 10
     output:
       ARCHEAN_build.FluidPipe: 1
@@ -207,10 +227,9 @@ recipes:
   - label: ItemConduit
     context: crafter
     category: spools
-    time: 30
+    time: 10
     input:
       ARCHEAN_celestial.Iron: 100
-      ARCHEAN_celestial.Copper: 100
       ARCHEAN_parts.Connector: 10
     output:
       ARCHEAN_build.ItemConduit: 1
@@ -223,7 +242,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 10
       ARCHEAN_parts.Connector: 2
-      ARCHEAN_parts.Magnet: 1
       ARCHEAN_parts.Motor: 1
     output:
       ARCHEAN_build.SmallPivot: 1
@@ -236,7 +254,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 10
       ARCHEAN_parts.Connector: 2
-      ARCHEAN_parts.Magnet: 1
       ARCHEAN_parts.Motor: 1
     output:
       ARCHEAN_build.SmallHinge: 1
@@ -246,11 +263,10 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 40
       ARCHEAN_parts.Screw: 10
       ARCHEAN_parts.Connector: 5
-      ARCHEAN_parts.Magnet: 1
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_parts.Magnet: 10
     output:
       ARCHEAN_build.DockingPort: 1
     
@@ -259,17 +275,14 @@ recipes:
     category: components
     time: 30
     input:
-      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Casing: 240
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 6
       ARCHEAN_parts.Motor: 2
-      ARCHEAN_parts.Magnet: 10
-      ARCHEAN_parts.Panel: 2
       ARCHEAN_parts.Circuit: 1
       ARCHEAN_parts.LED: 10
-      ARCHEAN_celestial.Iron: 1000
-      ARCHEAN_celestial.Aluminium: 10
       ARCHEAN_build.DockingPort: 2
+      ARCHEAN_build.SmallHinge: 4
     output:
       ARCHEAN_build.DockableDoor: 1
 
@@ -279,10 +292,7 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.LED: 10
     output:
       ARCHEAN_build.Volume: 1

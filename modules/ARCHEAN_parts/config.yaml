@@ -1,24 +1,37 @@
-parts:
-  - ARCHEAN_parts.Screw
-  - ARCHEAN_parts.Plastic
-  - ARCHEAN_parts.Wire
-  - ARCHEAN_parts.Connector
-  - ARCHEAN_parts.Magnet
-  - ARCHEAN_parts.Diode
-  - ARCHEAN_parts.Capacitor
-  - ARCHEAN_parts.Panel
-  - ARCHEAN_parts.Disk
-  - ARCHEAN_parts.Casing
-  - ARCHEAN_parts.Circuit
-  - ARCHEAN_parts.Motor
-  - ARCHEAN_parts.LED
+items:
+  ARCHEAN_parts.Screw:
+    max_stack: 1024
+  ARCHEAN_parts.Plastic:
+    max_stack: 1024
+  ARCHEAN_parts.Wire:
+    max_stack: 1024
+  ARCHEAN_parts.Connector:
+    max_stack: 1024
+  ARCHEAN_parts.Magnet:
+    max_stack: 256
+  ARCHEAN_parts.Diode:
+    max_stack: 1024
+  ARCHEAN_parts.Capacitor:
+    max_stack: 1024
+  ARCHEAN_parts.Panel:
+    max_stack: 256
+  ARCHEAN_parts.Disk:
+    max_stack: 256
+  ARCHEAN_parts.Casing:
+    max_stack: 256
+  ARCHEAN_parts.Circuit:
+    max_stack: 1024
+  ARCHEAN_parts.Motor:
+    max_stack: 256
+  ARCHEAN_parts.LED:
+    max_stack: 1024
 
 recipes:
 
   - label: Screw
     context: crafter
     category: parts
-    time: 0.1
+    time: 0.01
     input:
       ARCHEAN_celestial.Iron: 1
     output:
@@ -27,10 +40,10 @@ recipes:
   - label: Plastic
     context: crafter
     category: parts
-    time: 0.1
+    time: 0.01
     input:
-      ARCHEAN_celestial.Carbon: 1
-      ARCHEAN_celestial.Silicon: 1
+      ARCHEAN_celestial.Carbon: 125
+      ARCHEAN_celestial.Silicon: 125
       O2: 0.001
       H2: 0.001
     output:
@@ -39,7 +52,7 @@ recipes:
   - label: Wire
     context: crafter
     category: parts
-    time: 0.1
+    time: 0.01
     input:
       ARCHEAN_celestial.Copper: 1
       ARCHEAN_parts.Plastic: 1
@@ -53,40 +66,36 @@ recipes:
     input:
       ARCHEAN_parts.Wire: 1
       ARCHEAN_parts.Plastic: 1
-      ARCHEAN_celestial.Iron: 1
     output:
       ARCHEAN_parts.Connector: 1
   
   - label: Magnet
     context: crafter
     category: parts
-    time: 5
+    time: 1
     input:
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_parts.Magnet: 1
   
   - label: Diode
     context: crafter
     category: parts
-    time: 1
+    time: 0.01
     input:
       ARCHEAN_celestial.Silicon: 1
-      ARCHEAN_celestial.Iron: 1
       ARCHEAN_parts.Wire: 1
-      ARCHEAN_parts.Plastic: 1
     output:
       ARCHEAN_parts.Diode: 1
   
   - label: Capacitor
     context: crafter
     category: parts
-    time: 1
+    time: 0.05
     input:
-      ARCHEAN_celestial.Iron: 1
-      ARCHEAN_celestial.Silicon: 1
-      ARCHEAN_parts.Wire: 1
-      ARCHEAN_celestial.Carbon: 1
+      ARCHEAN_celestial.Iron: 10
+      ARCHEAN_celestial.Silicon: 40
+      ARCHEAN_celestial.Carbon: 50
     output:
       ARCHEAN_parts.Capacitor: 1
   
@@ -95,7 +104,7 @@ recipes:
     category: parts
     time: 1
     input:
-      ARCHEAN_celestial.Iron: 10
+      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_parts.Panel: 1
   
@@ -104,16 +113,16 @@ recipes:
     category: parts
     time: 1
     input:
-      ARCHEAN_celestial.Iron: 10
+      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_parts.Disk: 1
   
   - label: Casing
     context: crafter
     category: parts
-    time: 5
+    time: 0.1
     input:
-      ARCHEAN_celestial.Iron: 100
+      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_parts.Casing: 1
   
@@ -123,10 +132,9 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Diode: 10
-      ARCHEAN_parts.Capacitor: 10
+      ARCHEAN_parts.Capacitor: 2
       ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.Plastic: 1
-      ARCHEAN_parts.Panel: 1
       ARCHEAN_celestial.Silicon: 100
     output:
       ARCHEAN_parts.Circuit: 1

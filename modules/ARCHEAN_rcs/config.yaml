@@ -1,5 +1,7 @@
-components:
-  - ARCHEAN_rcs.RCS
+items:
+  ARCHEAN_rcs.RCS:
+    max_stack: 256
+
 recipes:
   - label: RCS
     context: crafter
@@ -7,8 +9,7 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 1
-      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_celestial.Aluminium: 10000
     output:
       ARCHEAN_rcs.RCS: 1

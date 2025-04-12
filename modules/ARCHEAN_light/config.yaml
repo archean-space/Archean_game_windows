@@ -1,5 +1,8 @@
-components:
-  - ARCHEAN_light.SpotLight
+items:
+  ARCHEAN_light.SpotLight:
+    max_stack: 256
+  ARCHEAN_light.Lamp:
+    max_stack: 256
 
 recipes:
 
@@ -9,7 +12,6 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 10
       ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.LED: 100
     output:
@@ -21,7 +23,6 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 10
       ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.LED: 100
     output:

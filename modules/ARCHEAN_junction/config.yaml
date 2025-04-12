@@ -1,16 +1,33 @@
-components:
-  - ARCHEAN_junction.FluidJunction
-  - ARCHEAN_junction.DataJunction
-  - ARCHEAN_junction.LowVoltageJunction
-  - ARCHEAN_junction.HighVoltageJunction
-  - ARCHEAN_junction.ItemJunction
-  - ARCHEAN_junction.LowVoltageRelay
-  - ARCHEAN_junction.HighVoltageRelay
-  - ARCHEAN_junction.PowerConverter
-  - ARCHEAN_junction.DataBridge
-  - ARCHEAN_junction.LowVoltageBridge
-  - ARCHEAN_junction.HighVoltageBridge
-  - ARCHEAN_junction.FluidBridge
+items:
+  ARCHEAN_junction.FluidJunction:
+    max_stack: 256
+  ARCHEAN_junction.DataJunction:
+    max_stack: 256
+  ARCHEAN_junction.LowVoltageJunction:
+    max_stack: 256
+  ARCHEAN_junction.HighVoltageJunction:
+    max_stack: 256
+  ARCHEAN_junction.ItemJunction:
+    max_stack: 256
+  ARCHEAN_junction.LowVoltageRelay:
+    max_stack: 256
+  ARCHEAN_junction.HighVoltageRelay:
+    max_stack: 256
+  ARCHEAN_junction.PowerConverter:
+    max_stack: 256
+  ARCHEAN_junction.DataBridge:
+    max_stack: 256
+  ARCHEAN_junction.LowVoltageBridge:
+    max_stack: 256
+  ARCHEAN_junction.HighVoltageBridge:
+    max_stack: 256
+  ARCHEAN_junction.FluidBridge:
+    max_stack: 256
+  ARCHEAN_junction.ItemBridge:
+    max_stack: 256
+  ARCHEAN_junction.FluidValve:
+    max_stack: 256
+
 
 recipes:
 
@@ -19,7 +36,7 @@ recipes:
     category: components
     time: 1
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 20
       ARCHEAN_parts.Connector: 5
     output:
       ARCHEAN_junction.FluidJunction: 1
@@ -59,7 +76,7 @@ recipes:
     category: components
     time: 1
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 20
       ARCHEAN_parts.Connector: 5
     output:
       ARCHEAN_junction.ItemJunction: 1
@@ -89,9 +106,8 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 4
       ARCHEAN_parts.Connector: 2
-      ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.Circuit: 1
       ARCHEAN_parts.Magnet: 1
     output:
@@ -154,7 +170,5 @@ recipes:
     input:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 3
-      ARCHEAN_parts.Wire: 10
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_junction.FluidValve: 1

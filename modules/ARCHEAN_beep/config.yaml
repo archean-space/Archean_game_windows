@@ -1,5 +1,7 @@
-components:
-  - ARCHEAN_beep.Buzzer
+items:
+  ARCHEAN_beep.Buzzer:
+    max_stack: 256
+
 recipes:
   - label: Buzzer
     context: crafter
@@ -8,8 +10,7 @@ recipes:
     input:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
-      ARCHEAN_parts.Magnet: 1
-      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Magnet: 4
       ARCHEAN_parts.Wire: 10
     output:
       ARCHEAN_beep.Buzzer: 1

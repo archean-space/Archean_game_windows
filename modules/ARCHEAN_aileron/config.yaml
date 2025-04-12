@@ -1,5 +1,7 @@
-components:
-  - ARCHEAN_aileron.Aileron
+items:
+  ARCHEAN_aileron.Aileron:
+    max_stack: 256
+
 recipes:
   - label: Aileron
     context: crafter
@@ -9,6 +11,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 1
-      ARCHEAN_celestial.Aluminium: 10
+      ARCHEAN_celestial.Aluminium: 9000
     output:
       ARCHEAN_aileron.Aileron: 1

@@ -2,6 +2,10 @@ var $cursor = 0
 var $currentCraft:text
 var $categories:text
 
+var $container:text
+array $autocraftList:text
+array $autocraftQty:number
+
 var $upX : number
 var $upY : number
 var $downX : number
@@ -24,12 +28,31 @@ function @clearError()
 		@screenDirty()
 	$error = 0
 
+recursive function @autoCraft($item:text, $n:number)
+	var $recipe = get_recipe("crafter", $item)
+	if $recipe
+		$autocraftList.append($item)
+		$autocraftQty.append($n)
+		$container.$item += $n
+		foreach $recipe ($k,$v)
+			$container.$k -= $v * $n
+			if $container.$k < 0
+				recurse($k, -$container.$k)
+				if $error
+					break
+	elseif $container.$item < $n && $item != "H2" && $item != "O2" && $item != "H2O"
+		$autocraftList.clear()
+		$autocraftQty.clear()
+		@error()
+
 function @drawScreen()
 	$dirty = 0
 	blank()
 	text_size(1)
 	
 	var $p = progress
+	if size($autocraftList)
+		$p = ($p + 1) / (size($autocraftList) + 1)
 	
 	if time < $initTime+4
 		if time > $initTime+1
@@ -46,18 +69,25 @@ function @drawScreen()
 		if $open
 			array $craftArray:text
 			$craftArray.from(get_recipes("crafter", $category), ",")
-			if $category == "coffee"
-				$craftArray.append("Americano","Espresso","Mocha")
 			foreach $craftArray ($index, $craft)
 				if button(0,(12*$dpIndex)-$cursor,color(10,10,10),screen_w-17,11)
 					if $currentCraft == $craft
 						$currentCraft = ""
 						cancel_craft()
+						$autocraftList.clear()
+						$autocraftQty.clear()
 					else
 						cancel_craft()
-						start_craft($craft)
+						$autocraftList.clear()
+						$autocraftQty.clear()
 						$currentCraft = $craft
 						@clearError()
+						if $container; Autocrafting when a container is connected
+							@autoCraft($craft, 1)
+							if size($autocraftList)
+								start_craft($autocraftList.last)
+						else
+							start_craft($craft)
 					@screenDirty()
 				if $currentCraft == $craft
 					if $p > 0 and $p < 1
@@ -76,14 +106,10 @@ function @drawScreen()
 						write(10,(12*$dpIndex+2)-$cursor,color(80,40,0),$craft)
 					else
 						write(10,(12*$dpIndex+2)-$cursor,color(20,80,0),$craft)
-					var $recipeInputs = get_recipe("crafter", $category, $currentCraft)
+					var $recipeInputs = get_recipe("crafter", $currentCraft)
 					$dpIndex++
 					foreach $recipeInputs ($item, $qty)
 						write(20,(12*$dpIndex+2)-$cursor,color(100,100,100), $item & ": " & $qty)
-						$dpIndex++
-					if $category == "coffee"
-						write(20,(12*$dpIndex+2)-$cursor,color(40,0,0), "Sorry, out of beans!")
-						@error()
 						$dpIndex++
 				else
 					write(10,(12*$dpIndex+2)-$cursor,color(100,100,100),$craft)
@@ -113,12 +139,23 @@ init
 	$recipesCategories.from(get_recipes_categories("crafter"), ",")
 	foreach $recipesCategories ($i, $category)
 		$categories.$category = 0
-	$categories.coffee = 0
 	
 tick
 	var $p = progress
 	if $p < 0
 		@error()
+	
+	; Autocrafting when a container is connected
+	if $p >= 1 and size($autocraftList)
+		var $qty = $autocraftQty.last - 1
+		$autocraftQty.pop()
+		if $qty > 0
+			$autocraftQty.append($qty)
+		else
+			$autocraftList.pop()
+		if size($autocraftList)
+			start_craft($autocraftList.last)
+	
 	if ($p > 0 and $p < 1 and !$continuous) or time < $initTime+5 or $dirty
 		@drawScreen()
 	var $fluidLevels = ""
@@ -129,11 +166,19 @@ tick
 		output.0 (-1, $currentCraft, $fluidLevels)
 	else
 		output.0 ($p, $currentCraft, $fluidLevels)
+	$container = ""
 	
 click
 	@screenDirty()
 
-input.0 ($on:number, $craft:text)
+input.0 ($onOrContainer:text, $craft:text)
+
+	; Autocrafting when a container is connected
+	if $onOrContainer != "0" and $onOrContainer != "1"
+		$container = $onOrContainer
+		return
+	
+	var $on = $onOrContainer:number
 	if $continuous != $on
 		@screenDirty()
 	$continuous = $on

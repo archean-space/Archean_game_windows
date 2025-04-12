@@ -1,13 +1,14 @@
-components:
-  - ARCHEAN_misc.Step
+items:
+  ARCHEAN_misc.Step:
+    max_stack: 256
 
 recipes:
 
   - label: Step
     context: crafter
     category: components
-    time: 0.5
+    time: 1
     input:
-      ARCHEAN_parts.Plastic: 20
+      ARCHEAN_parts.Plastic: 4
     output:
       ARCHEAN_misc.Step: 1

@@ -1,13 +1,15 @@
-components:
-  - ARCHEAN_rtg.RTG
+items:
+  ARCHEAN_rtg.RTG:
+    max_stack: 256
+
 recipes:
   - label: RTG
     context: crafter
     category: components
     time: 20
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 10
       ARCHEAN_parts.Connector: 3
-      ARCHEAN_celestial.Uranium: 1
+      ARCHEAN_nuclear.PlutoniumPellet: 8
     output:
       ARCHEAN_rtg.RTG: 1

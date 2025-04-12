@@ -1,6 +1,10 @@
-components:
-  - ARCHEAN_storage.TrashCan
-  - ARCHEAN_storage.Container
+items:
+  ARCHEAN_storage.TrashCan:
+    max_stack: 256
+  ARCHEAN_storage.Container:
+    max_stack: 64
+  ARCHEAN_storage.SmallContainer:
+    max_stack: 64
 
 recipes:
 
@@ -9,7 +13,7 @@ recipes:
     category: components
     time: 1
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 10
     output:
       ARCHEAN_storage.TrashCan: 1
   
@@ -18,10 +22,8 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Casing: 100
       ARCHEAN_parts.Connector: 3
-      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_storage.Container: 1
 
@@ -30,9 +32,7 @@ recipes:
     category: components
     time: 5
     input:
-      ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 5
+      ARCHEAN_parts.Casing: 50
       ARCHEAN_parts.Connector: 3
-      ARCHEAN_celestial.Iron: 500
     output:
       ARCHEAN_storage.SmallContainer: 1

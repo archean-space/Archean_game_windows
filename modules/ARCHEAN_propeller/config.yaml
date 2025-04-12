@@ -1,5 +1,7 @@
-components:
-  - ARCHEAN_propeller.Propeller
+items:
+  ARCHEAN_propeller.Propeller:
+    max_stack: 64
+
 recipes:
   - label: Propeller
     context: crafter
@@ -10,7 +12,6 @@ recipes:
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 3
       ARCHEAN_parts.Motor: 1
-      ARCHEAN_parts.Disk: 1
-      ARCHEAN_celestial.Aluminium: 100
+      ARCHEAN_celestial.Aluminium: 100000
     output:
       ARCHEAN_propeller.Propeller: 1

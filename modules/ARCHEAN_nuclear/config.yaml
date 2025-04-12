@@ -1,0 +1,170 @@
+items:
+  ARCHEAN_nuclear.FissionReactor:
+    max_stack: 8
+  ARCHEAN_nuclear.UraniumPowder:
+    max_stack: 10000000
+  ARCHEAN_nuclear.FluoritePowder:
+    max_stack: 10000000
+  # ARCHEAN_nuclear.SulfurPowder:
+  #   max_stack: 10000000
+  ARCHEAN_nuclear.YellowCake:
+    max_stack: 10000000
+  ARCHEAN_nuclear.UraniumDioxide:
+    max_stack: 10000000
+  ARCHEAN_nuclear.PlutoniumDioxide:
+    max_stack: 10000000
+  ARCHEAN_nuclear.UraniumTetrafluoride:
+    max_stack: 10000000
+  ARCHEAN_nuclear.UranylFluoride:
+    max_stack: 10000000
+  ARCHEAN_nuclear.UraniumRod:
+    max_stack: 1
+  ARCHEAN_nuclear.PlutoniumPellet:
+    max_stack: 1
+
+recipes:
+
+  - label: FissionReactor
+    context: crafter
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 145
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Motor: 4
+      ARCHEAN_thruster.FluidPump: 1
+      ARCHEAN_computer.MiniComputer: 1
+      ARCHEAN_celestial.Titanium: 100000
+      ARCHEAN_celestial.Lead: 700000
+    output:
+      ARCHEAN_nuclear.FissionReactor: 1
+
+  - label: UraniumRod
+    context: crafter
+    category: components
+    time: 1
+    keep_properties: 1
+    input:
+      ARCHEAN_nuclear.UraniumDioxide: 1000
+    output:
+      ARCHEAN_nuclear.UraniumRod: 1
+
+  - label: PlutoniumPellet
+    context: crafter
+    category: components
+    time: 1
+    input:
+      ARCHEAN_nuclear.PlutoniumDioxide: 5000
+    output:
+      ARCHEAN_nuclear.PlutoniumPellet: 1
+
+  - context: crusher
+    time: 0.01
+    input: ARCHEAN_celestial.Uranium
+    output:
+      ARCHEAN_nuclear.UraniumPowder:
+        stack: 1
+        composition:
+          (U235): 0.1
+          (U238): 0.9
+
+  - context: crusher
+    time: 0.01
+    input: ARCHEAN_nuclear.UraniumRod
+    output:
+      ARCHEAN_nuclear.PlutoniumDioxide:
+        stack: 1
+        composition:
+          Pu: 1
+
+  - context: crusher
+    time: 0.001
+    input: ARCHEAN_celestial.Fluorite
+    output:
+      ARCHEAN_nuclear.FluoritePowder:
+        stack: 1
+        composition:
+          F2: 1
+
+  - context: chemistry
+    temperature_min: 750
+    temperature_max: 950
+    input:
+      O2: 0.128
+      (U*): 0.714
+    output:
+      ARCHEAN_nuclear.YellowCake:
+        stack: 842
+        composition:
+          (U*)3O8: 1
+
+  - context: chemistry
+    temperature_min: 850
+    temperature_max: 1050
+    input:
+      H2: 0.004
+      (U*)3O8: 0.842
+    output:
+      H2O: 0.036
+      ARCHEAN_nuclear.UraniumDioxide:
+        stack: 810
+        composition:
+          (U*)O2: 1
+
+  - context: chemistry
+    temperature_min: 300
+    temperature_max: 400
+    exothermic_energy: 530000 # J/mol
+    input:
+      F2: 0.038
+      H2: 0.002
+    output:
+      HF: 0.040
+
+  - context: chemistry
+    temperature_min: 750
+    temperature_max: 950
+    input:
+      HF: 0.080
+      (U*)O2: 0.270
+    output:
+      H2O: 0.036
+      ARCHEAN_nuclear.UraniumTetrafluoride:
+        stack: 314
+        composition:
+          (U*)F4: 1
+
+  - context: chemistry
+    temperature_min: 550
+    temperature_max: 750
+    input:
+      (U*)F4: 0.314
+      F2: 0.038
+    output:
+      (U*)F6: 0.352
+    
+  - context: chemistry
+    temperature_min: 300
+    temperature_max: 350
+    input:
+      H2O: 0.036
+      (U*)F6: 0.352
+    output:
+      HF: 0.080
+      ARCHEAN_nuclear.UranylFluoride:
+        stack: 308
+        composition:
+          (U*)O2F2: 1
+
+  - context: chemistry
+    temperature_min: 750
+    temperature_max: 850
+    input:
+      H2: 0.002
+      (U*)O2F2: 0.308
+    output:
+      HF: 0.040
+      ARCHEAN_nuclear.UraniumDioxide:
+        stack: 270
+        composition:
+          (U*)O2: 1

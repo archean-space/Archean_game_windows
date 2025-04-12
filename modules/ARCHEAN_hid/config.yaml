@@ -1,7 +1,14 @@
-components:
-  - ARCHEAN_hid.PushButton
-  - ARCHEAN_hid.ToggleButton
-  - ARCHEAN_hid.ThrottleLever
+items:
+  ARCHEAN_hid.PushButton:
+    max_stack: 256
+  ARCHEAN_hid.ToggleButton:
+    max_stack: 256
+  ARCHEAN_hid.ThrottleLever:
+    max_stack: 256
+  ARCHEAN_hid.Numpad:
+    max_stack: 256
+  ARCHEAN_hid.Keyboard:
+    max_stack: 256
 
 recipes:
 
@@ -11,9 +18,7 @@ recipes:
     time: 1
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 1
       ARCHEAN_parts.Wire: 1
-      ARCHEAN_parts.LED: 1
       ARCHEAN_parts.Connector: 1
     output:
       ARCHEAN_hid.PushButton: 1
@@ -24,7 +29,6 @@ recipes:
     time: 1
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 1
       ARCHEAN_parts.Wire: 1
       ARCHEAN_parts.Connector: 1
     output:
@@ -35,9 +39,8 @@ recipes:
     category: components
     time: 1
     input:
-      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 1
       ARCHEAN_parts.Connector: 1
     output:
       ARCHEAN_hid.ThrottleLever: 1
@@ -49,9 +52,6 @@ recipes:
     input:
       ARCHEAN_parts.Circuit: 1
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.LED: 10
       ARCHEAN_parts.Connector: 1
     output:
@@ -63,10 +63,7 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Casing: 2
       ARCHEAN_parts.LED: 20
       ARCHEAN_parts.Connector: 1
     output:
