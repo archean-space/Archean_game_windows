@@ -1,6 +1,8 @@
-components:
-  - ARCHEAN_gyroscope.SmallGyroscope
-  - ARCHEAN_gyroscope.Gyroscope
+items:
+  ARCHEAN_gyroscope.SmallGyroscope:
+    max_stack: 64
+  ARCHEAN_gyroscope.Gyroscope:
+    max_stack: 64
 
 recipes:
   
@@ -9,13 +11,13 @@ recipes:
     category: components
     time: 5
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 20
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.Magnet: 2
       ARCHEAN_parts.Motor: 2
       ARCHEAN_parts.Disk: 2
-      ARCHEAN_celestial.Lead: 2
+      ARCHEAN_celestial.Lead: 5000
     output:
       ARCHEAN_gyroscope.SmallGyroscope: 1
   
@@ -24,12 +26,12 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 100
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.Magnet: 2
       ARCHEAN_parts.Motor: 2
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_celestial.Lead: 10
+      ARCHEAN_parts.Disk: 2
+      ARCHEAN_celestial.Lead: 80000
     output:
       ARCHEAN_gyroscope.Gyroscope: 1

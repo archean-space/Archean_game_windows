@@ -1,5 +1,11 @@
-# tools:
-#   - ARCHEAN_avatar.Canister
+items:
+  ARCHEAN_avatar.Canister:
+    max_stack: 256
+  ARCHEAN_avatar.PilotSeat:
+    max_stack: 64
+  ARCHEAN_avatar.Bobblehead:
+    max_stack: 256
+
 
 inventory_creative_backpack:
   ARCHEAN_build.BlueprintTool: 1
@@ -35,6 +41,7 @@ inventory_creative_backpack:
   ARCHEAN_thruster.MiniThruster: 50
   ARCHEAN_thruster.SmallThruster: 50
   ARCHEAN_thruster.BigThruster: 50
+  ARCHEAN_thruster.FluidPump: 50
   ARCHEAN_thruster.SmallTurboPump: 50
   ARCHEAN_thruster.BigTurboPump: 50
   ARCHEAN_tank.SmallFluidTank: 50
@@ -43,6 +50,8 @@ inventory_creative_backpack:
   ARCHEAN_chemical.FluidPort: 50
   ARCHEAN_chemical.Electrolyser: 50
   ARCHEAN_chemical.SabatierReactor: 50
+  ARCHEAN_chemical.EnrichmentCentrifuge: 50
+  ARCHEAN_chemical.ChemicalFurnace: 50
   ARCHEAN_junction.FluidJunction: 50
   ARCHEAN_junction.DataJunction: 50
   ARCHEAN_junction.LowVoltageJunction: 50
@@ -85,6 +94,12 @@ inventory_creative_backpack:
   ARCHEAN_machines.Crusher: 50
   ARCHEAN_machines.Crafter: 50
   ARCHEAN_machines.ItemConveyor: 50
+  ARCHEAN_machines.PassiveRadiator: 50
+  ARCHEAN_machines.ActiveRadiator: 50
+  ARCHEAN_machines.SmallSteamTurbine: 50
+  ARCHEAN_machines.SteamTurbine: 50
+  ARCHEAN_celestial.GeothermalExchanger: 50
+  ARCHEAN_nuclear.FissionReactor: 50
   ARCHEAN_beep.Buzzer: 50
   ARCHEAN_misc.Step: 50
   ARCHEAN_build.DataCable: 1
@@ -100,10 +115,6 @@ inventory_creative_belt:
   ARCHEAN_build.LowVoltageCable: 1
   ARCHEAN_build.HighVoltageCable: 1
 
-components:
-  - ARCHEAN_avatar.PilotSeat
-  - ARCHEAN_avatar.Bobblehead
-
 recipes:
 
   - label: PilotSeat
@@ -111,12 +122,8 @@ recipes:
     category: components
     time: 30
     input:
-      ARCHEAN_parts.Casing: 10
-      ARCHEAN_parts.Plastic: 10
-      ARCHEAN_parts.Screw: 100
-      ARCHEAN_parts.Wire: 1
-      ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 40
+      ARCHEAN_parts.Plastic: 40
       ARCHEAN_parts.Connector: 1
     output:
       ARCHEAN_avatar.PilotSeat: 1
@@ -127,7 +134,7 @@ recipes:
     time: 5
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Plastic: 1
       ARCHEAN_parts.Screw: 10
     output:
       ARCHEAN_avatar.Bobblehead: 1
@@ -137,6 +144,6 @@ recipes:
     category: misc
     time: 1
     input:
-      ARCHEAN_parts.Plastic: 1
+      ARCHEAN_parts.Plastic: 4
     output:
       ARCHEAN_avatar.Canister: 1

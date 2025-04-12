@@ -1,6 +1,14 @@
-components:
-  - ARCHEAN_chemical.FluidPort
-  - ARCHEAN_chemical.Electrolyser
+items:
+  ARCHEAN_chemical.FluidPort:
+    max_stack: 256
+  ARCHEAN_chemical.Electrolyser:
+    max_stack: 8
+  ARCHEAN_chemical.SabatierReactor:
+    max_stack: 64
+  ARCHEAN_chemical.EnrichmentCentrifuge:
+    max_stack: 64
+  ARCHEAN_chemical.ChemicalFurnace:
+    max_stack: 8
 
 recipes:
 
@@ -17,25 +25,45 @@ recipes:
   - label: Electrolyser
     context: crafter
     category: components
-    time: 1
+    time: 5
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 100
       ARCHEAN_parts.Connector: 5
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_parts.Screw: 100
-      ARCHEAN_celestial.Copper: 100
+      ARCHEAN_celestial.Copper: 400000
     output:
       ARCHEAN_chemical.Electrolyser: 1
 
   - label: SabatierReactor
     context: crafter
     category: components
-    time: 1
+    time: 5
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 100
       ARCHEAN_parts.Connector: 5
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_parts.Screw: 100
-      ARCHEAN_celestial.Nickel: 100
+      ARCHEAN_celestial.Nickel: 100000
     output:
       ARCHEAN_chemical.SabatierReactor: 1
+
+  - label: EnrichmentCentrifuge
+    context: crafter
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 90
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_parts.Connector: 5
+      ARCHEAN_celestial.Titanium: 100000
+    output:
+      ARCHEAN_chemical.EnrichmentCentrifuge: 1
+
+  - label: ChemicalFurnace
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 400
+      ARCHEAN_parts.Connector: 6
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_celestial.Tungsten: 100000
+    output:
+      ARCHEAN_chemical.ChemicalFurnace: 1

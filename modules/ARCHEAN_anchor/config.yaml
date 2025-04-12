@@ -1,14 +1,16 @@
-components:
-  - ARCHEAN_anchor.GroundAnchor
+items:
+  ARCHEAN_anchor.GroundAnchor:
+    max_stack: 256
+
 recipes:
   - label: GroundAnchor
     context: crafter
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 10
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 1
-      ARCHEAN_celestial.Iron: 1000
+      ARCHEAN_celestial.Iron: 15000
     output:
       ARCHEAN_anchor.GroundAnchor: 1

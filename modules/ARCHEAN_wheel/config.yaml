@@ -1,6 +1,10 @@
-components:
-  - ARCHEAN_wheel.Wheel
-  - ARCHEAN_wheel.SmallWheel
+items:
+  ARCHEAN_wheel.BigWheel:
+    max_stack: 8
+  ARCHEAN_wheel.Wheel:
+    max_stack: 64
+  ARCHEAN_wheel.SmallWheel:
+    max_stack: 256
 
 recipes:
 
@@ -9,12 +13,11 @@ recipes:
     category: components
     time: 20
     input:
-      ARCHEAN_parts.Casing: 3
+      ARCHEAN_parts.Casing: 200
       ARCHEAN_parts.Screw: 100
-      ARCHEAN_parts.Plastic: 1000
+      ARCHEAN_parts.Plastic: 800
       ARCHEAN_parts.Connector: 2
-      ARCHEAN_parts.Motor: 1
-      ARCHEAN_parts.Disk: 1
+      ARCHEAN_parts.Motor: 2
     output:
       ARCHEAN_wheel.BigWheel: 1
   
@@ -23,12 +26,11 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 2
+      ARCHEAN_parts.Casing: 50
       ARCHEAN_parts.Screw: 100
-      ARCHEAN_parts.Plastic: 100
+      ARCHEAN_parts.Plastic: 200
       ARCHEAN_parts.Connector: 3
       ARCHEAN_parts.Motor: 1
-      ARCHEAN_parts.Disk: 1
     output:
       ARCHEAN_wheel.Wheel: 1
   
@@ -37,9 +39,9 @@ recipes:
     category: components
     time: 5
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 10
       ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Plastic: 10
+      ARCHEAN_parts.Plastic: 40
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Disk: 1
     output:

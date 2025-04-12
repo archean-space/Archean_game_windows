@@ -1,9 +1,16 @@
-components:
-  - ARCHEAN_thruster.MiniThruster
-  - ARCHEAN_thruster.SmallThruster
-  - ARCHEAN_thruster.BigThruster
-  - ARCHEAN_thruster.SmallTurboPump
-  - ARCHEAN_thruster.BigTurboPump
+items:
+  ARCHEAN_thruster.MiniThruster:
+    max_stack: 256
+  ARCHEAN_thruster.SmallThruster:
+    max_stack: 256
+  ARCHEAN_thruster.BigThruster:
+    max_stack: 8
+  ARCHEAN_thruster.FluidPump:
+    max_stack: 256
+  ARCHEAN_thruster.SmallTurboPump:
+    max_stack: 256
+  ARCHEAN_thruster.BigTurboPump:
+    max_stack: 64
 
 recipes:
 
@@ -13,11 +20,9 @@ recipes:
     time: 5
     input:
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 3
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_celestial.Aluminium: 10
-      ARCHEAN_celestial.Iron: 1
+      ARCHEAN_celestial.Iron: 5000
+      ARCHEAN_celestial.Aluminium: 5000
     output:
       ARCHEAN_thruster.MiniThruster: 1
   
@@ -29,9 +34,8 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 4
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_celestial.Aluminium: 10
-      ARCHEAN_celestial.Titanium: 1
+      ARCHEAN_celestial.Aluminium: 40000
+      ARCHEAN_celestial.Titanium: 10000
     output:
       ARCHEAN_thruster.SmallThruster: 1
   
@@ -43,11 +47,21 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 4
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_celestial.Aluminium: 100
-      ARCHEAN_celestial.Titanium: 10
+      ARCHEAN_celestial.Aluminium: 300000
+      ARCHEAN_celestial.Titanium: 100000
     output:
       ARCHEAN_thruster.BigThruster: 1
+
+  - label: FluidPump
+    context: crafter
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Motor: 1
+    output:
+      ARCHEAN_thruster.FluidPump: 1
   
   - label: SmallTurboPump
     context: crafter
@@ -57,9 +71,8 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 4
-      ARCHEAN_parts.Disk: 10
       ARCHEAN_parts.Motor: 1
-      ARCHEAN_celestial.Titanium: 1
+      ARCHEAN_celestial.Titanium: 25000
     output:
       ARCHEAN_thruster.SmallTurboPump: 1
   
@@ -71,8 +84,7 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 4
-      ARCHEAN_parts.Disk: 100
-      ARCHEAN_parts.Motor: 10
-      ARCHEAN_celestial.Titanium: 10
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_celestial.Titanium: 200000
     output:
       ARCHEAN_thruster.BigTurboPump: 1

@@ -1,5 +1,6 @@
-components:
-  - ARCHEAN_hud.HudController
+items:
+  ARCHEAN_hud.HudController:
+    max_stack: 256
 
 recipes:
 
@@ -8,10 +9,8 @@ recipes:
     category: components
     time: 1
     input:
+      ARCHEAN_parts.Panel: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.Connector: 1
     output:
       ARCHEAN_hud.HudController: 1

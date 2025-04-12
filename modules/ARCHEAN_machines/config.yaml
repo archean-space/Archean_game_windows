@@ -1,5 +1,18 @@
-components:
-  - ARCHEAN_machines.Crusher
+items:
+  ARCHEAN_machines.Crusher:
+    max_stack: 8
+  ARCHEAN_machines.Crafter:
+    max_stack: 64
+  ARCHEAN_machines.ItemConveyor:
+    max_stack: 64
+  ARCHEAN_machines.PassiveRadiator:
+    max_stack: 64
+  ARCHEAN_machines.ActiveRadiator:
+    max_stack: 64
+  ARCHEAN_machines.SteamTurbine:
+    max_stack: 8
+  ARCHEAN_machines.SmallSteamTurbine:
+    max_stack: 64
 
 recipes:
 
@@ -8,13 +21,11 @@ recipes:
     category: components
     time: 60
     input:
-      ARCHEAN_parts.Casing: 2
-      ARCHEAN_parts.Disk: 2
+      ARCHEAN_parts.Casing: 380
       ARCHEAN_parts.Motor: 1
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 4
-      ARCHEAN_celestial.Tungsten: 10
-      ARCHEAN_celestial.Lead: 1
+      ARCHEAN_celestial.Tungsten: 10000
     output:
       ARCHEAN_machines.Crusher: 1
 
@@ -23,14 +34,13 @@ recipes:
     category: components
     time: 60
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 200
       ARCHEAN_parts.Motor: 1
       ARCHEAN_parts.Circuit: 1
       ARCHEAN_parts.Screw: 1000
       ARCHEAN_parts.Connector: 6
-      ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.LED: 10
-      ARCHEAN_celestial.Gold: 1
+      ARCHEAN_celestial.Gold: 1000
       ARCHEAN_computer.MiniComputer: 1
     output:
       ARCHEAN_machines.Crafter: 1
@@ -40,10 +50,56 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 50
       ARCHEAN_parts.Motor: 1
-      ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 4
     output:
       ARCHEAN_machines.ItemConveyor: 1
+
+  - label: PassiveRadiator
+    context: crafter
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 5
+      ARCHEAN_parts.Connector: 3
+      ARCHEAN_celestial.Aluminium: 20000
+    output:
+      ARCHEAN_machines.PassiveRadiator: 1
+
+  - label: ActiveRadiator
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 5
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Motor: 1
+      ARCHEAN_celestial.Aluminium: 20000
+      ARCHEAN_celestial.Copper: 5000
+    output:
+      ARCHEAN_machines.ActiveRadiator: 1
+
+  - label: SteamTurbine
+    context: crafter
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 300
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Motor: 10
+      ARCHEAN_celestial.Titanium: 100000
+    output:
+      ARCHEAN_machines.SteamTurbine: 1
+
+  - label: SmallSteamTurbine
+    context: crafter
+    category: components
+    time: 30
+    input:
+      ARCHEAN_parts.Casing: 20
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Motor: 3
+      ARCHEAN_celestial.Iron: 50000
+    output:
+      ARCHEAN_machines.SmallSteamTurbine: 1

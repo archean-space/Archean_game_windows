@@ -1,5 +1,6 @@
-components:
-  - ARCHEAN_ownership.OwnerPad
+items:
+  ARCHEAN_ownership.OwnerPad:
+    max_stack: 256
 
 recipes:
 
@@ -9,10 +10,7 @@ recipes:
     time: 10
     input:
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 10
       ARCHEAN_parts.LED: 10
     output:
       ARCHEAN_ownership.OwnerPad: 1

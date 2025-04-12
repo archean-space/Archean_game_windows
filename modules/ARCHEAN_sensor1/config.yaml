@@ -1,7 +1,20 @@
-components:
-  - ARCHEAN_sensor1.AltitudeSensor
-  - ARCHEAN_sensor1.SpeedSensor
-  - ARCHEAN_sensor1.TiltSensor
+items:
+  ARCHEAN_sensor1.AltitudeSensor:
+    max_stack: 256
+  ARCHEAN_sensor1.SpeedSensor:
+    max_stack: 256
+  ARCHEAN_sensor1.TiltSensor:
+    max_stack: 256
+  ARCHEAN_sensor1.LinearVelocitySensor:
+    max_stack: 256
+  ARCHEAN_sensor1.AngularVelocitySensor:
+    max_stack: 256
+  ARCHEAN_sensor1.VehiclePhysicsSensor:
+    max_stack: 256
+  ARCHEAN_sensor1.DensitySensor:
+    max_stack: 256
+  ARCHEAN_sensor1.TemperatureSensor:
+    max_stack: 256
 
 recipes:
   
@@ -13,7 +26,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.AltitudeSensor: 1
   
@@ -25,7 +37,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.SpeedSensor: 1
   
@@ -37,7 +48,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.TiltSensor: 1
 
@@ -49,7 +59,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.LinearVelocitySensor: 1
 
@@ -61,7 +70,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.AngularVelocitySensor: 1
 
@@ -73,7 +81,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.VehiclePhysicsSensor: 1
 
@@ -85,7 +92,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.DensitySensor: 1
 
@@ -97,6 +103,5 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Magnet: 1
     output:
       ARCHEAN_sensor1.TemperatureSensor: 1

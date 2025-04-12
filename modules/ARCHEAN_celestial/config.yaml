@@ -1,32 +1,62 @@
-# ores:
-#   - ARCHEAN_celestial.Aluminium: Al
-#   - ARCHEAN_celestial.Chrome: Cr
-#   - ARCHEAN_celestial.Copper: Cu
-#   - ARCHEAN_celestial.Gold: Au
-#   - ARCHEAN_celestial.Iron: Fe
-#   - ARCHEAN_celestial.Lead: Pb
-#   - ARCHEAN_celestial.Nickel: Ni
-#   - ARCHEAN_celestial.Silicon: Si
-#   - ARCHEAN_celestial.Silver: Ag
-#   - ARCHEAN_celestial.Tin: Sn
-#   - ARCHEAN_celestial.Titanium: Ti
-#   - ARCHEAN_celestial.Tungsten: W
-#   - ARCHEAN_celestial.Uranium: U
-#   - ARCHEAN_celestial.Carbon: C
+items:
+  ARCHEAN_celestial.Aluminium:
+    max_stack: 10000000
+  ARCHEAN_celestial.Chrome:
+    max_stack: 10000000
+  ARCHEAN_celestial.Copper:
+    max_stack: 10000000
+  ARCHEAN_celestial.Gold:
+    max_stack: 10000000
+  ARCHEAN_celestial.Iron:
+    max_stack: 10000000
+  ARCHEAN_celestial.Lead:
+    max_stack: 10000000
+  ARCHEAN_celestial.Nickel:
+    max_stack: 10000000
+  ARCHEAN_celestial.Silicon:
+    max_stack: 10000000
+  ARCHEAN_celestial.Silver:
+    max_stack: 10000000
+  ARCHEAN_celestial.Tin:
+    max_stack: 10000000
+  ARCHEAN_celestial.Titanium:
+    max_stack: 10000000
+  ARCHEAN_celestial.Tungsten:
+    max_stack: 10000000
+  ARCHEAN_celestial.Uranium:
+    max_stack: 10000000
+  ARCHEAN_celestial.Carbon:
+    max_stack: 10000000
+  ARCHEAN_celestial.Sulfur:
+    max_stack: 10000000
+  ARCHEAN_celestial.Fluorite:
+    max_stack: 10000000
 
-# tools:
-#   - ARCHEAN_celestial.RockRakeTool
+  ARCHEAN_celestial.Rock:
+    max_stack: 10000
 
-components:
-  - ARCHEAN_celestial.NavInstrument
-  - ARCHEAN_celestial.SolarPanel
-  - ARCHEAN_celestial.MiningDrill
-  - ARCHEAN_celestial.OreScanner
+  ARCHEAN_celestial.RockRakeTool:
+    max_stack: 1
+
+  ARCHEAN_celestial.NavInstrument:
+    max_stack: 256
+  ARCHEAN_celestial.SolarPanel:
+    max_stack: 256
+  ARCHEAN_celestial.SolarSensor:
+    max_stack: 256
+  ARCHEAN_celestial.MiningDrill:
+    max_stack: 8
+  ARCHEAN_celestial.OreScanner:
+    max_stack: 256
+  ARCHEAN_celestial.TerrainScanner:
+    max_stack: 256
+  ARCHEAN_celestial.GeothermalExchanger:
+    max_stack: 64
 
 recipes:
 
   - context: crusher
-    time: 0.02
+    time: 0.01
     input: ARCHEAN_celestial.Rock
     output:
       ARCHEAN_celestial.Aluminium: input.composition.Al
@@ -43,6 +73,8 @@ recipes:
       ARCHEAN_celestial.Tungsten: input.composition.W
       ARCHEAN_celestial.Uranium: input.composition.U
       ARCHEAN_celestial.Carbon: input.composition.C
+      ARCHEAN_celestial.Sulfur: input.composition.S
+      ARCHEAN_celestial.Fluorite: input.composition.F
       ARCHEAN_celestial.Cheese: input.composition.Ch
   
   - label: RockRakeTool
@@ -50,8 +82,7 @@ recipes:
     category: tools
     time: 10
     input:
-      ARCHEAN_celestial.Iron: 100
-      ARCHEAN_parts.Screw: 10
+      ARCHEAN_celestial.Iron: 1000
     output:
       ARCHEAN_celestial.RockRakeTool: 1
   
@@ -60,15 +91,12 @@ recipes:
     category: components
     time: 30
     input:
-      ARCHEAN_parts.Circuit: 10
-      ARCHEAN_parts.Casing: 2
-      ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Screw: 100
-      ARCHEAN_parts.Wire: 10
+      ARCHEAN_parts.Circuit: 1
+      ARCHEAN_parts.Casing: 9
       ARCHEAN_parts.LED: 100
-      ARCHEAN_parts.Magnet: 10
-      ARCHEAN_parts.Capacitor: 10
-      ARCHEAN_celestial.Gold: 10
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Capacitor: 1
+      ARCHEAN_celestial.Gold: 100
       ARCHEAN_parts.Connector: 2
     output:
       ARCHEAN_celestial.NavInstrument: 1
@@ -78,10 +106,9 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Panel: 1
+      ARCHEAN_parts.Panel: 10
       ARCHEAN_parts.Connector: 3
-      ARCHEAN_celestial.Silicon: 1000
+      ARCHEAN_celestial.Silicon: 15000
     output:
       ARCHEAN_celestial.SolarPanel: 1
   
@@ -93,7 +120,6 @@ recipes:
       ARCHEAN_parts.Casing: 1
       ARCHEAN_parts.Connector: 1
       ARCHEAN_parts.Diode: 10
-      ARCHEAN_celestial.Silicon: 10
     output:
       ARCHEAN_celestial.SolarSensor: 1
   
@@ -102,12 +128,11 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 380
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 3
       ARCHEAN_parts.Motor: 2
-      ARCHEAN_parts.Disk: 10
-      ARCHEAN_celestial.Tungsten: 1
+      ARCHEAN_celestial.Tungsten: 1000
     output:
       ARCHEAN_celestial.MiningDrill: 1
   
@@ -116,12 +141,11 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 4
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.Magnet: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Capacitor: 1
     output:
       ARCHEAN_celestial.OreScanner: 1
   
@@ -130,12 +154,24 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Casing: 4
       ARCHEAN_parts.Screw: 100
       ARCHEAN_parts.Connector: 2
       ARCHEAN_parts.Magnet: 1
       ARCHEAN_parts.Circuit: 1
-      ARCHEAN_parts.Capacitor: 1
     output:
       ARCHEAN_celestial.TerrainScanner: 1
+
+  - label: GeothermalExchanger
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 160
+      ARCHEAN_parts.Screw: 100
+      ARCHEAN_parts.Connector: 4
+      ARCHEAN_parts.Motor: 2
+      ARCHEAN_celestial.Iron: 20000
+    output:
+      ARCHEAN_celestial.GeothermalExchanger: 1
   

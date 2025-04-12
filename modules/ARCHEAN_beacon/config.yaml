@@ -1,5 +1,7 @@
-components:
-  - ARCHEAN_beacon.Beacon
+items:
+  ARCHEAN_beacon.Beacon:
+    max_stack: 256
+
 recipes:
   - label: Beacon
     context: crafter
@@ -8,11 +10,8 @@ recipes:
     input:
       ARCHEAN_parts.Circuit: 1
       ARCHEAN_parts.Casing: 1
-      ARCHEAN_parts.Panel: 1
-      ARCHEAN_parts.Screw: 10
-      ARCHEAN_parts.Wire: 10
-      ARCHEAN_parts.Magnet: 10
-      ARCHEAN_parts.Capacitor: 10
+      ARCHEAN_parts.Magnet: 1
+      ARCHEAN_parts.Capacitor: 1
       ARCHEAN_parts.Connector: 2
     output:
       ARCHEAN_beacon.Beacon: 1
