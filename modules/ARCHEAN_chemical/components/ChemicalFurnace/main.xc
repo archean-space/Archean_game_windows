@@ -2,6 +2,7 @@ var $targetTemp = target_temperature
 var $currentTemp = temperature
 
 function @color($temp:number):number
+	$temp = clamp($temp, 300, 3000)
 	var $r = 60/3000*$temp
 	var $g = 60/3000*(3000-$temp)
 	return color($r,$g,0)

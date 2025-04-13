@@ -12,6 +12,7 @@ var $downX : number
 var $downY : number
 var $initTime : number
 var $error : number
+var $popup = 1
 var $continuous = 0
 var $dirty = 0
 
@@ -127,6 +128,28 @@ function @drawScreen()
 	
 	draw_triangle(0+$upX,0+$upY,10+$upX,0+$upY,5+$upX,-9+$upY,white,white)
 	draw_triangle(0+$downX,0+$downY,10+$downX,0+$downY,5+$downX,9+$downY,white,white)
+
+	if $popup
+		draw_rect(4,5,196,195,color(150,150,150,240),color(40,40,40,240))
+		text_align(top)
+		write(0,10,color(0,200,225),"How to enable Auto-Crafting ?")
+		text_align(top_left)
+		write(7,30,color(200,200,200),"1. Connect both Item ports of")
+		write(25,40,color(200,200,200),"the Crafter to the same")
+		write(25,50,color(200,200,200),"Container")
+		write(7,70,color(200,200,200),"2. Connect the Container's Data")
+		write(25,80,color(200,200,200),"port to the Crafter's Data")
+		write(25,90,color(200,200,200),"port")
+		write(15,110,color(200,200,200),"The Crafter will recursively")
+		write(15,120,color(200,200,200),"craft everything using items")
+		write(15,130,color(200,200,200),"from the Container.")
+		if button_rect(25,150,175,180,color(120,120,120),color(30,30,30))
+			$popup = 0
+			@screenDirty()
+		text_size(2)
+		write(56,157,white,"Got it!")
+
+		
 	
 init
 	if $initTime == 0

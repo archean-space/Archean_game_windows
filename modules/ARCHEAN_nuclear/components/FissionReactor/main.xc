@@ -1,6 +1,7 @@
+const $sleepTime = 7500 ; ticks (7500 ticks = 5 minutes)
 var $steamTemp = 0
 var $tick = 0
-var $idle = 1234567890
+var $idle = $sleepTime
 var $CooldownAnim = 0
 var $bgColor = color(5,15,25)
 var $bColor = color(0,160,210)
@@ -85,7 +86,7 @@ function @nuclearLogo($x:number,$y:number)
 		$g = clamp(255 - ((($steamTemp - 300) / 900) * 255), 0, 255)
 		$b = 25
 	$nuclearLogoColor = color($r, $g, $b)
-	if status == "CRITICAL" and round(time * 2) % 2
+	if status == "CRITICAL" and round(time * 5) % 2
 		$nuclearLogoColor = color(255,255,50)
 	draw_circle($x,$y,50,$nuclearLogoColor,$nuclearLogoColor)
 	draw_triangle($x-25,$y-50,$x+25,$y-50,$x,$y,$bgColor,$bgColor)
@@ -215,7 +216,8 @@ tick
 		$idle--
 	if status == "MELTDOWN"
 		@meltdown()
-	elseif $idle == 0
+		$idle = $sleepTime
+	elseif $idle <= 0
 		@standby()
 	else
 		@screen()
@@ -232,4 +234,4 @@ input.0 ($rod0:number,$rod1:number,$rod2:number,$rod3:number,$send_neutrons:numb
 		scram()
 
 click
-	$idle = 1234567890
+	$idle = $sleepTime
