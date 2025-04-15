@@ -109,8 +109,9 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 	rayQueryEXT q;
 	rayQueryInitializeEXT(q, tlas_lights, 0, 0xff, position, 0, vec3(0,1,0), 0);
 	
-	Reservoir res[2];
-	for (int i = 0; i < 2; ++i) {
+	const int NB_RESERVOIRS = 3;
+	Reservoir res[NB_RESERVOIRS];
+	for (int i = 0; i < NB_RESERVOIRS; ++i) {
 		res[i].totalIntensity = 0;
 	}
 	
@@ -141,17 +142,23 @@ vec3 GetDirectLighting(in vec3 worldPosition, in vec3 rayDirection, in vec3 norm
 				if (penumbra == 0) continue;
 			}
 			float lightIntensity = max(0, lightSource.power / (surfaceArea * distanceToLightSurface*distanceToLightSurface + 1) - LIGHT_LUMINOSITY_VISIBLE_THRESHOLD) * penumbra;
-			if (distanceToLightSurface > 100000) { // 100+ km away uses another reservoir
-				ReservoirMix(res[0], lightPosition, lightSource.color, lightIntensity, abs(lightSource.innerRadius), 1);
+			if (distanceToLightSurface > 100000) { // 100+ km away uses another reservoir for celestials
+				if (lightIntensity > 1.0) {
+					// Sun
+					ReservoirMix(res[0], lightPosition, lightSource.color, lightIntensity, abs(lightSource.innerRadius), 1);
+				} else {
+					// Moon
+					ReservoirMix(res[1], lightPosition, lightSource.color, lightIntensity, abs(lightSource.innerRadius), 1);
+				}
 			} else {
 				float luminance = dot(lightSource.color, vec3(0.2126, 0.7152, 0.0722));
 				float weight = luminance * sqrt(lightIntensity * nDotL) * penumbra / (distanceToLightSurface + 1e-4);
-				ReservoirMix(res[1], lightPosition, lightSource.color, lightIntensity, abs(lightSource.innerRadius), weight);
+				ReservoirMix(res[2], lightPosition, lightSource.color, lightIntensity, abs(lightSource.innerRadius), weight);
 			}
 		}
 	}
 	
-	for (int reservoirIndex = 0; reservoirIndex < 2; ++reservoirIndex) {
+	for (int reservoirIndex = 0; reservoirIndex < NB_RESERVOIRS; ++reservoirIndex) {
 		if (res[reservoirIndex].totalIntensity > 0) {
 			vec3 relativeLightPosition = res[reservoirIndex].lightPos - position;
 			vec3 shadowRayDir = normalize(relativeLightPosition);
