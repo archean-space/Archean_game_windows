@@ -16,7 +16,6 @@ inventory_creative_backpack:
   ARCHEAN_ownership.OwnerPad: 50
   ARCHEAN_computer.Computer: 50
   ARCHEAN_computer.MiniComputer: 50
-  ARCHEAN_computer.HDD: 50
   ARCHEAN_computer.Router: 50
   ARCHEAN_computer.MiniRouter: 50
   ARCHEAN_celestial.NavInstrument: 50
@@ -78,6 +77,7 @@ inventory_creative_backpack:
   ARCHEAN_build.SmallHinge: 50
   ARCHEAN_build.DockableDoor: 50
   ARCHEAN_build.DockingPort: 50
+  ARCHEAN_build.Hitch: 50
   ARCHEAN_gyroscope.SmallGyroscope: 50
   ARCHEAN_gyroscope.Gyroscope: 50
   ARCHEAN_aileron.Aileron: 50
