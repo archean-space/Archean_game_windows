@@ -304,10 +304,9 @@ recipes:
     category: components
     time: 10
     input:
-      ARCHEAN_parts.Casing: 40
-      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Casing: 5
       ARCHEAN_parts.Connector: 1
-      ARCHEAN_parts.Magnet: 10
+      ARCHEAN_parts.Magnet: 5
     output:
       ARCHEAN_build.Hitch: 1
     
