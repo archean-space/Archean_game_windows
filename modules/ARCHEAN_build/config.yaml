@@ -49,6 +49,8 @@ items:
     max_stack: 64
   ARCHEAN_build.Volume:
     max_stack: 256
+  ARCHEAN_build.Hitch:
+    max_stack: 64
 
 
 recipes:
@@ -296,4 +298,15 @@ recipes:
       ARCHEAN_parts.LED: 10
     output:
       ARCHEAN_build.Volume: 1
+    
+  - label: Hitch
+    context: crafter
+    category: components
+    time: 10
+    input:
+      ARCHEAN_parts.Casing: 5
+      ARCHEAN_parts.Connector: 1
+      ARCHEAN_parts.Magnet: 5
+    output:
+      ARCHEAN_build.Hitch: 1
     
