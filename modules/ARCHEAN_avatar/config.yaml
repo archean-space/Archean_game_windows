@@ -75,6 +75,7 @@ inventory_creative_backpack:
   ARCHEAN_sensor1.VehiclePhysicsSensor: 50
   ARCHEAN_build.SmallPivot: 50
   ARCHEAN_build.SmallHinge: 50
+  ARCHEAN_build.LinearTrack: 50
   ARCHEAN_build.DockableDoor: 50
   ARCHEAN_build.DockingPort: 50
   ARCHEAN_build.Hitch: 50

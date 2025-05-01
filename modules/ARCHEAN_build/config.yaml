@@ -43,6 +43,8 @@ items:
     max_stack: 256
   ARCHEAN_build.SmallHinge:
     max_stack: 256
+  ARCHEAN_build.LinearTrack:
+    max_stack: 256
   ARCHEAN_build.DockableDoor:
     max_stack: 8
   ARCHEAN_build.DockingPort:
@@ -259,6 +261,18 @@ recipes:
       ARCHEAN_parts.Motor: 1
     output:
       ARCHEAN_build.SmallHinge: 1
+
+  - label: LinearTrack
+    context: crafter
+    category: components
+    time: 5
+    input:
+      ARCHEAN_parts.Casing: 1
+      ARCHEAN_parts.Screw: 10
+      ARCHEAN_parts.Connector: 2
+      ARCHEAN_parts.Motor: 1
+    output:
+      ARCHEAN_build.LinearTrack: 1
   
   - label: DockingPort
     context: crafter
