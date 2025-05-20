@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.3.47",
+		"generator":"Khronos glTF Blender I/O v4.4.55",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -66,12 +66,11 @@
 			"name":"inside",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.009999999776482582,
-					0.009999999776482582,
-					0.009999999776482582,
+					0.029999999329447746,
+					0.029999999329447746,
+					0.029999999329447746,
 					1
-				],
-				"metallicFactor":0
+				]
 			}
 		},
 		{

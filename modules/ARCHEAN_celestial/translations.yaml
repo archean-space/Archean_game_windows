@@ -1,0 +1,34 @@
+translations:
+
+  - en_US: "The Rock Rake tool is for picking rocks quicker than by hand."
+    fr_FR: "Le Rock Rake est un outil pour ramasser les roches plus rapidement qu'à la main."
+    es_ES: "La herramienta Rock Rake sirve para recoger rocas más rápido que a mano."
+    de_DE: "Das Rock Rake-Werkzeug dient dazu, Steine schneller aufzuheben als von Hand."
+    it_IT: "Lo strumento Rock Rake serve per raccogliere le rocce più velocemente che a mano."
+    ru_RU: "Инструмент Rock Rake предназначен для более быстрого сбора камней, чем вручную."
+    zh_CN: "Rock Rake工具用于比手动更快地捡起石头。"
+
+  - en_US: "To pick up rocks, aim at them while holding %s."
+    fr_FR: "Pour ramasser des roches, visez-les et maintenez %s."
+    es_ES: "Para recoger rocas, apúntales mientras sostienes %s."
+    de_DE: "Um Steine aufzuheben, zielen Sie auf sie, während Sie %s halten."
+    it_IT: "Per raccogliere le rocce, mira a loro mentre tieni %s."
+    ru_RU: "Чтобы поднять камни, прицеливайтесь в них, держа %s."
+    zh_CN: "要捡起石头，请在持有%s时瞄准它们。"
+
+  - en_US: "To know the composition of a rock, aim at it while holding %s."
+    fr_FR: "Pour connaître la composition d'une roche, visez-la et maintenez %s."
+    es_ES: "Para conocer la composición de una roca, apúntale mientras sostienes %s."
+    de_DE: "Um die Zusammensetzung eines Steins zu kennen, zielen Sie auf ihn, während Sie %s halten."
+    it_IT: "Per conoscere la composizione di una roccia, mira a essa mentre tieni %s."
+    ru_RU: "Чтобы узнать состав камня, прицеливайтесь в него, держа %s."
+    zh_CN: "要了解岩石的成分，请在持有%s时瞄准它。"
+
+  - en_US: "Gives %d Rock units"
+    fr_FR: "Donne %d unités de roche"
+    es_ES: "Da %d unidades de roca"
+    de_DE: "Gibt %d Steine"
+    it_IT: "Dà %d unità di roccia"
+    ru_RU: "Дает %d единиц камней"
+    zh_CN: "给予%d个岩石单位"
+
